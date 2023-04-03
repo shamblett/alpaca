@@ -13,4 +13,4 @@ import 'dart:typed_data';
 import 'package:ffi/ffi.dart' as ffi;
 import 'src/utils/implementation/utils_impl.dart' as utilsimpl;
 
-part 'src/utils/api/utils.dart';
+part 'src/utils/api/alpaca_utils.dart';
