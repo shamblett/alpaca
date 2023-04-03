@@ -12,6 +12,8 @@ import 'package:test/test.dart';
 import 'package:alpaca/alpaca.dart';
 
 int main() {
-  test('Initialise', () {});
+  test('Initialise', () {
+    final utils = AlpacaUtils();
+  });
   return 0;
 }

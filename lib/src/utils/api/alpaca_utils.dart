@@ -10,18 +10,17 @@ part of alpaca;
 ///
 /// The main Utils interface.
 ///
-class Utils {
+class AlpacaUtils {
   /// Default uses the supplied dynamic library
-  Utils() {
-    _impl = utilsimpl.UtilsImpl(DynamicLibrary.open('library/libutils.so'));
+  AlpacaUtils() {
+    _impl = utilsimpl.UtilsImpl(DynamicLibrary.open('lib/src/utils/implementation/library/libutils.so'));
   }
 
   /// Specify the library and path
-  Utils.fromLib(String libPath) {
+  AlpacaUtils.fromLib(String libPath) {
     _impl = utilsimpl.UtilsImpl(DynamicLibrary.open(libPath));
   }
 
   // The MRAA Implementation class
   late utilsimpl.UtilsImpl _impl;
-
 }
