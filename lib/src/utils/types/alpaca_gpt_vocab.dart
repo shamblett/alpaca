@@ -7,4 +7,4 @@
 
 part of alpaca;
 
-typedef AlpacaGptVocab = utilsimpl.gpt_vocab;
+// typedef AlpacaGptVocab = utilsimpl.gpt_vocab;

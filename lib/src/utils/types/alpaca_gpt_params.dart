@@ -7,4 +7,4 @@
 
 part of alpaca;
 
-typedef AlpacaGptParams = utilsimpl.gpt_params;
+// typedef AlpacaGptParams = utilsimpl.gpt_params;
