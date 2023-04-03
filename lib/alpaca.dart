@@ -11,4 +11,6 @@ import 'dart:ffi';
 import 'dart:typed_data';
 
 import 'package:ffi/ffi.dart' as ffi;
-// import 'src/implementation/alpaca_impl.dart' as mraaimpl;
+import 'src/utils/implementation/utils_impl.dart' as utilsimpl;
+
+part 'src/utils/api/utils.dart';
