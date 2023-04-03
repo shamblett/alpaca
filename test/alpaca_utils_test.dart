@@ -12,8 +12,15 @@ import 'package:test/test.dart';
 import 'package:alpaca/alpaca.dart';
 
 int main() {
-  test('Initialise', () {
+  test('Usage', () {
     final utils = AlpacaUtils();
+    utils.gptPrintUsage(1, ['chat'], AlpacaGptParams());
+  });
+  test('Random prompt', () {
+    final utils = AlpacaUtils();
+    for (int i = 0; i < 10; i++) {
+      print(utils.gptRandomPrompt());
+    }
   });
   return 0;
 }
