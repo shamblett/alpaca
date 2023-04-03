@@ -37,6 +37,41 @@ class AlpacaUtils {
     return ret != 0;
   }
 
+  void gptPrintUsage(int argc, List<String> argv, AlpacaGptParams arg2) {
+    _impl.gpt_print_usage(
+      argc,
+      _strListToCharPointer(argv),
+      arg2,
+    );
+  }
+
+  String gptRandomPrompt() {
+    int r = Random().nextInt(32767) % 10;
+    switch (r) {
+      case 0:
+        return "So";
+      case 1:
+        return "Once upon a time";
+      case 2:
+        return "When";
+      case 3:
+        return "The";
+      case 4:
+        return "After";
+      case 5:
+        return "If";
+      case 6:
+        return "import";
+      case 7:
+        return "He";
+      case 8:
+        return "She";
+      case 9:
+        return "They";
+      default:
+        return "To";
+    }
+  }
 
   Pointer<Pointer<Char>> _strListToCharPointer(List<String> strings) {
     // Gat the strings as UTF8

@@ -7,6 +7,7 @@
 
 library alpaca;
 
+import 'dart:math';
 import 'dart:io';
 import 'dart:ffi';
 import 'dart:typed_data';
@@ -16,3 +17,4 @@ import 'src/utils/implementation/utils_impl.dart' as utilsimpl;
 
 part 'src/utils/api/alpaca_utils.dart';
 part 'src/utils/types/alpaca_gpt_params.dart';
+part 'src/utils/types/alpaca_gpt_vocab.dart';

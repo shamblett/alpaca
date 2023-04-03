@@ -83,17 +83,25 @@ class UtilsImpl {
   late final _gpt_print_usage = _gpt_print_usagePtr.asFunction<
       void Function(int, ffi.Pointer<ffi.Pointer<ffi.Char>>, gpt_params)>();
 
-  late final ffi.Pointer<ffi.Int> _std = _lookup<ffi.Int>('std');
+  int gpt_random_prompt(
+    int arg0,
+  ) {
+    return _gpt_random_prompt(
+      arg0,
+    );
+  }
 
-  int get std => _std.value;
-
-  set std(int value) => _std.value = value;
+  late final _gpt_random_promptPtr =
+      _lookup<ffi.NativeFunction<ffi.Int Function(ffi.Int)>>(
+          'gpt_random_prompt');
+  late final _gpt_random_prompt =
+      _gpt_random_promptPtr.asFunction<int Function(int)>();
 
   void replace(
-    int std,
+    int arg0,
   ) {
     return _replace(
-      std,
+      arg0,
     );
   }
 
@@ -102,10 +110,10 @@ class UtilsImpl {
   late final _replace = _replacePtr.asFunction<void Function(int)>();
 
   int gpt_vocab_init(
-    int std,
+    int arg0,
   ) {
     return _gpt_vocab_init(
-      std,
+      arg0,
     );
   }
 
@@ -121,10 +129,10 @@ class UtilsImpl {
   set gpt_vocab1(int value) => _gpt_vocab1.value = value;
 
   void sample_top_k(
-    int std,
+    int arg0,
   ) {
     return _sample_top_k(
-      std,
+      arg0,
     );
   }
 
@@ -227,7 +235,10 @@ class gpt_params extends ffi.Struct {
   external int n_batch;
 
   @ffi.Int()
-  external int std;
+  external int model;
+
+  @ffi.Int()
+  external int prompt;
 
   @ffi.Int()
   external int use_color;
@@ -237,6 +248,9 @@ class gpt_params extends ffi.Struct {
 
   @ffi.Int()
   external int interactive_start;
+
+  @ffi.Int()
+  external int antiprompt;
 }
 
 class gpt_vocab extends ffi.Struct {
@@ -247,5 +261,8 @@ class gpt_vocab extends ffi.Struct {
   external int token;
 
   @ffi.Int()
-  external int std;
+  external int unnamed;
+
+  @ffi.Int()
+  external int unnamed1;
 }
