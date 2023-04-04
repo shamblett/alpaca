@@ -11,11 +11,12 @@ environment:
 
 dependencies:
  ffi: '^2.0.1'
+ text_analysis: '^1.0.0+2'
 
 dev_dependencies:
  test: '^1.21.5'
  lints: '^2.0.0'
- ffigen: '^7.2.9'
+ ffigen: '^7.2.10'
  
  
 

@@ -7,12 +7,14 @@
 
 library alpaca;
 
+import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
 import 'dart:io';
 import 'dart:ffi';
 
 import 'package:ffi/ffi.dart' as ffi;
+import 'package:text_analysis/text_analysis.dart';
 
 import 'src/ggml/implementation/ggml_impl.dart' as ggmlimpl;
 

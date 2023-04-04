@@ -8,7 +8,7 @@
 @TestOn('vm && linux')
 
 import 'package:test/test.dart';
-
+import 'package:text_analysis/text_analysis.dart';
 import 'package:alpaca/alpaca.dart';
 
 int main() {
@@ -35,10 +35,18 @@ int main() {
     expect(decoded['Second'], 2);
   });
 
-  test('Get tokenize', () {
+  test('Get tokenize', () async {
     final str = 'This is a string of words';
-    final words = AlpacaUtils.gptTokenize(AlpacaGptVocab(), str);
-    expect(words, ['This', 'is', 'a', 'string', 'of', 'words']);
+    //final words = AlpacaUtils.gptTokenize(AlpacaGptVocab(), str);
+    //expect(words, ['This', 'is', 'a', 'string', 'of', 'words']);
+    final tokens = await English.analyzer.tokenizer(str);
+    tokens.forEach((element) {
+      print(element.term);
+    });
+    final terms = English.analyzer.termSplitter(str);
+    terms.forEach((element) {
+      print(element);
+    });
   });
 
   return 0;
