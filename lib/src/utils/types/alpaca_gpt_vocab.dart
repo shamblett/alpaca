@@ -7,4 +7,13 @@
 
 part of alpaca;
 
-// typedef AlpacaGptVocab = utilsimpl.gpt_vocab;
+typedef Token = String;
+typedef Id = int;
+
+class AlpacaGptVocab {
+  Id id = 0;
+  Token token = '';
+
+  Map<Token, Id> tokenToId = {};
+  Map<Id, Token> idToToken = {};
+}

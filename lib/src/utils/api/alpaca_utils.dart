@@ -15,7 +15,8 @@ class AlpacaUtils {
 
   /// API methods, lack of comment reflects lack of same in the implementation files.
 
-  bool gptParamsParse(int argc, List<String> argv, AlpacaGptParams params) {
+  static bool gptParamsParse(
+      int argc, List<String> argv, AlpacaGptParams params) {
     for (int i = 1; i < argc; i++) {
       String arg = argv[i];
 
@@ -73,7 +74,8 @@ class AlpacaUtils {
     return true;
   }
 
-  void gptPrintUsage(int argc, List<String> argv, AlpacaGptParams params) {
+  static void gptPrintUsage(
+      int argc, List<String> argv, AlpacaGptParams params) {
     print('usage: ${argv[0]} [options]\n');
     print('\n');
     print('options:\n');
@@ -112,7 +114,7 @@ class AlpacaUtils {
     print('\n');
   }
 
-  String gptRandomPrompt() {
+  static String gptRandomPrompt() {
     int r = Random().nextInt(32767) % 10;
     switch (r) {
       case 0:
@@ -138,5 +140,77 @@ class AlpacaUtils {
       default:
         return 'To';
     }
+  }
+
+  static void replace(List<String> str, String needle, String replacement) {
+    str[0] = str[0].replaceAll(needle, replacement);
+  }
+
+  static Map<String, int> jsonParse(String fileName) {
+    final jsonFile = File(fileName);
+    final jsonString = jsonFile.readAsStringSync();
+    return JsonDecoder().convert(jsonString).cast<String, int>();
+  }
+
+  ///
+  /// Split text into tokens
+  ///
+  /// ref: https://github.com/openai/gpt-2/blob/a74da5d99abaaba920de8131d64da2862a8f213b/src/encoder.py#L53
+  ///
+  /// Regex (Python):
+  /// r"""'s|'t|'re|'ve|'m|'ll|'d| ?\p{L}+| ?\p{N}+| ?[^\s\p{L}\p{N}]+|\s+(?!\S)|\s+"""
+  ///
+  /// Regex (C++):
+  /// R"('s|'t|'re|'ve|'m|'ll|'d| ?[[:alpha:]]+| ?[[:digit:]]+| ?[^\s[:alpha:][:digit:]]+|\s+(?!\S)|\s+)"
+  ///
+  static List<String?> gptTokenize(AlpacaGptVocab vocab, String text) {
+    // First split the text into words
+    final words = <String?>[];
+    var str = text;
+    final pat =
+        r"('s|'t|'re|'ve|'m|'ll|'d| ?[[:alpha:]]+| ?[[:digit:]]+| ?[^\s[:alpha:][:digit:]]+|\s+(?!\S)|\s+)";
+
+    final re = RegExp(pat);
+    final m = re.allMatches(str).toList();
+    for (var i = 0; i < m.length; i++) {
+      for (var k = 0; k < m[i].groupCount; k++) {
+        words.add(m[i].group(k));
+      }
+    }
+
+    // find the longest tokens that form the words:
+    // std::vector<gpt_vocab::id> tokens;
+    // for (const auto & word : words) {
+    // if (word.size() == 0) continue;
+    //
+    // int i = 0;
+    // int n = word.size();
+    // while (i < n) {
+    // int j = n;
+    // while (j > i) {
+    // auto it = vocab.token_to_id.find(word.substr(i, j-i));
+    // if (it != vocab.token_to_id.end()) {
+    // tokens.push_back(it->second);
+    // i = j;
+    // break;
+    // }
+    // --j;
+    // }
+    // if (i == n) {
+    // break;
+    // }
+    // if (j == i) {
+    // auto sub = word.substr(i, 1);
+    // if (vocab.token_to_id.find(sub) != vocab.token_to_id.end()) {
+    // tokens.push_back(vocab.token_to_id.at(sub));
+    // } else {
+    // fprintf(stderr, "%s: unknown token '%s'\n", __func__, sub.data());
+    // }
+    // ++i;
+    // }
+    // }
+    // }
+
+    return words;
   }
 }
