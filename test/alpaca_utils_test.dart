@@ -16,37 +16,14 @@ int main() {
     AlpacaUtils.gptPrintUsage(1, ['chat'], AlpacaGptParams());
   });
 
-  test('Random prompt', () {
-    for (int i = 0; i < 10; i++) {
-      print(AlpacaUtils.gptRandomPrompt());
-    }
-  });
-
-  test('Replace', () {
-    var str = 'was 23';
-    final pass = <String>[str];
-    AlpacaUtils.replace(pass, '23', '24');
-    expect(pass[0], 'was 24');
-  });
-
   test('JSON parse', () {
     final decoded = AlpacaUtils.jsonParse('test/support/json_parse.json');
     expect(decoded['First'], 1);
     expect(decoded['Second'], 2);
   });
 
-  test('Get tokenize', () async {
+  test('Get llama tokenize', () async {
     final str = 'This is a string of words';
-    //final words = AlpacaUtils.gptTokenize(AlpacaGptVocab(), str);
-    //expect(words, ['This', 'is', 'a', 'string', 'of', 'words']);
-    final tokens = await English.analyzer.tokenizer(str);
-    tokens.forEach((element) {
-      print(element.term);
-    });
-    final terms = English.analyzer.termSplitter(str);
-    terms.forEach((element) {
-      print(element);
-    });
   });
 
   return 0;
