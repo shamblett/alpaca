@@ -7,7 +7,6 @@
 
 library alpaca;
 
-import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
 import 'dart:io';

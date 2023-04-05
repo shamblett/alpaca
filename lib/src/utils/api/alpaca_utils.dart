@@ -13,6 +13,8 @@ part of alpaca;
 class AlpacaUtils {
   AlpacaUtils();
 
+  static const maxTokenLen = 18;
+
   /// API methods, lack of comment reflects lack of same in the implementation files.
 
   static bool gptParamsParse(
@@ -119,4 +121,73 @@ class AlpacaUtils {
     final jsonString = jsonFile.readAsStringSync();
     return JsonDecoder().convert(jsonString).cast<String, int>();
   }
+
+  /// SentencePiece implementation after https://guillaume-be.github.io/2020-05-30/sentence_piece
+  List<Id> llamaTokenize(AlpacaGptVocab vocab, String text, bool bos) {
+    List<Id?> res = [];
+    List<int> score = [];
+    List<Id?> prev = [];
+    final int len = text.length;
+
+    // Forward pass
+    for (int i = 0; i < len; i++) {
+      for (int subLen = 1; subLen <= len - i; subLen++) {
+        var sub = text.substring(i, subLen);
+        var token = vocab.tokenToId.containsValue(sub);
+        if (token) {
+          int tokenScore = sub.length * sub.length;
+          int localScore = score[i] + tokenScore;
+          int next = i + subLen;
+          if (score[next] < localScore) {
+            score[next] = localScore;
+            prev[next] = vocab.tokenToId[sub];
+          }
+        }
+      }
+    }
+
+    // Backward pass
+    int i = len;
+    while (i > 0) {
+      var tokenId = prev[i];
+      if (tokenId == 0) {
+        // TODO: Return error or something more meaningful
+        print("failed to tokenize string!\n");
+        break;
+      }
+      res.add(tokenId);
+      if (vocab.idToToken.containsKey(tokenId)) {
+        var token = vocab.idToToken[tokenId];
+        i -= token!.length;
+      }
+    }
+
+    if (bos) {
+      res.add(1); // TODO: replace with vocab.bos
+    }
+
+    // Pieces are in reverse order so correct that
+    res = res.reversed.toList();
+
+    return [];
+  }
+
+  bool gptVocabInit(String fname, AlpacaGptVocab vocab) {
+    print('Loading vocab from $fname\n');
+
+    vocab.tokenToId = jsonParse(fname);
+
+    vocab.tokenToId.forEach((k, v) => vocab.idToToken[v] = k);
+
+    print('Vocab size = ${vocab.tokenToId.length}');
+
+    // print the vocabulary
+    //for (auto kv : vocab.token_to_id) {
+    //    printf("'%s' -> %d\n", kv.first.data(), kv.second);
+    //}
+
+    return true;
+  }
+
+  // C++ Algorithm partial_sort() function is used to rearrange the elements in the range[first, last), in such a way that the elements between the first and middle will be sorted and the elements between the middle and last will be in an unspecified order.
 }
