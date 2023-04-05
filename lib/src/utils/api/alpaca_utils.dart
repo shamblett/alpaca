@@ -116,14 +116,8 @@ class AlpacaUtils {
     print('\n');
   }
 
-  static Map<String, int> jsonParse(String fileName) {
-    final jsonFile = File(fileName);
-    final jsonString = jsonFile.readAsStringSync();
-    return JsonDecoder().convert(jsonString).cast<String, int>();
-  }
-
   /// SentencePiece implementation after https://guillaume-be.github.io/2020-05-30/sentence_piece
-  List<Id> llamaTokenize(AlpacaGptVocab vocab, String text, bool bos) {
+  List<Id?> llamaTokenize(AlpacaGptVocab vocab, String text, bool bos) {
     List<Id?> res = [];
     List<int> score = [];
     List<Id?> prev = [];
@@ -169,24 +163,7 @@ class AlpacaUtils {
     // Pieces are in reverse order so correct that
     res = res.reversed.toList();
 
-    return [];
-  }
-
-  bool gptVocabInit(String fname, AlpacaGptVocab vocab) {
-    print('Loading vocab from $fname\n');
-
-    vocab.tokenToId = jsonParse(fname);
-
-    vocab.tokenToId.forEach((k, v) => vocab.idToToken[v] = k);
-
-    print('Vocab size = ${vocab.tokenToId.length}');
-
-    // print the vocabulary
-    //for (auto kv : vocab.token_to_id) {
-    //    printf("'%s' -> %d\n", kv.first.data(), kv.second);
-    //}
-
-    return true;
+    return res;
   }
 
   // C++ Algorithm partial_sort() function is used to rearrange the elements in the range[first, last), in such a way that the elements between the first and middle will be sorted and the elements between the middle and last will be in an unspecified order.
