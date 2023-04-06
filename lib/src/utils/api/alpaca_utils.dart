@@ -166,7 +166,8 @@ class AlpacaUtils {
     return res;
   }
 
-  void sampleTopK(List<AlpacaGptLogit> logitsId, int topK) {
+  static void sampleTopK(List<AlpacaGptLogit> logitsId, int topK) {
+    selectionSort<AlpacaGptLogit>(logitsId, begin:0, end:topK);
     // find the top K tokens
     // std::partial_sort(
     // logits_id.begin(),
