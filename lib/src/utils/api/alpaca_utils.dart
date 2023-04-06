@@ -166,5 +166,15 @@ class AlpacaUtils {
     return res;
   }
 
-  // C++ Algorithm partial_sort() function is used to rearrange the elements in the range[first, last), in such a way that the elements between the first and middle will be sorted and the elements between the middle and last will be in an unspecified order.
+  void sampleTopK(List<AlpacaGptLogit> logitsId, int topK) {
+    // find the top K tokens
+    // std::partial_sort(
+    // logits_id.begin(),
+    // logits_id.begin() + top_k, logits_id.end(),
+    // [](const std::pair<double, gpt_vocab::id> & a, const std::pair<double, gpt_vocab::id> & b) {
+    // return a.first > b.first;
+    // });
+    //
+    // logits_id.resize(top_k);
+  }
 }

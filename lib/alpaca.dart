@@ -20,3 +20,4 @@ part 'src/utils/api/alpaca_utils.dart';
 part 'src/ggml/api/alpaca_ggml.dart';
 part 'src/utils/types/alpaca_gpt_params.dart';
 part 'src/utils/types/alpaca_gpt_vocab.dart';
+part 'src/utils/types/alpaca_gpt_logit.dart';
