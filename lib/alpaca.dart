@@ -13,6 +13,7 @@ import 'dart:io';
 import 'dart:ffi';
 
 import 'package:algorithmic/algorithmic.dart';
+import 'package:calc/calc.dart';
 import 'package:ffi/ffi.dart' as ffi;
 
 import 'src/ggml/implementation/ggml_impl.dart' as ggmlimpl;

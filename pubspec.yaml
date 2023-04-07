@@ -11,6 +11,7 @@ environment:
 
 dependencies:
  algorithmic: '^0.0.11'
+ calc: ^0.2.1
  ffi: '^2.0.1'
 
 dev_dependencies:
