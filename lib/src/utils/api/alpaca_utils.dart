@@ -167,15 +167,30 @@ class AlpacaUtils {
   }
 
   static void sampleTopK(List<AlpacaGptLogit> logitsId, int topK) {
-    selectionSort<AlpacaGptLogit>(logitsId, begin:0, end:topK);
-    // find the top K tokens
-    // std::partial_sort(
-    // logits_id.begin(),
-    // logits_id.begin() + top_k, logits_id.end(),
-    // [](const std::pair<double, gpt_vocab::id> & a, const std::pair<double, gpt_vocab::id> & b) {
-    // return a.first > b.first;
-    // });
-    //
-    // logits_id.resize(top_k);
+    if (topK == 0 || topK > logitsId.length) {
+      return;
+    }
+
+    // Sort the list, highest first
+    final toSort = logitsId.toList();
+    toSort.sort();
+
+    // Get the first topK elements
+    final subLogits = toSort.sublist(0, topK);
+    if (subLogits.isEmpty) {
+      return;
+    }
+
+    // Remove the sorted sublist from logitsId
+    final tmpList = logitsId.toList();
+    tmpList.removeWhere((element) => subLogits.contains(element));
+
+    // Add the temp list to the sorted list
+    subLogits.addAll(tmpList);
+
+    // Assign back to the input parameter
+    logitsId
+      ..clear()
+      ..addAll(subLogits);
   }
 }

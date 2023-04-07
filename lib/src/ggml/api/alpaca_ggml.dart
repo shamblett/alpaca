@@ -11,8 +11,8 @@ part of alpaca;
 
 class AlpacaGgml {
   AlpacaGgml() {
-    _impl =
-        ggmlimpl.GgmlImpl(DynamicLibrary.open('lib/src/ggml/implementation/library/libggml.so'));
+    _impl = ggmlimpl.GgmlImpl(
+        DynamicLibrary.open('lib/src/ggml/implementation/library/libggml.so'));
   }
 
   /// Specify the library and path

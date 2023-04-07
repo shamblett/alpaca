@@ -19,5 +19,5 @@ class AlpacaGptLogit extends Comparable {
   bool operator >(AlpacaGptLogit other) => other.val > val;
 
   @override
-  int compareTo(other) => other.val > val ? -1 : 1;
+  int compareTo(other) => other.val > val ? 1 : -1;
 }
