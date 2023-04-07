@@ -201,84 +201,75 @@ class AlpacaUtils {
   ///
   static Id llamaSampleTopPTopK(
       AlpacaGptVocab vocab,
-      double logits,
+      List<double> logits,
       List<Id> lastNTokens,
       double repeatPenalty,
       int topK,
-      double toPp,
+      double topP,
       double temp) {
+    int nLogits = vocab.idToToken.length;
+    //
+    final logitsId = <AlpacaGptLogit>[];
+    //
+    final double scale = 1.0 / temp;
+    for (int i = 0; i < nLogits; ++i) {
+      // Repetition penalty from CTRL paper (https://arxiv.org/abs/1909.05858)
+      // credit https://github.com/facebookresearch/llama/compare/main...shawwn:llama:main
 
+      if (lastNTokens.contains(i)) {
+        // if score < 0 then repetition penalty has to multiplied to reduce the previous token probability
 
-    // int n_logits = vocab.id_to_token.size();
+        if (logits[i] < 0.0) {
+          logitsId.add(AlpacaGptLogit()
+            ..id = i
+            ..val = logits[i] * scale * repeatPenalty);
+        } else {
+          logitsId.add(AlpacaGptLogit()
+            ..id = i
+            ..val = logits[i] / scale * repeatPenalty);
+        }
+      } else {
+        logitsId.add(AlpacaGptLogit()
+          ..id = i
+          ..val = logits[i] / scale);
+      }
+    }
+
     //
-    // std::vector<std::pair<double, gpt_vocab::id>> logits_id;
-    // logits_id.reserve(n_logits);
+    sampleTopK(logitsId, topK);
     //
-    // {
-    // const double scale = 1.0/temp;
-    // for (int i = 0; i < n_logits; ++i) {
-    // // repetition penalty from CTRL paper (https://arxiv.org/abs/1909.05858)
-    // // credit https://github.com/facebookresearch/llama/compare/main...shawwn:llama:main
-    // if (std::find(last_n_tokens.begin(), last_n_tokens.end(), i) != last_n_tokens.end()) {
-    // // if score < 0 then repetition penalty has to multiplied to reduce the previous token probability
-    // if (logits[i] < 0.0) {
-    // logits_id.push_back(std::make_pair(logits[i]*scale*repeat_penalty, i));
-    // } else {
-    // logits_id.push_back(std::make_pair(logits[i]*scale/repeat_penalty, i));
-    // }
-    // } else {
-    // logits_id.push_back(std::make_pair(logits[i]*scale, i));
-    // }
-    // }
-    // }
+    double maxl = double.negativeInfinity;
+    for (final entry in logitsId) {
+      maxl = max(maxl, entry.val);
+    }
     //
-    // sample_top_k(logits_id, top_k);
+    // Compute probabilities for the top K tokens
+    final probs = <double>[];
     //
-    // double maxl = -INFINITY;
-    // for (const auto & kv : logits_id) {
-    // maxl = std::max(maxl, kv.first);
-    // }
+    double sum = 0.0;
+    for (final entry in logitsId) {
+      final p = exp(entry.val - maxl);
+      probs.add(p);
+      sum += p;
+    }
     //
-    // // compute probs for the top K tokens
-    // std::vector<double> probs;
-    // probs.reserve(logits_id.size());
+    // Normalize the probabilities
+    for (var p in probs) {
+      p /= sum;
+    }
+
     //
-    // double sum = 0.0;
-    // for (const auto & kv : logits_id) {
-    // double p = exp(kv.first - maxl);
-    // probs.push_back(p);
-    // sum += p;
-    // }
-    //
-    // // normalize the probs
-    // for (auto & p : probs) {
-    // p /= sum;
-    // }
-    //
-    // if (top_p < 1.0f) {
-    // double cumsum = 0.0f;
-    // for (int i = 0; i < (int) probs.size(); i++) {
-    // cumsum += probs[i];
-    // if (cumsum >= top_p) {
-    // probs.resize(i + 1);
-    // logits_id.resize(i + 1);
-    // break;
-    // }
-    // }
-    //
-    // cumsum = 1.0/cumsum;
-    // for (int i = 0; i < (int) probs.size(); i++) {
-    // probs[i] *= cumsum;
-    // }
-    // }
-    //
-    // //printf("\n");
-    // //for (int i = 0; i < (int) 10; i++) {
-    // //    printf("%d: '%s' %f\n", i, vocab.id_to_token.at(logits_id[i].second).c_str(), probs[i]);
-    // //}
-    // //printf("\n\n");
-    // //exit(0);
-    //
+    if (topP < 1.0) {
+      double cumsum = 0.0;
+      for (int i = 0; i < probs.length; i++) {
+        cumsum += probs[i];
+      }
+
+      cumsum = 1.0 / cumsum;
+      for (int i = 0; i < probs.length; i++) {
+        probs[i] *= cumsum;
+      }
+    }
     // std::discrete_distribution<> dist(probs.begin(), probs.end());
     // int idx = dist(rng);
     //
