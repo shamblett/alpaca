@@ -8,7 +8,10 @@
 part of alpaca;
 
 /// The Alpaca GGML interface.
-
+///
+///  For a full description of the methods in this class please see its
+///  corresponding C header file https://github.com/antimatter15/alpaca.cpp/blob/master/ggml.h
+///
 class AlpacaGgml {
   AlpacaGgml() {
     _impl = ggmlimpl.GgmlImpl(
@@ -22,4 +25,28 @@ class AlpacaGgml {
 
   // The GGML Implementation class
   late ggmlimpl.GgmlImpl _impl;
+
+  /// void ggml_time_init(void);
+  void ggmTimeInit() => _impl.ggml_time_init();
+
+  /// int64_t ggml_time_ms(void);
+  int ggmlTimeMs() => _impl.ggml_time_ms();
+
+  /// int64_t ggml_time_us(void);
+  int ggmlTimeUs() => _impl.ggml_time_us();
+
+  /// int64_t ggml_cycles(void);
+  int ggmlCycles() => _impl.ggml_cycles();
+
+  /// int64_t ggml_cycles_per_ms(void);
+  int ggmlCyclesPerMs() => _impl.ggml_cycles_per_ms();
+
+  /// void ggml_print_object(const struct ggml_object * obj);
+  void ggmlPrintObject(AlpacaGgmlObject obj) {
+    final ptr = ffi.calloc<AlpacaGgmlObject>();
+    ptr = obj;
+    _impl.ggml_print_object();
+  }
+
+
 }

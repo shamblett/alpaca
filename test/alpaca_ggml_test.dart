@@ -15,5 +15,12 @@ int main() {
   test('Initialize', () {
     final ggml = AlpacaGgml();
   });
+
+  test('Print Object', () {
+    final ggml = AlpacaGgml();
+    final obj = AlpacaGgmlObject();
+    ggml.ggmlPrintObject(obj);
+  });
+
   return 0;
 }
