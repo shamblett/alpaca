@@ -7,57 +7,6 @@
 
 part of alpaca;
 
-class MyDist<T> extends DiscreteDistribution<T> {
-  Map<T, double> _masses = <T, double>{};
-
-  MyDist.from(Iterable<T> iterable) {
-    final result = <T, double>{};
-
-    // Count relative frequencies of items and sum of relative frequencies
-    var n = 0;
-    for (var item in iterable) {
-      result[item] = (result[item] ?? 0.0) + 1.0;
-      n++;
-    }
-
-    // Normalize values (so the sum is 1.0).
-    for (var entry in result.entries) {
-      result[entry.key] = entry.value / n.toDouble();
-    }
-
-    _masses.addAll(result);
-  }
-
-  @override
-  double pmf(T value) {
-    return _masses[value] ?? 0.0;
-  }
-
-  @override
-  T sample({Random? random}) {
-    final masses = _masses;
-    if (masses.isEmpty) {
-      throw StateError('Frequencies is empty');
-    }
-    random ??= Random();
-
-    // Choose a random threshold
-    final x = random.nextDouble();
-
-    // Iterate until the sum exceeds threshold
-    var sum = 0.0;
-    for (var entry in masses.entries) {
-      sum += entry.value;
-      if (sum > x) {
-        return entry.key;
-      }
-    }
-
-    // Fallback
-    return masses.keys.first;
-  }
-}
-
 ///
 /// The main Utility library interface.
 ///
@@ -257,7 +206,8 @@ class AlpacaUtils {
       double repeatPenalty,
       int topK,
       double topP,
-      double temp) {
+      double temp,
+      Random rng) {
     int nLogits = vocab.idToToken.length;
     //
     final logitsId = <AlpacaGptLogit>[];
@@ -321,11 +271,9 @@ class AlpacaUtils {
         probs[i] *= cumsum;
       }
     }
-    final dist = MyDist<double>.from(probs);
-    double idx = dist.sample();
-    // std::discrete_distribution<> dist(probs.begin(), probs.end());
-    // int idx = dist(rng);
-    //
-    return logitsId[idx.toInt()].id;
+    final dist = UniformDiscreteDistribution(
+        probs[0].toInt(), probs[probs.length].toInt());
+    final idx = dist.sample(random: rng);
+    return logitsId[idx].id;
   }
 }
