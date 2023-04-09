@@ -12,6 +12,8 @@ part of ggml;
 ///  For a full description of the methods in this class please see its
 ///  corresponding C header file https://github.com/antimatter15/alpaca.cpp/blob/master/ggml.h
 ///
+/// The methods are implemented in the same order as that found in the C header file.
+///
 class Ggml {
   Ggml() {
     _impl = ggmlimpl.GgmlImpl(
@@ -66,5 +68,26 @@ class Ggml {
   }
 
   /// int ggml_blck_size (enum ggml_type type);
-  // int blockSize(GgmlType theType) => _impl.ggml_blck_size(theType.);
+  int blockSize(GgmlType theType) => _impl.ggml_blck_size(theType.code);
+
+  /// size_t ggml_type_size (enum ggml_type type); // size in bytes for all elements in a block
+  int typeSize(GgmlType theType) => _impl.ggml_type_size(theType.code);
+
+  /// float ggml_type_sizef(enum ggml_type type); // ggml_type_size()/ggml_blck_size() as float
+  double typeSizeF(GgmlType theType) => _impl.ggml_type_sizef(theType.code);
+
+  /// size_t ggml_element_size(const struct ggml_tensor * tensor);
+  int elementSize(GgmlTensor tensor) {
+    final ptr = ffi.calloc<GgmlTensor>();
+    ptr.ref = tensor;
+    final ret = _impl.ggml_element_size(ptr);
+    ffi.calloc.free(ptr);
+    return ret;
+  }
+
+  /// struct ggml_context * ggml_init(struct ggml_init_params params);
+  GgmlContext init(GgmlInitParams params) => _impl.ggml_init(params.instance);
+
+  /// void ggml_free(struct ggml_context * ctx);
+  void free(GgmlContext ctx) => _impl.ggml_free(ctx);
 }
