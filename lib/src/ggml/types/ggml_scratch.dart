@@ -7,13 +7,13 @@
 
 part of ggml;
 
-class GgmlInitParams {
+class GgmlScratch {
   // Finalized to free the resource should the user not do so
-  final _ptr = ffi.calloc<ggmlimpl.ggml_init_params>();
+  final _ptr = ffi.calloc<ggmlimpl.ggml_scratch>();
 
-  Pointer<ggmlimpl.ggml_init_params> get ptr => _ptr;
+  Pointer<ggmlimpl.ggml_scratch> get ptr => _ptr;
 
-  ggmlimpl.ggml_init_params get instance => _ptr.ref;
+  ggmlimpl.ggml_scratch get instance => _ptr.ref;
 
   void free() => ffi.calloc.free(_ptr);
 }

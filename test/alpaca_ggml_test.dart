@@ -17,7 +17,7 @@ int main() {
     final initParams = GgmlInitParams()..instance;
     final ctx = ggml.init(initParams);
     expect(ctx, isNotNull);
-    print(ggml.usedMem(ctx));
+    //print(ggml.usedMem(ctx));
     //ggml.free(ctx);
     //initParams.free();
   });

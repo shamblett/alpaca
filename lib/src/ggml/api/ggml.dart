@@ -50,22 +50,10 @@ class Ggml {
   void printObjects(GgmlContext ctx) => _impl.ggml_print_objects(ctx);
 
   /// int ggml_nelements(const struct ggml_tensor * tensor);
-  int nElements(GgmlTensor tensor) {
-    final ptr = ffi.calloc<GgmlTensor>();
-    ptr.ref = tensor;
-    final ret = _impl.ggml_nelements(ptr);
-    ffi.calloc.free(ptr);
-    return ret;
-  }
+  int nElements(GgmlTensor tensor) => _impl.ggml_nelements(tensor.ptr);
 
   /// size_t ggml_nbytes   (const struct ggml_tensor * tensor);
-  int nBytes(GgmlTensor tensor) {
-    final ptr = ffi.calloc<GgmlTensor>();
-    ptr.ref = tensor;
-    final ret = _impl.ggml_nbytes(ptr);
-    ffi.calloc.free(ptr);
-    return ret;
-  }
+  int nBytes(GgmlTensor tensor) => _impl.ggml_nbytes(tensor.ptr);
 
   /// int ggml_blck_size (enum ggml_type type);
   int blockSize(GgmlType theType) => _impl.ggml_blck_size(theType.code);
@@ -77,13 +65,7 @@ class Ggml {
   double typeSizeF(GgmlType theType) => _impl.ggml_type_sizef(theType.code);
 
   /// size_t ggml_element_size(const struct ggml_tensor * tensor);
-  int elementSize(GgmlTensor tensor) {
-    final ptr = ffi.calloc<GgmlTensor>();
-    ptr.ref = tensor;
-    final ret = _impl.ggml_element_size(ptr);
-    ffi.calloc.free(ptr);
-    return ret;
-  }
+  int elementSize(GgmlTensor tensor) => _impl.ggml_element_size(tensor.ptr);
 
   /// struct ggml_context * ggml_init(struct ggml_init_params params);
   GgmlContext init(GgmlInitParams params) => _impl.ggml_init(params.instance);
@@ -93,4 +75,8 @@ class Ggml {
 
   /// size_t ggml_used_mem(const struct ggml_context * ctx);
   int usedMem(GgmlContext ctx) => _impl.ggml_used_mem(ctx);
+
+  /// size_t ggml_set_scratch(struct ggml_context * ctx, struct ggml_scratch scratch);
+  int setScratch(GgmlContext ctx, GgmlScratch scratch) =>
+      _impl.ggml_set_scratch(ctx, scratch.instance);
 }

@@ -9,4 +9,3 @@ part of ggml;
 
 typedef GgmlObject = Pointer<ggmlimpl.ggml_object>;
 typedef GgmlContext = Pointer<ggmlimpl.ggml_context>;
-typedef GgmlTensor = ggmlimpl.ggml_tensor;
