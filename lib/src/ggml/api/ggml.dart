@@ -90,4 +90,7 @@ class Ggml {
 
   /// void ggml_free(struct ggml_context * ctx);
   void free(GgmlContext ctx) => _impl.ggml_free(ctx);
+
+  /// size_t ggml_used_mem(const struct ggml_context * ctx);
+  int usedMem(GgmlContext ctx) => _impl.ggml_used_mem(ctx);
 }
