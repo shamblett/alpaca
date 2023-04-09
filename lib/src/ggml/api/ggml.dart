@@ -27,20 +27,44 @@ class Ggml {
   late ggmlimpl.GgmlImpl _impl;
 
   /// void ggml_time_init(void);
-  void ggmTimeInit() => _impl.ggml_time_init();
+  void timeInit() => _impl.ggml_time_init();
 
   /// int64_t ggml_time_ms(void);
-  int ggmlTimeMs() => _impl.ggml_time_ms();
+  int timeMs() => _impl.ggml_time_ms();
 
   /// int64_t ggml_time_us(void);
-  int ggmlTimeUs() => _impl.ggml_time_us();
+  int timeUs() => _impl.ggml_time_us();
 
   /// int64_t ggml_cycles(void);
-  int ggmlCycles() => _impl.ggml_cycles();
+  int cycles() => _impl.ggml_cycles();
 
   /// int64_t ggml_cycles_per_ms(void);
-  int ggmlCyclesPerMs() => _impl.ggml_cycles_per_ms();
+  int cyclesPerMs() => _impl.ggml_cycles_per_ms();
 
   /// void ggml_print_object(const struct ggml_object * obj);
-  void ggmlPrintObject(GgmlObject obj) => _impl.ggml_print_object(obj);
+  void printObject(GgmlObject obj) => _impl.ggml_print_object(obj);
+
+  /// void ggml_print_objects(const struct ggml_context * ctx);
+  void printObjects(GgmlContext ctx) => _impl.ggml_print_objects(ctx);
+
+  /// int ggml_nelements(const struct ggml_tensor * tensor);
+  int nElements(GgmlTensor tensor) {
+    final ptr = ffi.calloc<GgmlTensor>();
+    ptr.ref = tensor;
+    final ret = _impl.ggml_nelements(ptr);
+    ffi.calloc.free(ptr);
+    return ret;
+  }
+
+  /// size_t ggml_nbytes   (const struct ggml_tensor * tensor);
+  int nBytes(GgmlTensor tensor) {
+    final ptr = ffi.calloc<GgmlTensor>();
+    ptr.ref = tensor;
+    final ret = _impl.ggml_nbytes(ptr);
+    ffi.calloc.free(ptr);
+    return ret;
+  }
+
+  /// int ggml_blck_size (enum ggml_type type);
+  // int blockSize(GgmlType theType) => _impl.ggml_blck_size(theType.);
 }
