@@ -18,6 +18,7 @@ int main() {
     final ctx = ggml.init(initParams);
     expect(ctx, isNotNull);
     ggml.free(ctx);
+    initParams.free();
   });
 
   test('Various', () {
