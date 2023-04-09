@@ -9,17 +9,11 @@
 
 import 'package:test/test.dart';
 
-import 'package:alpaca/alpaca.dart';
+import 'package:alpaca/src/ggml/ggml.dart';
 
 int main() {
   test('Initialize', () {
-    final ggml = AlpacaGgml();
-  });
-
-  test('Print Object', () {
-    final ggml = AlpacaGgml();
-    final obj = AlpacaGgmlObject();
-    ggml.ggmlPrintObject(obj);
+    Ggml();
   });
 
   return 0;

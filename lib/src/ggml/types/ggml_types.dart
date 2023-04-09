@@ -5,6 +5,6 @@
  * Copyright :  S.Hamblett
  */
 
-part of alpaca;
+part of ggml;
 
-typedef AlpacaGgmlObject = ggmlimpl.ggml_object;
+typedef GgmlObject = Pointer<ggmlimpl.ggml_object>;

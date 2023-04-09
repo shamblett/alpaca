@@ -5,21 +5,21 @@
  * Copyright :  S.Hamblett
  */
 
-part of alpaca;
+part of ggml;
 
 /// The Alpaca GGML interface.
 ///
 ///  For a full description of the methods in this class please see its
 ///  corresponding C header file https://github.com/antimatter15/alpaca.cpp/blob/master/ggml.h
 ///
-class AlpacaGgml {
-  AlpacaGgml() {
+class Ggml {
+  Ggml() {
     _impl = ggmlimpl.GgmlImpl(
         DynamicLibrary.open('lib/src/ggml/implementation/library/libggml.so'));
   }
 
   /// Specify the library and path
-  AlpacaGgml.fromLib(String libPath) {
+  Ggml.fromLib(String libPath) {
     _impl = ggmlimpl.GgmlImpl(DynamicLibrary.open(libPath));
   }
 
@@ -42,11 +42,5 @@ class AlpacaGgml {
   int ggmlCyclesPerMs() => _impl.ggml_cycles_per_ms();
 
   /// void ggml_print_object(const struct ggml_object * obj);
-  void ggmlPrintObject(AlpacaGgmlObject obj) {
-    final ptr = ffi.calloc<AlpacaGgmlObject>();
-    ptr = obj;
-    _impl.ggml_print_object();
-  }
-
-
+  void ggmlPrintObject(GgmlObject obj) => _impl.ggml_print_object(obj);
 }
