@@ -9,7 +9,12 @@ part of ggml;
 
 class GgmlTensor {
   // Finalized to free the resource should the user not do so
-  final _ptr = ffi.calloc<ggmlimpl.ggml_tensor>();
+  Pointer<ggmlimpl.ggml_tensor> _ptr = ffi.calloc<ggmlimpl.ggml_tensor>();
+
+  set ptr(Pointer<ggmlimpl.ggml_tensor> ptr) {
+    free();
+    _ptr = ptr;
+  }
 
   Pointer<ggmlimpl.ggml_tensor> get ptr => _ptr;
 

@@ -9,7 +9,13 @@ part of ggml;
 
 class GgmlInitParams {
   // Finalized to free the resource should the user not do so
-  final _ptr = ffi.calloc<ggmlimpl.ggml_init_params>();
+  Pointer<ggmlimpl.ggml_init_params> _ptr =
+      ffi.calloc<ggmlimpl.ggml_init_params>();
+
+  set ptr(Pointer<ggmlimpl.ggml_init_params> ptr) {
+    free();
+    _ptr = ptr;
+  }
 
   Pointer<ggmlimpl.ggml_init_params> get ptr => _ptr;
 

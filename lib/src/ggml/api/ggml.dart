@@ -79,4 +79,46 @@ class Ggml {
   /// size_t ggml_set_scratch(struct ggml_context * ctx, struct ggml_scratch scratch);
   int setScratch(GgmlContext ctx, GgmlScratch scratch) =>
       _impl.ggml_set_scratch(ctx, scratch.instance);
+
+  /// struct ggml_tensor * ggml_new_i32(struct ggml_context * ctx, int32_t value);
+  GgmlTensor newI32(GgmlContext ctx, int value) {
+    final ptr = _impl.ggml_new_i32(ctx, value);
+    return GgmlTensor()..ptr = ptr;
+  }
+
+  /// struct ggml_tensor * ggml_new_f32(struct ggml_context * ctx, float value);
+  GgmlTensor newF32(GgmlContext ctx, double value) {
+    final ptr = _impl.ggml_new_f32(ctx, value);
+    return GgmlTensor()..ptr = ptr;
+  }
+
+  /// struct ggml_tensor * ggml_dup_tensor (struct ggml_context * ctx, const struct ggml_tensor * src);
+  GgmlTensor dupTensor(GgmlContext ctx, GgmlTensor tensor) {
+    final ptr = _impl.ggml_dup_tensor(ctx, tensor.ptr);
+    return GgmlTensor()..ptr = ptr;
+  }
+
+  /// struct ggml_tensor * ggml_view_tensor(struct ggml_context * ctx, const struct ggml_tensor * src);
+  GgmlTensor viewTensor(GgmlContext ctx, GgmlTensor tensor) {
+    final ptr = _impl.ggml_view_tensor(ctx, tensor.ptr);
+    return GgmlTensor()..ptr = ptr;
+  }
+
+  /// struct ggml_tensor * ggml_set_zero(struct ggml_tensor * tensor);
+  GgmlTensor setZero(GgmlTensor tensor) {
+    final ptr = _impl.ggml_set_zero(tensor.ptr);
+    return GgmlTensor()..ptr = ptr;
+  }
+
+  /// struct ggml_tensor * ggml_set_i32 (struct ggml_tensor * tensor, int32_t value);
+  GgmlTensor setI32(GgmlTensor tensor, int value) {
+    final ptr = _impl.ggml_set_i32(tensor.ptr, value);
+    return GgmlTensor()..ptr = ptr;
+  }
+
+  /// struct ggml_tensor * ggml_set_f32 (struct ggml_tensor * tensor, float value);
+  GgmlTensor setF32(GgmlTensor tensor, double value) {
+    final ptr = _impl.ggml_set_f32(tensor.ptr, value);
+    return GgmlTensor()..ptr = ptr;
+  }
 }

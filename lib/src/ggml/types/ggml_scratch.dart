@@ -9,7 +9,12 @@ part of ggml;
 
 class GgmlScratch {
   // Finalized to free the resource should the user not do so
-  final _ptr = ffi.calloc<ggmlimpl.ggml_scratch>();
+  Pointer<ggmlimpl.ggml_scratch> _ptr = ffi.calloc<ggmlimpl.ggml_scratch>();
+
+  set ptr(Pointer<ggmlimpl.ggml_scratch> ptr) {
+    free();
+    _ptr = ptr;
+  }
 
   Pointer<ggmlimpl.ggml_scratch> get ptr => _ptr;
 

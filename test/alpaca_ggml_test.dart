@@ -17,10 +17,11 @@ int main() {
     final initParams = GgmlInitParams()..instance;
     final ctx = ggml.init(initParams);
     expect(ctx, isNotNull);
-    //print(ggml.usedMem(ctx));
-    //ggml.free(ctx);
-    //initParams.free();
+    ggml.free(ctx);
+    initParams.free();
   });
+
+  test('Tensor', () {});
 
   test('Various', () {
     final ggml = Ggml();
