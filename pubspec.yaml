@@ -9,6 +9,9 @@ funding:
 environment:
  sdk: '>=2.17.0 <3.0.0'
 
+executables:
+ chat:
+
 dependencies:
  data: '^0.11.0'
  ffi: '^2.0.1'
