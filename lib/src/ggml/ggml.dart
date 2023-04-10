@@ -20,3 +20,6 @@ part 'types/ggml_init_params.dart';
 part 'types/ggml_tensor.dart';
 part 'types/ggml_scratch.dart';
 part 'types/ggml_cgraph.dart';
+part 'types/ggml_opt_params.dart';
+part 'types/ggml_opt_result.dart';
+part 'types/ggml_opt_type.dart';

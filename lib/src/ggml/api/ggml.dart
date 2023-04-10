@@ -179,4 +179,51 @@ class Ggml {
   void graphDumpDot(GgmlCGraph gb, GgmlCGraph gf, String filename) =>
       _impl.ggml_graph_dump_dot(
           gb.ptr, gf.ptr, filename.toNativeUtf8().cast<Char>());
+
+  /// struct ggml_opt_params ggml_opt_default_params(enum ggml_opt_type type);
+  GgmlOptParams optDefaultParams(GgmlOptType type) {
+    final optParams = _impl.ggml_opt_default_params(type.code);
+    return GgmlOptParams()..instance = optParams;
+  }
+
+  /// enum ggml_opt_result ggml_opt(struct ggml_context * ctx,struct ggml_opt_params params,
+  /// struct ggml_tensor * f);
+  GgmlOptResult opt(GgmlContext ctx, GgmlOptParams params, GgmlTensor f) =>
+      GgmlOptResult.opt(_impl.ggml_opt(ctx, params.instance, f.ptr));
+
+  /// int ggml_cpu_has_avx(void);
+  int cpuHasAvx() => _impl.ggml_cpu_has_avx();
+
+  /// int ggml_cpu_has_avx2(void);
+  int cpuHasAvx2() => _impl.ggml_cpu_has_avx2();
+
+  /// int ggml_cpu_has_avx512(void);
+  int cpuHasAvx512() => _impl.ggml_cpu_has_avx512();
+
+  /// int ggml_cpu_has_fma(void);
+  int cpuHasFma() => _impl.ggml_cpu_has_fma();
+
+  /// int ggml_cpu_has_neon(void);
+  int cpuHasNeon() => _impl.ggml_cpu_has_neon();
+
+  /// int ggml_cpu_has_arm_fma(void);
+  int cpuHasArmFma() => _impl.ggml_cpu_has_arm_fma();
+
+  /// int ggml_cpu_has_f16c(void);
+  int cpuHasF16c() => _impl.ggml_cpu_has_f16c();
+
+  /// int ggml_cpu_has_avx(void);
+  int cpuHasFp16Va() => _impl.ggml_cpu_has_fp16_va();
+
+  /// int ggml_cpu_has_wasm_simd(void);
+  int cpuHasWasmSimd() => _impl.ggml_cpu_has_wasm_simd();
+
+  /// int ggml_cpu_has_blas(void);
+  int cpuHasBlas() => _impl.ggml_cpu_has_blas();
+
+  /// int ggml_cpu_has_sse3(void);
+  int cpuHasSse3() => _impl.ggml_cpu_has_sse3();
+
+  /// int ggml_cpu_has_vsx(void);
+  int cpuHasVsx() => _impl.ggml_cpu_has_vsx();
 }

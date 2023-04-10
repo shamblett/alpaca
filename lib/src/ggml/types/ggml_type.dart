@@ -20,7 +20,7 @@ enum GgmlType {
 
   static final Map<int, GgmlType> byCode = {};
 
-  static GgmlType gpioEdge(int type) {
+  static GgmlType type(int type) {
     if (byCode.isEmpty) {
       for (final type in GgmlType.values) {
         byCode[type.code] = type;
