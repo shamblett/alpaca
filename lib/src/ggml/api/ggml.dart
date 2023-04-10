@@ -121,4 +121,62 @@ class Ggml {
     final ptr = _impl.ggml_set_f32(tensor.ptr, value);
     return GgmlTensor()..ptr = ptr;
   }
+
+  /// int32_t ggml_get_i32_1d(const struct ggml_tensor * tensor, int i);
+  int getI321d(GgmlTensor tensor, int i) =>
+      _impl.ggml_get_i32_1d(tensor.ptr, i);
+
+  /// void ggml_set_i32_1d(const struct ggml_tensor * tensor, int i, int32_t value);
+  void setI321d(GgmlTensor tensor, int i, int value) =>
+      _impl.ggml_set_i32_1d(tensor.ptr, i, value);
+
+  /// float ggml_get_f32_1d(const struct ggml_tensor * tensor, int i);
+  double getF321d(GgmlTensor tensor, int i) =>
+      _impl.ggml_get_f32_1d(tensor.ptr, i);
+
+  /// void ggml_set_f32_1d(const struct ggml_tensor * tensor, int i, float value);
+  void setF321d(GgmlTensor tensor, int i, double value) =>
+      _impl.ggml_set_f32_1d(tensor.ptr, i, value);
+
+  /// void * ggml_get_data    (const struct ggml_tensor * tensor);
+  Pointer<void> getData(GgmlTensor tensor) => _impl.ggml_get_data(tensor.ptr);
+
+  /// float * ggml_get_data_f32(const struct ggml_tensor * tensor);
+  Pointer<Float> getDataF32(GgmlTensor tensor) =>
+      _impl.ggml_get_data_f32(tensor.ptr);
+
+  /// void ggml_set_param(struct ggml_context * ctx, struct ggml_tensor * tensor);
+  void setParam(GgmlContext ctx, GgmlTensor tensor) =>
+      _impl.ggml_set_param(ctx, tensor.ptr);
+
+  /// void ggml_build_forward_expand(struct ggml_cgraph * cgraph, struct ggml_tensor * tensor);
+  void buildForwardExpand(GgmlCGraph cGraph, GgmlTensor tensor) =>
+      _impl.ggml_build_forward_expand(cGraph.ptr, tensor.ptr);
+
+  /// struct ggml_cgraph ggml_build_forward (struct ggml_tensor * tensor);
+  GgmlCGraph buildForward(GgmlTensor tensor) {
+    final cGraph = _impl.ggml_build_forward(tensor.ptr);
+    return GgmlCGraph()..instance = cGraph;
+  }
+
+  /// struct ggml_cgraph ggml_build_backward(struct ggml_context * ctx, struct ggml_cgraph * gf, bool keep);
+  GgmlCGraph buildBackward(GgmlContext ctx, GgmlCGraph gf, bool keep) {
+    final cGraph = _impl.ggml_build_backward(ctx, gf.ptr, keep);
+    return GgmlCGraph()..instance = cGraph;
+  }
+
+  /// void ggml_graph_compute(struct ggml_context * ctx, struct ggml_cgraph * cgraph);
+  void graphCompute(GgmlContext ctx, GgmlCGraph gf) =>
+      _impl.ggml_graph_compute(ctx, gf.ptr);
+
+  /// void ggml_graph_reset  (struct ggml_cgraph * cgraph);
+  void graphReset(GgmlCGraph cGraph) => _impl.ggml_graph_reset(cGraph.ptr);
+
+  /// void ggml_graph_print(const struct ggml_cgraph * cgraph);
+  void graphPrint(GgmlCGraph cGraph) => _impl.ggml_graph_print(cGraph.ptr);
+
+  /// void ggml_graph_dump_dot(const struct ggml_cgraph * gb, const struct ggml_cgraph * gf, const char * filename);
+  void graphDumpDot(GgmlCGraph gb, GgmlCGraph gf, String filename) =>
+      _impl.ggml_graph_dump_dot(
+          gb.ptr, gf.ptr, filename.toNativeUtf8().cast<Char>());
 }
