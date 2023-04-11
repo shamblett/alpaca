@@ -271,8 +271,8 @@ class AlpacaUtils {
         probs[i] *= cumsum;
       }
     }
-    final dist = UniformDiscreteDistribution(
-        probs[0].toInt(), probs[probs.length].toInt());
+    final dist =
+        UniformDiscreteDistribution(probs.first.toInt(), probs.last.toInt());
     final idx = dist.sample(random: rng);
     return logitsId[idx].id;
   }
