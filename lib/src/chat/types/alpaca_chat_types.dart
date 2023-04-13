@@ -21,14 +21,18 @@ const llamaNParts = <int, int>{4096: 1, 5120: 1, 6656: 1, 8192: 1};
 
 // Default hparams (LLaMA 7B)
 class AlpacaLlamaHParams {
-  static const nVocab = 32000;
-  static const nnCtx = 512; // this is provided as user input?
-  static const nEmbd = 4096;
-  static const nMult = 256;
-  static const nHead = 32;
-  static const nLayer = 32;
-  static const nRot = 64;
-  static const f16 = 1;
+  int nVocab = 32000;
+  int nCtx = 512; // this is provided as user input?
+  int nEmbd = 4096;
+  int nMult = 256;
+  int nHead = 32;
+  int nLayer = 32;
+  int nRot = 64;
+  int f16 = 1;
+
+  @override
+  toString() =>
+      'nVocab = $nVocab, nCtx = $nCtx, nEmbd = $nEmbd, nMult = $nMult, nHead = $nHead, nLayer = $nLayer, nRot = $nRot, f16 = $f16 \n';
 }
 
 class AlpacaLlamaLayer {
@@ -51,7 +55,7 @@ class AlpacaLlamaLayer {
 }
 
 class AlpacaLlamaModel {
-  AlpacaLlamaHParams? hParams;
+  AlpacaLlamaHParams? hParams = AlpacaLlamaHParams();
 
   GgmlTensor? tokEmbeddings;
 

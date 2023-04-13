@@ -15,10 +15,11 @@ import 'package:alpaca/alpaca.dart';
 int main() {
   test('Read model', () {
     AlpacaGptVocab? vocab;
-    AlpacaLlamaModel? model;
+    final model = AlpacaLlamaModel();
     final fname = 'test/support/model/ggml-model-q4_0.bin';
     final ret = AlpacaChat.llamaModelLoad(fname, model, vocab, 1);
     expect(ret, isTrue);
+    print(model.hParams);
   });
 
   return 0;

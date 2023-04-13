@@ -7,6 +7,7 @@
 
 library alpaca;
 
+import 'dart:ffi';
 import 'dart:math';
 import 'dart:io';
 import 'dart:typed_data';

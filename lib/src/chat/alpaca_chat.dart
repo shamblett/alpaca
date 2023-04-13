@@ -38,6 +38,25 @@ class AlpacaChat {
     int nFf = 0;
     int nParts = 0;
 
+    // Load Hparams;
+    model!.hParams!.nVocab = bData.getInt32(bPos, Endian.little);
+    bPos += 4;
+    model.hParams!.nEmbd = bData.getInt32(bPos, Endian.little);
+    bPos += 4;
+    model.hParams!.nMult = bData.getInt32(bPos, Endian.little);
+    bPos += 4;
+    model.hParams!.nHead = bData.getInt32(bPos, Endian.little);
+    bPos += 4;
+    model.hParams!.nLayer = bData.getInt32(bPos, Endian.little);
+    bPos += 4;
+    model.hParams!.nRot = bData.getInt32(bPos, Endian.little);
+    bPos += 4;
+    model.hParams!.f16 = bData.getInt32(bPos, Endian.little);
+    bPos += 4;
+    model.hParams!.nCtx = nCtx;
+
+    // Load vocab
+
     try {
       raf.closeSync();
     } on FileSystemException {
