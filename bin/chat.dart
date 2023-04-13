@@ -5,6 +5,9 @@
  * Copyright :  S.Hamblett
  */
 
+
+import 'package:fixnum/fixnum.dart';
+import 'package:mt19937/mt19937.dart';
 import 'package:alpaca/alpaca.dart';
 import 'package:alpaca/src/ggml/ggml.dart';
 
@@ -28,7 +31,12 @@ int main(List<String> argv) {
 
   print('seed = ${params.seed}\n');
 
+  var rng = MersenneTwisterEngine.w32()..init(Int64(params.seed));
 
+  int tLoadUs = 0;
+
+  final AlpacaGptVocab vocab;
+  //final llama_model model;
 
   return 0;
 }
