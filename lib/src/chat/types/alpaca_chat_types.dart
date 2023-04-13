@@ -20,7 +20,7 @@ const String ansiBold = 'x1b[1m';
 const llamaNParts = <int, int>{4096: 1, 5120: 1, 6656: 1, 8192: 1};
 
 // Default hparams (LLaMA 7B)
-class LlamaHParams {
+class AlpacaLlamaHParams {
   static const nVocab = 32000;
   static const nnCtx = 512; // this is provided as user input?
   static const nEmbd = 4096;
@@ -31,7 +31,7 @@ class LlamaHParams {
   static const f16 = 1;
 }
 
-class LlamaLayer {
+class AlpacaLlamaLayer {
   // Normalization
   GgmlTensor? attentionNorm;
 
@@ -50,15 +50,15 @@ class LlamaLayer {
   GgmlTensor? w3;
 }
 
-class LlamaModel {
-  LlamaHParams? hParams;
+class AlpacaLlamaModel {
+  AlpacaLlamaHParams? hParams;
 
   GgmlTensor? tokEmbeddings;
 
   GgmlTensor? norm;
   GgmlTensor? output;
 
-  final layers = <LlamaLayer>[];
+  final layers = <AlpacaLlamaLayer>[];
 
   // Key + value memory
   GgmlTensor? memoryK;

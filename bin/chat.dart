@@ -36,7 +36,9 @@ int main(List<String> argv) {
   int tLoadUs = 0;
 
   final AlpacaGptVocab vocab;
-  //final llama_model model;
+  final AlpacaLlamaModel model;
+
+
 
   return 0;
 }
