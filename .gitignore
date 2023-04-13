@@ -14,3 +14,4 @@ doc
 # No idea
 .idea
 
+/test/support/model/ggml-model-q4_0.bin

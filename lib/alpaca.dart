@@ -9,6 +9,7 @@ library alpaca;
 
 import 'dart:math';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:data/data.dart';
 

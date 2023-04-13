@@ -8,13 +8,43 @@
 part of alpaca;
 
 class AlpacaChat {
-
   /// Load the model's weights from a file
-  static bool llamaModelLoad(String fname, AlpacaLlamaModel model, AlpacaGptVocab vocab, int nCtx) {
+  static bool llamaModelLoad(
+      String fname, AlpacaLlamaModel? model, AlpacaGptVocab? vocab, int nCtx) {
     print('Loading model from $fname - please wait ...\n');
 
+    File file = File(fname);
+    RandomAccessFile raf;
+    int bPos = 0;
+    try {
+      raf = file.openSync(mode: FileMode.read);
+      raf.setPositionSync(bPos);
+    } on FileSystemException {
+      print('Failed to open $fname - exiting');
+      return false;
+    }
 
-    return false;
+    final buff = raf.readSync(1024 * 1024);
+
+    // verify magic
+    final bData = ByteData.sublistView(buff);
+    final magic = bData.getUint32(0, Endian.little);
+    if (magic != 0x67676d6c) {
+      print('Invalid model file - bad magic $magic');
+      return false;
+    }
+    bPos += 4;
+
+    int nFf = 0;
+    int nParts = 0;
+
+    try {
+      raf.closeSync();
+    } on FileSystemException {
+      print('Failed to close file $fname');
+      return false;
+    }
+
+    return true;
   }
-
 }

@@ -38,7 +38,5 @@ int main(List<String> argv) {
   final AlpacaGptVocab vocab;
   final AlpacaLlamaModel model;
 
-
-
   return 0;
 }
