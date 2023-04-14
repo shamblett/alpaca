@@ -39,33 +39,36 @@ class AlpacaChat {
     int nParts = 0;
 
     // Load hParams;
-    model!.hParams!.nVocab = bData.getInt32(bPos, Endian.little);
-    bPos += 4;
-    model.hParams!.nEmbd = bData.getInt32(bPos, Endian.little);
-    bPos += 4;
-    model.hParams!.nMult = bData.getInt32(bPos, Endian.little);
-    bPos += 4;
-    model.hParams!.nHead = bData.getInt32(bPos, Endian.little);
-    bPos += 4;
-    model.hParams!.nLayer = bData.getInt32(bPos, Endian.little);
-    bPos += 4;
-    model.hParams!.nRot = bData.getInt32(bPos, Endian.little);
-    bPos += 4;
-    model.hParams!.f16 = bData.getInt32(bPos, Endian.little);
-    bPos += 4;
-    model.hParams!.nCtx = nCtx;
-
-    // Load vocab
-    const latin1Decoder = Latin1Decoder();
-    final nVocab = model.hParams!.nVocab;
-    for (int i = 0; i < nVocab; i++) {
-      int len = bData.getInt32(bPos, Endian.little);
+    {
+      model!.hParams!.nVocab = bData.getInt32(bPos, Endian.little);
       bPos += 4;
-      final chars = bData.buffer.asUint8List(bPos, len);
-      final word = latin1Decoder.convert(chars);
-      vocab!.tokenToId[word] = i;
-      vocab.idToToken[i] = word;
-      bPos += len;
+      model.hParams!.nEmbd = bData.getInt32(bPos, Endian.little);
+      bPos += 4;
+      model.hParams!.nMult = bData.getInt32(bPos, Endian.little);
+      bPos += 4;
+      model.hParams!.nHead = bData.getInt32(bPos, Endian.little);
+      bPos += 4;
+      model.hParams!.nLayer = bData.getInt32(bPos, Endian.little);
+      bPos += 4;
+      model.hParams!.nRot = bData.getInt32(bPos, Endian.little);
+      bPos += 4;
+      model.hParams!.f16 = bData.getInt32(bPos, Endian.little);
+      bPos += 4;
+      model.hParams!.nCtx = nCtx;
+    }
+    // Load vocab
+    {
+      const latin1Decoder = Latin1Decoder();
+      final nVocab = model.hParams!.nVocab;
+      for (int i = 0; i < nVocab; i++) {
+        int len = bData.getInt32(bPos, Endian.little);
+        bPos += 4;
+        final chars = bData.buffer.asUint8List(bPos, len);
+        final word = latin1Decoder.convert(chars);
+        vocab!.tokenToId[word] = i;
+        vocab.idToToken[i] = word;
+        bPos += len;
+      }
     }
     print('Vocab size is ${vocab!.idToToken.length}');
 
