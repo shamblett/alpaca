@@ -56,20 +56,21 @@ class AlpacaChat {
     model.hParams!.nCtx = nCtx;
 
     // Load vocab
-    const asciiDecoder = AsciiDecoder();
+    const latin1Decoder = Latin1Decoder();
     final nVocab = model.hParams!.nVocab;
     for (int i = 0; i < nVocab; i++) {
       int len = bData.getInt32(bPos, Endian.little);
       bPos += 4;
-      final chars = bData.buffer.asUint8List(0, len - 1);
-      final word = asciiDecoder.convert(chars);
+      final chars = bData.buffer.asUint8List(bPos, len);
+      final word = latin1Decoder.convert(chars);
       vocab!.tokenToId[word] = i;
       vocab.idToToken[i] = word;
       bPos += len;
     }
-
     print('Vocab size is ${vocab!.idToToken.length}');
 
+    // For the big tensors, we have the option to store the data in 16-bit floats or quantized
+    // in order to save memory and also to speed up the computation.
     try {
       raf.closeSync();
     } on FileSystemException {
