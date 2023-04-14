@@ -22,5 +22,7 @@ class GgmlCGraph {
 
   set instance(ggmlimpl.ggml_cgraph cGraph) => _ptr.ref = cGraph;
 
+  static int get size => sizeOf<ggmlimpl.ggml_cgraph>();
+
   void free() => ffi.calloc.free(_ptr);
 }

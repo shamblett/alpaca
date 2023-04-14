@@ -20,5 +20,7 @@ class GgmlScratch {
 
   ggmlimpl.ggml_scratch get instance => _ptr.ref;
 
+  static int get size => sizeOf<ggmlimpl.ggml_scratch>();
+
   void free() => ffi.calloc.free(_ptr);
 }

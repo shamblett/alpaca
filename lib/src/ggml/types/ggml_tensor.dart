@@ -20,5 +20,7 @@ class GgmlTensor {
 
   ggmlimpl.ggml_tensor get instance => _ptr.ref;
 
+  static int get size => sizeOf<ggmlimpl.ggml_tensor>();
+
   void free() => ffi.calloc.free(_ptr);
 }

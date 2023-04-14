@@ -21,5 +21,7 @@ class GgmlInitParams {
 
   ggmlimpl.ggml_init_params get instance => _ptr.ref;
 
+  static int get size => sizeOf<ggmlimpl.ggml_init_params>();
+
   void free() => ffi.calloc.free(_ptr);
 }

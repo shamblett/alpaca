@@ -23,5 +23,7 @@ class GgmlOptParams {
 
   ggmlimpl.ggml_opt_params get instance => _ptr.ref;
 
+  static int get size => sizeOf<ggmlimpl.ggml_opt_params>();
+
   void free() => ffi.calloc.free(_ptr);
 }
