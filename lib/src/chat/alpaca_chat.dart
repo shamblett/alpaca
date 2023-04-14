@@ -9,8 +9,8 @@ part of alpaca;
 
 class AlpacaChat {
   /// Load the model's weights from a file
-  static bool llamaModelLoad(
-      String fname, AlpacaLlamaModel? model, AlpacaGptVocab? vocab, int nCtx) {
+  static bool llamaModelLoad(String fname, AlpacaLlamaModel? model,
+      AlpacaGptVocab? vocab, int nCtx, Ggml ggml) {
     print('Loading model from $fname - please wait ...\n');
 
     File file = File(fname);
@@ -71,6 +71,66 @@ class AlpacaChat {
 
     // For the big tensors, we have the option to store the data in 16-bit floats or quantized
     // in order to save memory and also to speed up the computation.
+    var wType = GgmlType.count;
+    switch (model.hParams!.f16) {
+      case 0:
+        wType = GgmlType.f32;
+        break;
+      case 1:
+        wType = GgmlType.f16;
+        break;
+      case 2:
+        wType = GgmlType.q40;
+        break;
+      case 3:
+        wType = GgmlType.q41;
+        break;
+      default:
+        {
+          print(
+              'Invalid model file $fname (bad f16 value ${model.hParams!.f16})\n');
+          return false;
+        }
+    }
+
+    const GgmlType wType2 = GgmlType.f32;
+    var ctx = model.ctx;
+    int ctxSize = 0;
+    {
+      final hParams = model.hParams;
+      final nEmbd = hParams!.nEmbd;
+      final nLayer = hParams.nLayer;
+      final nCtx = hParams.nCtx;
+      final nVocab = hParams.nVocab;
+
+      ctxSize +=
+          nEmbd * nVocab * ggml.typeSizeF(wType).toInt(); // tok_embeddings
+      //
+      // ctx_size += n_embd*ggml_type_sizef(GGML_TYPE_F32); // norm
+      //
+      // ctx_size += n_embd*n_vocab*ggml_type_sizef(wtype); // output
+      //
+      // ctx_size += n_layer*(n_embd*ggml_type_sizef(GGML_TYPE_F32)); // attention_norm
+      //
+      // ctx_size += n_layer*(n_embd*n_embd*ggml_type_sizef(wtype)); // wq
+      // ctx_size += n_layer*(n_embd*n_embd*ggml_type_sizef(wtype)); // wk
+      // ctx_size += n_layer*(n_embd*n_embd*ggml_type_sizef(wtype)); // wv
+      // ctx_size += n_layer*(n_embd*n_embd*ggml_type_sizef(wtype)); // wo
+      //
+      // ctx_size += n_layer*(n_embd*ggml_type_sizef(GGML_TYPE_F32)); // ffn_norm
+      //
+      // ctx_size += n_layer*(n_ff*n_embd*ggml_type_sizef(wtype)); // w1
+      // ctx_size += n_layer*(n_ff*n_embd*ggml_type_sizef(wtype)); // w2
+      // ctx_size += n_layer*(n_ff*n_embd*ggml_type_sizef(wtype)); // w3
+      //
+      // ctx_size += n_ctx*n_layer*n_embd*ggml_type_sizef(GGML_TYPE_F32); // memory_k
+      // ctx_size += n_ctx*n_layer*n_embd*ggml_type_sizef(GGML_TYPE_F32); // memory_v
+      //
+      // ctx_size += (5 + 10*n_layer)*256; // object overhead
+      //
+      // fprintf(stderr, "%s: ggml ctx size = %6.2f MB\n", __func__, ctx_size/(1024.0*1024.0));
+    }
+
     try {
       raf.closeSync();
     } on FileSystemException {
