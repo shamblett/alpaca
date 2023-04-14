@@ -14,7 +14,7 @@ import 'package:alpaca/alpaca.dart';
 
 int main() {
   test('Read model', () {
-    AlpacaGptVocab? vocab;
+    final vocab = AlpacaGptVocab();
     final model = AlpacaLlamaModel();
     final fname = 'test/support/model/ggml-model-q4_0.bin';
     final ret = AlpacaChat.llamaModelLoad(fname, model, vocab, 1);

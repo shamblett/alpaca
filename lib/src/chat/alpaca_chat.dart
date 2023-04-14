@@ -38,7 +38,7 @@ class AlpacaChat {
     int nFf = 0;
     int nParts = 0;
 
-    // Load Hparams;
+    // Load hParams;
     model!.hParams!.nVocab = bData.getInt32(bPos, Endian.little);
     bPos += 4;
     model.hParams!.nEmbd = bData.getInt32(bPos, Endian.little);
@@ -56,6 +56,19 @@ class AlpacaChat {
     model.hParams!.nCtx = nCtx;
 
     // Load vocab
+    const asciiDecoder = AsciiDecoder();
+    final nVocab = model.hParams!.nVocab;
+    for (int i = 0; i < nVocab; i++) {
+      int len = bData.getInt32(bPos, Endian.little);
+      bPos += 4;
+      final chars = bData.buffer.asUint8List(0, len - 1);
+      final word = asciiDecoder.convert(chars);
+      vocab!.tokenToId[word] = i;
+      vocab.idToToken[i] = word;
+      bPos += len;
+    }
+
+    print('Vocab size is ${vocab!.idToToken.length}');
 
     try {
       raf.closeSync();
