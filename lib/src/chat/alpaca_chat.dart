@@ -97,7 +97,6 @@ class AlpacaChat {
     }
 
     const GgmlType wType2 = GgmlType.f32;
-    var ctx = model.ctx;
     int ctxSize = 0;
     {
       final hParams = model.hParams;
@@ -160,6 +159,7 @@ class AlpacaChat {
       final nLayer = hParams.nLayer;
       final nCtx = hParams.nCtx;
       final nVocab = hParams.nVocab;
+      final ctx = model.ctx;
 
       model.tokEmbeddings = ggml.newTensor2D(ctx!, wType, nEmbd, nVocab);
       model.norm = ggml.newTensor1D(ctx, GgmlType.f32, nEmbd);
