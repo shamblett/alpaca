@@ -80,6 +80,44 @@ class Ggml {
   int setScratch(GgmlContext ctx, GgmlScratch scratch) =>
       _impl.ggml_set_scratch(ctx, scratch.instance);
 
+  /// struct ggml_tensor * ggml_new_tensor(struct ggml_context * ctx, enum ggml_type type,
+  /// int n_dims, const int *ne);
+  GgmlTensor newTensor(
+      GgmlContext ctx, GgmlType type, int nDims, Pointer<Int> ne) {
+    final ptr = _impl.ggml_new_tensor(ctx, type.code, nDims, ne);
+    return GgmlTensor()..ptr = ptr;
+  }
+
+  /// struct ggml_tensor * ggml_new_tensor_1d(struct ggml_context * ctx,
+  /// enum ggml_type type, int ne0);
+  GgmlTensor newTensor1D(GgmlContext ctx, GgmlType type, int ne0) {
+    final ptr = _impl.ggml_new_tensor_1d(ctx, type.code, ne0);
+    return GgmlTensor()..ptr = ptr;
+  }
+
+  /// struct ggml_tensor * ggml_new_tensor_2d(struct ggml_context * ctx,
+  /// enum ggml_type type, int ne0, int ne1);
+  GgmlTensor newTensor2D(GgmlContext ctx, GgmlType type, int ne0, int ne1) {
+    final ptr = _impl.ggml_new_tensor_2d(ctx, type.code, ne0, ne1);
+    return GgmlTensor()..ptr = ptr;
+  }
+
+  /// struct ggml_tensor * ggml_new_tensor_3d(struct ggml_context * ctx,
+  /// enum ggml_type type, int ne0, int ne1, int ne2);
+  GgmlTensor newTensor3D(
+      GgmlContext ctx, GgmlType type, int ne0, int ne1, int ne2) {
+    final ptr = _impl.ggml_new_tensor_3d(ctx, type.code, ne0, ne1, ne2);
+    return GgmlTensor()..ptr = ptr;
+  }
+
+  /// struct ggml_tensor * ggml_new_tensor_4d(struct ggml_context * ctx,
+  /// enum ggml_type type, int ne0, int ne1, int ne2, int ne3);
+  GgmlTensor newTensor4D(
+      GgmlContext ctx, GgmlType type, int ne0, int ne1, int ne2, int ne3) {
+    final ptr = _impl.ggml_new_tensor_4d(ctx, type.code, ne0, ne1, ne2, ne3);
+    return GgmlTensor()..ptr = ptr;
+  }
+
   /// struct ggml_tensor * ggml_new_i32(struct ggml_context * ctx, int32_t value);
   GgmlTensor newI32(GgmlContext ctx, int value) {
     final ptr = _impl.ggml_new_i32(ctx, value);
