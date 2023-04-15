@@ -97,52 +97,49 @@ class AlpacaChat {
     }
 
     const GgmlType wType2 = GgmlType.f32;
-    int ctxSize = 0;
+    int ctxSizeInt = 0;
     {
       final hParams = model.hParams;
       final nEmbd = hParams!.nEmbd;
       final nLayer = hParams.nLayer;
       final nCtx = hParams.nCtx;
       final nVocab = hParams.nVocab;
+      double ctxSize = 0.0;
 
+      ctxSize += nEmbd * nVocab * ggml.typeSizeF(wType); // tok_embeddings
+      ctxSize += nEmbd * ggml.typeSizeF(GgmlType.f32); // norm
+      ctxSize += nEmbd * nVocab * ggml.typeSizeF(wType); // output
       ctxSize +=
-          nEmbd * nVocab * ggml.typeSizeF(wType).toInt(); // tok_embeddings
-      ctxSize += nEmbd * ggml.typeSizeF(GgmlType.f32).toInt(); // norm
-      ctxSize += nEmbd * nVocab * ggml.typeSizeF(wType).toInt(); // output
-      ctxSize += nLayer *
-          (nEmbd * ggml.typeSizeF(GgmlType.f32)).toInt(); // attention_norm
+          nLayer * (nEmbd * ggml.typeSizeF(GgmlType.f32)); // attention_norm
       //
-      ctxSize += nLayer * (nEmbd * nEmbd * ggml.typeSizeF(wType)).toInt(); // wq
-      ctxSize += nLayer * (nEmbd * nEmbd * ggml.typeSizeF(wType)).toInt(); // wk
-      ctxSize += nLayer * (nEmbd * nEmbd * ggml.typeSizeF(wType)).toInt(); // wv
-      ctxSize += nLayer * (nEmbd * nEmbd * ggml.typeSizeF(wType)).toInt(); // wo
+      ctxSize += nLayer * (nEmbd * nEmbd * ggml.typeSizeF(wType)); // wq
+      ctxSize += nLayer * (nEmbd * nEmbd * ggml.typeSizeF(wType)); // wk
+      ctxSize += nLayer * (nEmbd * nEmbd * ggml.typeSizeF(wType)); // wv
+      ctxSize += nLayer * (nEmbd * nEmbd * ggml.typeSizeF(wType)); // wo
       //
       ctxSize +=
           nLayer * (nEmbd * ggml.typeSizeF(GgmlType.f32)).toInt(); // ffn_norm
       //
-      ctxSize += nLayer * (nFf * nEmbd * ggml.typeSizeF(wType)).toInt(); // w1
-      ctxSize += nLayer * (nFf * nEmbd * ggml.typeSizeF(wType)).toInt(); // w2
-      ctxSize += nLayer * (nFf * nEmbd * ggml.typeSizeF(wType)).toInt(); // w3
+      ctxSize += nLayer * (nFf * nEmbd * ggml.typeSizeF(wType)); // w1
+      ctxSize += nLayer * (nFf * nEmbd * ggml.typeSizeF(wType)); // w2
+      ctxSize += nLayer * (nFf * nEmbd * ggml.typeSizeF(wType)); // w3
       //
-      ctxSize += nCtx *
-          nLayer *
-          nEmbd *
-          ggml.typeSizeF(GgmlType.f32).toInt(); // memory_k
-      ctxSize += nCtx *
-          nLayer *
-          nEmbd *
-          ggml.typeSizeF(GgmlType.f32).toInt(); // memory_v
+      ctxSize +=
+          nCtx * nLayer * nEmbd * ggml.typeSizeF(GgmlType.f32); // memory_k
+      ctxSize +=
+          nCtx * nLayer * nEmbd * ggml.typeSizeF(GgmlType.f32); // memory_v
       //
       ctxSize += (5 + 10 * nLayer) * 256; // object overhead
       //
       print(
           'llamaModelLoad:: Ggml ctx size = ${ctxSize ~/ (1024.0 * 1024.0)} MB\n');
+      ctxSizeInt = ctxSize.toInt();
     }
 
     // Create the ggml context
     {
       final params = GgmlInitParams();
-      params.instance.mem_size = ctxSize;
+      params.instance.mem_size = ctxSizeInt;
       params.instance.mem_buffer = nullptr;
       model.ctx = nullptr;
       model.ctx = ggml.init(params);
