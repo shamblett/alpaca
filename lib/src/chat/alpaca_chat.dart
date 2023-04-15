@@ -170,36 +170,35 @@ class AlpacaChat {
       model.tensors["norm.weight"] = model.norm!;
       model.tensors["output.weight"] = model.output!;
 
-      //   for (int i = 0; i < n_layer; ++i) {
-      //     auto & layer = model.layers[i];
-      //
-      //     layer.attention_norm = ggml_new_tensor_1d(ctx, GGML_TYPE_F32, n_embd);
-      //
-      //     layer.wq = ggml_new_tensor_2d(ctx, wtype, n_embd, n_embd);
-      //     layer.wk = ggml_new_tensor_2d(ctx, wtype, n_embd, n_embd);
-      //     layer.wv = ggml_new_tensor_2d(ctx, wtype, n_embd, n_embd);
-      //     layer.wo = ggml_new_tensor_2d(ctx, wtype, n_embd, n_embd);
-      //
-      //     layer.ffn_norm = ggml_new_tensor_1d(ctx, GGML_TYPE_F32, n_embd);
-      //
-      //     layer.w1 = ggml_new_tensor_2d(ctx, wtype, n_embd,   n_ff);
-      //     layer.w2 = ggml_new_tensor_2d(ctx, wtype,   n_ff, n_embd);
-      //     layer.w3 = ggml_new_tensor_2d(ctx, wtype, n_embd,   n_ff);
-      //
-      //     // map by name
-      //     model.tensors["layers." + std::to_string(i) + ".attention_norm.weight"] = layer.attention_norm;
-      //
-      // model.tensors["layers." + std::to_string(i) + ".attention.wq.weight"] = layer.wq;
-      // model.tensors["layers." + std::to_string(i) + ".attention.wk.weight"] = layer.wk;
-      // model.tensors["layers." + std::to_string(i) + ".attention.wv.weight"] = layer.wv;
-      // model.tensors["layers." + std::to_string(i) + ".attention.wo.weight"] = layer.wo;
-      //
-      // model.tensors["layers." + std::to_string(i) + ".ffn_norm.weight"] = layer.ffn_norm;
-      //
-      // model.tensors["layers." + std::to_string(i) + ".feed_forward.w1.weight"] = layer.w1;
-      // model.tensors["layers." + std::to_string(i) + ".feed_forward.w2.weight"] = layer.w2;
-      // model.tensors["layers." + std::to_string(i) + ".feed_forward.w3.weight"] = layer.w3;
-      // }
+      for (int i = 0; i < nLayer; ++i) {
+        final layer = AlpacaLlamaLayer();
+
+        layer.attentionNorm = ggml.newTensor1D(ctx, GgmlType.f32, nEmbd);
+
+        layer.wq = ggml.newTensor2D(ctx, wType, nEmbd, nEmbd);
+        layer.wk = ggml.newTensor2D(ctx, wType, nEmbd, nEmbd);
+        layer.wv = ggml.newTensor2D(ctx, wType, nEmbd, nEmbd);
+        layer.wo = ggml.newTensor2D(ctx, wType, nEmbd, nEmbd);
+
+        layer.ffnNorm = ggml.newTensor1D(ctx, GgmlType.f32, nEmbd);
+
+        layer.w1 = ggml.newTensor2D(ctx, wType, nEmbd, nFf);
+        layer.w2 = ggml.newTensor2D(ctx, wType, nFf, nEmbd);
+        layer.w3 = ggml.newTensor2D(ctx, wType, nEmbd, nFf);
+
+        // Map by name
+        model.tensors['layers.$i.attention_norm.weight'] = layer.attentionNorm!;
+        model.tensors['layers.$i.attention.wq.weight'] = layer.wq!;
+        model.tensors['layers.$i.attention.wk.weight'] = layer.wk!;
+        model.tensors['layers.$i.attention.wv.weight'] = layer.wv!;
+        model.tensors['layers.$i.attention.wo.weight'] = layer.wo!;
+        model.tensors['layers.$i.ffn_norm.weight'] = layer.ffnNorm!;
+        model.tensors['layers.$i.feed_forward.w1.weight'] = layer.w1!;
+        model.tensors['layers.$i.feed_forward.w2.weight'] = layer.w2!;
+        model.tensors['layers.$i.feed_forward.w3.weight'] = layer.w3!;
+
+        model.layers.add(layer);
+      }
     }
 
     try {
