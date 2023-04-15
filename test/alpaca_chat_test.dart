@@ -7,17 +7,18 @@
 
 @TestOn('vm && linux')
 
-import 'dart:io';
-
 import 'package:test/test.dart';
+
 import 'package:alpaca/alpaca.dart';
+import 'package:alpaca/src/ggml/ggml.dart';
 
 int main() {
   test('Read model', () {
     final vocab = AlpacaGptVocab();
     final model = AlpacaLlamaModel();
     final fname = 'test/support/model/ggml-model-q4_0.bin';
-    final ret = AlpacaChat.llamaModelLoad(fname, model, vocab, 1);
+    final ggml = Ggml();
+    final ret = AlpacaChat.llamaModelLoad(fname, model, vocab, 1, ggml);
     expect(ret, isTrue);
     print(model.hParams);
   });

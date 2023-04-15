@@ -108,30 +108,35 @@ class AlpacaChat {
 
       ctxSize +=
           nEmbd * nVocab * ggml.typeSizeF(wType).toInt(); // tok_embeddings
+      ctxSize += nEmbd * ggml.typeSizeF(GgmlType.f32).toInt(); // norm
+      ctxSize += nEmbd * nVocab * ggml.typeSizeF(wType).toInt(); // output
+      ctxSize += nLayer *
+          (nEmbd * ggml.typeSizeF(GgmlType.f32)).toInt(); // attention_norm
       //
-      // ctx_size += n_embd*ggml_type_sizef(GGML_TYPE_F32); // norm
+      ctxSize += nLayer * (nEmbd * nEmbd * ggml.typeSizeF(wType)).toInt(); // wq
+      ctxSize += nLayer * (nEmbd * nEmbd * ggml.typeSizeF(wType)).toInt(); // wk
+      ctxSize += nLayer * (nEmbd * nEmbd * ggml.typeSizeF(wType)).toInt(); // wv
+      ctxSize += nLayer * (nEmbd * nEmbd * ggml.typeSizeF(wType)).toInt(); // wo
       //
-      // ctx_size += n_embd*n_vocab*ggml_type_sizef(wtype); // output
+      ctxSize +=
+          nLayer * (nEmbd * ggml.typeSizeF(GgmlType.f32)).toInt(); // ffn_norm
       //
-      // ctx_size += n_layer*(n_embd*ggml_type_sizef(GGML_TYPE_F32)); // attention_norm
+      ctxSize += nLayer * (nFf * nEmbd * ggml.typeSizeF(wType)).toInt(); // w1
+      ctxSize += nLayer * (nFf * nEmbd * ggml.typeSizeF(wType)).toInt(); // w2
+      ctxSize += nLayer * (nFf * nEmbd * ggml.typeSizeF(wType)).toInt(); // w3
       //
-      // ctx_size += n_layer*(n_embd*n_embd*ggml_type_sizef(wtype)); // wq
-      // ctx_size += n_layer*(n_embd*n_embd*ggml_type_sizef(wtype)); // wk
-      // ctx_size += n_layer*(n_embd*n_embd*ggml_type_sizef(wtype)); // wv
-      // ctx_size += n_layer*(n_embd*n_embd*ggml_type_sizef(wtype)); // wo
+      ctxSize += nCtx *
+          nLayer *
+          nEmbd *
+          ggml.typeSizeF(GgmlType.f32).toInt(); // memory_k
+      ctxSize += nCtx *
+          nLayer *
+          nEmbd *
+          ggml.typeSizeF(GgmlType.f32).toInt(); // memory_v
       //
-      // ctx_size += n_layer*(n_embd*ggml_type_sizef(GGML_TYPE_F32)); // ffn_norm
+      ctxSize += (5 + 10 * nLayer) * 256; // object overhead
       //
-      // ctx_size += n_layer*(n_ff*n_embd*ggml_type_sizef(wtype)); // w1
-      // ctx_size += n_layer*(n_ff*n_embd*ggml_type_sizef(wtype)); // w2
-      // ctx_size += n_layer*(n_ff*n_embd*ggml_type_sizef(wtype)); // w3
-      //
-      // ctx_size += n_ctx*n_layer*n_embd*ggml_type_sizef(GGML_TYPE_F32); // memory_k
-      // ctx_size += n_ctx*n_layer*n_embd*ggml_type_sizef(GGML_TYPE_F32); // memory_v
-      //
-      // ctx_size += (5 + 10*n_layer)*256; // object overhead
-      //
-      // fprintf(stderr, "%s: ggml ctx size = %6.2f MB\n", __func__, ctx_size/(1024.0*1024.0));
+      print('Ggml ctx size = ${ctxSize ~/ (1024.0 * 1024.0)} MB\n');
     }
 
     try {
