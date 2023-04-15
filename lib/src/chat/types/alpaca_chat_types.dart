@@ -66,7 +66,7 @@ class AlpacaLlamaModel {
 
   // Key + value memory
   GgmlTensor? memoryK;
-  GgmlTensor? memoryY;
+  GgmlTensor? memoryV;
 
   GgmlContext? ctx;
   final tensors = <String, GgmlTensor>{};

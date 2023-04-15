@@ -36,7 +36,7 @@ class AlpacaChat {
     bPos += 4;
 
     int nFf = 0;
-    int nParts = 0;
+    int? nParts = 0;
 
     // Load hParams;
     {
@@ -55,7 +55,16 @@ class AlpacaChat {
       model.hParams!.f16 = bData.getInt32(bPos, Endian.little);
       bPos += 4;
       model.hParams!.nCtx = nCtx;
+
+      final hParams = model.hParams!;
+
+      nFf =
+          (((2 * (4 * hParams.nEmbd) / 3 + hParams.nMult - 1) / hParams.nMult) *
+                  hParams.nMult)
+              .toInt();
+      nParts = llamaNParts[hParams.nEmbd];
     }
+
     // Load vocab
     {
       const latin1Decoder = Latin1Decoder();
@@ -70,7 +79,6 @@ class AlpacaChat {
         bPos += len;
       }
     }
-    print('llamaModelLoad:: Vocab size is ${vocab!.idToToken.length}');
 
     // For the big tensors, we have the option to store the data in 16-bit floats or quantized
     // in order to save memory and also to speed up the computation.
@@ -196,6 +204,28 @@ class AlpacaChat {
 
         model.layers.add(layer);
       }
+    }
+
+    // Key + value memory
+    {
+      final hParams = model.hParams;
+
+      final nEmbd = hParams!.nEmbd;
+      final nLayer = hParams.nLayer;
+      final nCtx = hParams.nCtx;
+      final ctx = model.ctx;
+
+      final nMem = nLayer * nCtx;
+      final nElements = nEmbd * nMem;
+
+      model.memoryK = ggml.newTensor1D(ctx!, GgmlType.f32, nElements);
+      model.memoryV = ggml.newTensor1D(ctx, GgmlType.f32, nElements);
+
+      final memorySize =
+          ggml.nBytes(model.memoryK!) + ggml.nBytes(model.memoryV!);
+
+      print(
+          'llamaModelLoad:: Memory_size = ${memorySize / 1024.0 / 1024.0} MB, nMem = $nMem\n');
     }
 
     try {

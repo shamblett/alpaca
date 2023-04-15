@@ -18,7 +18,7 @@ int main() {
     final model = AlpacaLlamaModel();
     final fname = 'test/support/model/ggml-model-q4_0.bin';
     final ggml = Ggml();
-    final ret = AlpacaChat.llamaModelLoad(fname, model, vocab, 1, ggml);
+    final ret = AlpacaChat.llamaModelLoad(fname, model, vocab, 512, ggml);
     expect(ret, isTrue);
     print(model.hParams);
   });
