@@ -20,7 +20,7 @@ class AlpacaChat {
       raf = file.openSync(mode: FileMode.read);
       raf.setPositionSync(bPos);
     } on FileSystemException {
-      print('Failed to open $fname - exiting');
+      print('llamaModelLoad:: Failed to open $fname - exiting');
       return false;
     }
 
@@ -30,7 +30,7 @@ class AlpacaChat {
     final bData = ByteData.sublistView(buff);
     final magic = bData.getUint32(0, Endian.little);
     if (magic != 0x67676d6c) {
-      print('Invalid model file - bad magic $magic');
+      print('llamaModelLoad:: Invalid model file - bad magic $magic');
       return false;
     }
     bPos += 4;
@@ -70,7 +70,7 @@ class AlpacaChat {
         bPos += len;
       }
     }
-    print('Vocab size is ${vocab!.idToToken.length}');
+    print('llamaModelLoad:: Vocab size is ${vocab!.idToToken.length}');
 
     // For the big tensors, we have the option to store the data in 16-bit floats or quantized
     // in order to save memory and also to speed up the computation.
@@ -91,7 +91,7 @@ class AlpacaChat {
       default:
         {
           print(
-              'Invalid model file $fname (bad f16 value ${model.hParams!.f16})\n');
+              'llamaModelLoad:: Invalid model file $fname (bad f16 value ${model.hParams!.f16})\n');
           return false;
         }
     }
@@ -136,13 +136,31 @@ class AlpacaChat {
       //
       ctxSize += (5 + 10 * nLayer) * 256; // object overhead
       //
-      print('Ggml ctx size = ${ctxSize ~/ (1024.0 * 1024.0)} MB\n');
+      print(
+          'llamaModelLoad:: Ggml ctx size = ${ctxSize ~/ (1024.0 * 1024.0)} MB\n');
     }
+
+    // Create the ggml context
+    {
+      final params = GgmlInitParams();
+      params.instance.mem_size = ctxSize;
+      params.instance.mem_buffer = nullptr;
+      model.ctx = nullptr;
+      model.ctx = ggml.init(params);
+      if (model.ctx == nullptr) {
+        print('llamaModelLoad:: ggml.init() failed\n');
+        return false;
+      }
+    }
+
+    // Prepare memory for the weights
+    {}
+
 
     try {
       raf.closeSync();
     } on FileSystemException {
-      print('Failed to close file $fname');
+      print('llamaModelLoad:: Failed to close file $fname');
       return false;
     }
 
