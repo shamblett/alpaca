@@ -12,6 +12,7 @@ class AlpacaChat {
   static bool llamaModelLoad(String fname, AlpacaLlamaModel? model,
       AlpacaGptVocab? vocab, int nCtx, Ggml ggml) {
     print('Loading model from $fname - please wait ...\n');
+    const latin1Decoder = Latin1Decoder();
 
     File file = File(fname);
     RandomAccessFile raf;
@@ -20,7 +21,7 @@ class AlpacaChat {
       raf = file.openSync(mode: FileMode.read);
       raf.setPositionSync(bPos);
     } on FileSystemException {
-      print('llamaModelLoad:: Failed to open $fname - exiting');
+      print('llamaModelLoad:: Failed to open "$fname" - exiting');
       return false;
     }
 
@@ -67,7 +68,6 @@ class AlpacaChat {
 
     // Load vocab
     {
-      const latin1Decoder = Latin1Decoder();
       final nVocab = model.hParams!.nVocab;
       for (int i = 0; i < nVocab; i++) {
         int len = bData.getInt32(bPos, Endian.little);
@@ -99,7 +99,7 @@ class AlpacaChat {
       default:
         {
           print(
-              'llamaModelLoad:: Invalid model file $fname (bad f16 value ${model.hParams!.f16})\n');
+              'llamaModelLoad:: Invalid model file "$fname" (bad f16 value ${model.hParams!.f16})\n');
           return false;
         }
     }
@@ -226,6 +226,99 @@ class AlpacaChat {
 
       print(
           'llamaModelLoad:: Memory_size = ${memorySize / 1024.0 / 1024.0} MB, nMem = $nMem\n');
+    }
+
+    // Load model parts;
+    try {
+      raf.closeSync();
+    } on FileSystemException {
+      print(
+          'llamaModelLoad:: Failed to close file for part processing "$fname"');
+      return false;
+    }
+    final tmp = <Uint8>[];
+
+    for (int i = 0; i < nParts!; ++i) {
+      final partId = i;
+      var fnamePart = fname;
+      if (i > 0) {
+        fnamePart += '.$i';
+      }
+
+      print(
+          'llamaModelLoad:: loading model part ${i + 1}/$nParts from "$fnamePart"\n');
+      try {
+        raf = file.openSync(mode: FileMode.read);
+        raf.setPositionSync(bPos);
+      } on FileSystemException {
+        print('llamaModelLoad:: Failed to open "$fname" - exiting');
+        return false;
+      }
+
+      // Load weights
+      {
+        int nTensors = 0;
+        int totalSize = 0;
+        while (true) {
+          int nDims;
+          int length;
+          int fType;
+          nDims = bData.getInt32(bPos, Endian.little);
+          bPos += 4;
+          length = bData.getInt32(bPos, Endian.little);
+          bPos += 4;
+          length = bData.getInt32(bPos, Endian.little);
+          bPos += 4;
+
+          int nElements = 1;
+          final ne = <int>[1, 1];
+          for (int i = 0; i < nDims; ++i) {
+            ne[i] = bData.getInt32(bPos, Endian.little);
+            bPos += 4;
+            nElements *= ne[i];
+          }
+
+          final chars = bData.buffer.asUint8List(bPos, length);
+          final name = latin1Decoder.convert(chars);
+          bPos += length;
+
+          if (!model.tensors.containsKey(name)) {
+            print('llamaModelLoad:: unknown tensor "$name" in model file\n');
+            return false;
+          }
+
+          int splitType = 0;
+          if (name.contains('tok_embeddings')) {
+            splitType = 0;
+          } else if (name.contains('layers')) {
+            if (name.contains('attention.wo.weight')) {
+              splitType = 0;
+            } else if (name.contains('feed_forward.w2.weight')) {
+              splitType = 0;
+            } else {
+              splitType = 1;
+            }
+          } else if (name.contains('output')) {
+            splitType = 1;
+          }
+
+          final tensor = model.tensors[name];
+
+          if (nDims == 1) {
+            if (ggml.nElements(tensor!) != nElements) {
+              print(
+                  'llamaModelLoad:: tensor "$name" has wrong size in model file\n');
+              return false;
+            }
+          } else {
+            if (ggml.nElements(tensor!) / nParts != nElements) {
+              print(
+                  'llamaModelLoad:: tensor "$name" has wrong size in model file\n');
+              return false;
+            }
+          }
+        }
+      }
     }
 
     try {
