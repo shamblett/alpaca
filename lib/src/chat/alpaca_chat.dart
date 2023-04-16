@@ -318,6 +318,56 @@ class AlpacaChat {
             }
           }
 
+          if (nDims == 1) {
+            if (tensor.instance.ne[0] != ne[0] ||
+                tensor.instance.ne[1] != ne[1]) {
+              print(
+                  'llamaModelLoad:: tensor "$name" has wrong shape in model file: got [${tensor.instance.ne[0]},${tensor.instance.ne[1]}], expected [${ne[0]}, ${ne[1]}]\n');
+              return false;
+            }
+          } else {
+            if (splitType == 0) {
+              if (tensor.instance.ne[0] / nParts != ne[0] ||
+                  tensor.instance.ne[1] != ne[1]) {
+                print(
+                    'llamaModelLoad:: tensor "$name" has wrong shape in model file: got [${tensor.instance.ne[0] / nParts},${tensor.instance.ne[1]}], expected [${ne[0]}, ${ne[1]}]\n');
+                return false;
+              }
+            } else {
+              if (tensor.instance.ne[0] != ne[0] ||
+                  tensor.instance.ne[1] / nParts != ne[1]) {
+                print(
+                    'llamaModelLoad:: tensor "$name" has wrong shape in model file: got [${tensor.instance.ne[0]},${tensor.instance.ne[1] / nParts}], expected [${ne[0]}, ${ne[1]}]\n');
+                return false;
+              }
+            }
+          }
+
+          int bpe = 0;
+
+          switch (fType) {
+            case 0:
+              bpe = ggml.typeSize(GgmlType.f32);
+              break;
+            case 1:
+              bpe = ggml.typeSize(GgmlType.f16);
+              break;
+            case 2:
+              bpe = ggml.typeSize(GgmlType.q40);
+              assert(ne[0] % 64 == 0);
+              break;
+            case 3:
+              bpe = ggml.typeSize(GgmlType.q41);
+              assert(ne[0] % 64 == 0);
+              break;
+            default:
+              {
+                print(
+                    'llamaModelLoad:: Unknown ftype [$fType] in model file\n');
+                return false;
+              }
+          }
+
 
         }
       }
