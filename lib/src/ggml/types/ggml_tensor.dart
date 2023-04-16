@@ -22,5 +22,21 @@ class GgmlTensor {
 
   static int get size => sizeOf<ggmlimpl.ggml_tensor>();
 
+  int _dataBlockCount = 0;
+
+  void setData(Uint8List data) {
+    final Pointer<Uint8> tensorData = ffi.calloc
+        .allocate<Uint8>(data.length); // Allocate a pointer large enough.
+    final pointerList = tensorData.asTypedList(data
+        .length); // Create a list that uses our pointer and copy in the image data.
+    pointerList.setAll(0, data);
+    if (_dataBlockCount == 0) {
+      instance.data = tensorData.cast<Void>();
+    } else {
+      //
+    }
+    _dataBlockCount++;
+  }
+
   void free() => ffi.calloc.free(_ptr);
 }

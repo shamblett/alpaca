@@ -254,6 +254,7 @@ class AlpacaChat {
         print('llamaModelLoad:: Failed to open "$fname" - exiting');
         return false;
       }
+      final fileLength = raf.lengthSync();
 
       // Load weights
       {
@@ -269,6 +270,10 @@ class AlpacaChat {
           bPos += 4;
           fType = bData.getInt32(bPos, Endian.little);
           bPos += 4;
+
+          if (fileLength == bPos) {
+            break;
+          }
 
           int nElements = 1;
           final ne = <int>[1, 1];
@@ -368,8 +373,75 @@ class AlpacaChat {
               }
           }
 
+          if (nDims == 1 || nParts == 1) {
+            if ((nElements * bpe) /
+                    ggml.blockSize(GgmlType.type(tensor.instance.type)) !=
+                ggml.nBytes(tensor)) {
+              print(
+                  'llamaModelLoad:: tensor "$name" has wrong size in model file: got ${ggml.nBytes(tensor)}, expected ${nElements * bpe}\n');
+              return false;
+            }
 
+            var readLength = ggml.nBytes(tensor);
+            if (partId == 0) {
+              final bytes = bData.buffer.asUint8List(bPos, readLength);
+              tensor.setData(bytes);
+              bPos += readLength;
+            } else {
+              bPos += readLength;
+            }
+            totalSize += ggml.nBytes(tensor);
+          } else {
+            if ((nElements * bpe) /
+                    ggml.blockSize(GgmlType.type(tensor.instance.type)) !=
+                ggml.nBytes(tensor) / nParts) {
+              print(
+                  'llamaModelLoad:: tensor "$name" has wrong size in model file: got ${ggml.nBytes(tensor) / nParts}, expected ${nElements * bpe}\n');
+              return false;
+            }
+
+            if (splitType == 0) {
+              final np0 = ne[0];
+
+              final rowSize = (tensor.instance.ne[0] /
+                  ggml.blockSize(GgmlType.type(tensor.instance.type)) *
+                  ggml.typeSize(GgmlType.type(tensor.instance.type)));
+              assert(rowSize == tensor.instance.nb[1]);
+
+              for (int i1 = 0; i1 < ne[1]; ++i1) {
+                final offsetRow = i1 * rowSize;
+                final offset = offsetRow +
+                    ((partId * np0) /
+                            ggml.blockSize(
+                                GgmlType.type(tensor.instance.type))) *
+                        ggml.typeSize(GgmlType.type(tensor.instance.type));
+                //fin.read(reinterpret_cast<char *>(tensor->data) + offset, row_size/n_parts);
+              }
+            } else {
+              final np1 = ne[1];
+
+              final rowSize = (tensor.instance.ne[0] /
+                      ggml.blockSize(GgmlType.type(tensor.instance.type))) *
+                  ggml.typeSize(GgmlType.type(tensor.instance.type));
+
+              for (int i1 = 0; i1 < ne[1]; ++i1) {
+                final offsetRow = (i1 + partId * np1) * rowSize;
+                // fin.read(reinterpret_cast<char *>(tensor->data) + offset_row, row_size);
+              }
+            }
+
+            totalSize += ggml.nBytes(tensor) ~/ nParts;
+          }
+
+          if (++nTensors % 8 == 0) {
+            print('.');
+          }
         }
+
+        print('llamaModelLoad:: done\n');
+
+        print(
+            'llamaModelLoad:: model size = ${totalSize / 1024.0 / 1024.0} MB / num tensors = nTensors\n');
       }
     }
 

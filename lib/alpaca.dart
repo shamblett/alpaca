@@ -14,6 +14,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:data/data.dart';
+import 'package:ffi/ffi.dart' as ffi;
 
 import 'package:alpaca/src/ggml/ggml.dart';
 
