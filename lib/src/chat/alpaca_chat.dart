@@ -267,7 +267,7 @@ class AlpacaChat {
           bPos += 4;
           length = bData.getInt32(bPos, Endian.little);
           bPos += 4;
-          length = bData.getInt32(bPos, Endian.little);
+          fType = bData.getInt32(bPos, Endian.little);
           bPos += 4;
 
           int nElements = 1;
@@ -317,6 +317,8 @@ class AlpacaChat {
               return false;
             }
           }
+
+
         }
       }
     }
