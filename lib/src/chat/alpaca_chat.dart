@@ -246,16 +246,32 @@ class AlpacaChat {
       print(
           'llamaModelLoad:: loading model part ${i + 1}/$nParts from "$fnamePart"');
       int fileLength = 0;
+      Uint8List partBuff1;
+      Uint8List partBuff2;
+      // Load the rest of the model file. Split it into two chunks
+      // and concatenate them. Dart doesn't seem to want to raed Random Access files
+      // in chunks greater that 2GB.
       try {
+        // Read the buffers
         raf = file.openSync(mode: FileMode.read);
         fileLength = raf.lengthSync();
-        buff = raf.readSync(fileLength);
+        raf.setPositionSync(bPos);
+        final lengthToRead = fileLength - bPos;
+        partBuff1 = raf.readSync(lengthToRead ~/ 2);
+        raf.setPositionSync(bPos + (lengthToRead ~/ 2));
+        partBuff2 = raf.readSync(lengthToRead ~/ 2);
       } on FileSystemException {
         print('llamaModelLoad:: Failed to open "$fname" - exiting');
         return false;
       }
 
-      final bData = ByteData.view(buff.buffer);
+      // Concatenate the buffers
+      final partBuff = Uint8List(partBuff1.length + partBuff2.length);
+      partBuff.setAll(0, partBuff1);
+      partBuff.setAll(partBuff1.length, partBuff2);
+      final bData = ByteData.view(partBuff.buffer);
+      print('llamaModelLoad:: Buffer length is ${bData.buffer.lengthInBytes}');
+      bPos = 0;
 
       // Load weights
       {
