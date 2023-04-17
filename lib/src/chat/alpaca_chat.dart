@@ -59,10 +59,9 @@ class AlpacaChat {
 
       final hParams = model.hParams!;
 
-      nFf =
-          (((2 * (4 * hParams.nEmbd) / 3 + hParams.nMult - 1) / hParams.nMult) *
-                  hParams.nMult)
-              .toInt();
+      final t1 =
+          (2 * (4 * hParams.nEmbd) / 3 + hParams.nMult - 1) ~/ hParams.nMult;
+      nFf = t1 * hParams.nMult;
       nParts = llamaNParts[hParams.nEmbd];
     }
 
@@ -264,7 +263,9 @@ class AlpacaChat {
       {
         int nTensors = 0;
         int totalSize = 0;
+        int whileCount = 0;
         while (true) {
+          whileCount++;
           int nDims;
           int length;
           int fType;
@@ -320,7 +321,8 @@ class AlpacaChat {
               return false;
             }
           } else {
-            if (ggml.nElements(tensor!) / nParts != nElements) {
+            final te = ggml.nElements(tensor!);
+            if (te / nParts != nElements) {
               print(
                   'llamaModelLoad:: 2 tensor "$name" has wrong size in model file');
               return false;
@@ -434,7 +436,7 @@ class AlpacaChat {
           }
 
           if (++nTensors % 8 == 0) {
-            print('.');
+            stdout.write('.');
           }
         }
 
