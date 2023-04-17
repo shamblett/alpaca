@@ -249,35 +249,39 @@ class AlpacaChat {
       try {
         raf = file.openSync(mode: FileMode.read);
         fileLength = raf.lengthSync();
-        raf.setPositionSync(bPos);
-        buff = raf.readSync(fileLength - bPos);
+        buff = raf.readSync(fileLength);
       } on FileSystemException {
         print('llamaModelLoad:: Failed to open "$fname" - exiting');
         return false;
       }
 
-      final bData = ByteData.sublistView(buff);
-      bPos = 0;
+      final bData = ByteData.view(buff.buffer);
 
       // Load weights
       {
         int nTensors = 0;
         int totalSize = 0;
-        int whileCount = 0;
-        while (true) {
-          whileCount++;
-          int nDims;
-          int length;
-          int fType;
-          nDims = bData.getInt32(bPos, Endian.little);
-          bPos += 4;
-          length = bData.getInt32(bPos, Endian.little);
-          bPos += 4;
-          fType = bData.getInt32(bPos, Endian.little);
-          bPos += 4;
-
-          if (bPos >= fileLength) {
-            break;
+        while (bPos < fileLength) {
+          int nDims = -1;
+          int length = -1;
+          int fType = -1;
+          try {
+            nDims = bData.getInt32(bPos, Endian.little);
+            bPos += 4;
+          } catch (e) {
+            print(e);
+          }
+          try {
+            length = bData.getInt32(bPos, Endian.little);
+            bPos += 4;
+          } catch (e) {
+            print(e);
+          }
+          try {
+            fType = bData.getInt32(bPos, Endian.little);
+            bPos += 4;
+          } catch (e) {
+            print(e);
           }
 
           int nElements = 1;
