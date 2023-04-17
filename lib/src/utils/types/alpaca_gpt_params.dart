@@ -9,7 +9,7 @@ part of alpaca;
 
 class AlpacaGptParams {
   int seed = -1; // RNG seed
-  int nThreads = 1;
+  int nThreads = 4;
   int nPredict = 128; // new tokens to predict
   int repeatLastN = 64; // last n tokens to penalize
   int nCtx = 2048; //context size

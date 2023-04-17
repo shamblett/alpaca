@@ -476,4 +476,24 @@ class AlpacaChat {
 
     return true;
   }
+
+  static String llamaPrintSystemInfo(Ggml ggml) {
+    final s = StringBuffer();
+
+    s.write('');
+    s.write('AVX = ${ggml.cpuHasAvx()}  |  ');
+    s.write('AVX2 = ${ggml.cpuHasAvx2()}  |  ');
+    s.write('AVX512 = ${ggml.cpuHasAvx512()}  |  ');
+    s.write('FMA = ${ggml.cpuHasFma()} | ');
+    s.write('NEON = ${ggml.cpuHasNeon()} | ');
+    s.write('ARM_FMA = ${ggml.cpuHasArmFma()} | ');
+    s.write('F16C = ${ggml.cpuHasF16c()} | ');
+    s.write('FP16_VA = ${ggml.cpuHasFp16Va()} | ');
+    s.write('WASM_SIMD = ${ggml.cpuHasWasmSimd()} | ');
+    s.write('BLAS = ${ggml.cpuHasBlas()} | ');
+    s.write('SSE3 = ${ggml.cpuHasSse3()} | ');
+    s.write('VSX = ${ggml.cpuHasVsx()} | ');
+
+    return s.toString();
+  }
 }

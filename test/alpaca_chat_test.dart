@@ -19,8 +19,15 @@ int main() {
     final gptParams = AlpacaGptParams();
     final fname = 'test/support/model/ggml-model-q4_0.bin';
     final ggml = Ggml();
-    final ret = AlpacaChat.llamaModelLoad(fname, model, vocab, gptParams.nCtx, ggml);
+    final ret =
+        AlpacaChat.llamaModelLoad(fname, model, vocab, gptParams.nCtx, ggml);
     expect(ret, isTrue);
+  });
+
+  test('System Info', () {
+    final ggml = Ggml();
+    final ret = AlpacaChat.llamaPrintSystemInfo(ggml);
+    print(ret);
   });
 
   return 0;

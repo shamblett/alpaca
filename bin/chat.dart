@@ -56,9 +56,9 @@ int main(List<String> argv) {
   // Print system information
   {
     final numProcessors = Platform.numberOfProcessors;
-    //fprintf(stderr, "\n");
-    //fprintf(stderr, "system_info: n_threads = %d / %d | %s\n",
-    //  params.n_threads, std::thread::hardware_concurrency(), llama_print_system_info());
+    print('');
+    print(
+        'AlpacaChat:: System_info: n_threads = ${params.nThreads} / $numProcessors | ${AlpacaChat.llamaPrintSystemInfo(ggml)}');
   }
   return 0;
 }
