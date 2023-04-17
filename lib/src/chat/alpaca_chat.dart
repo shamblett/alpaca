@@ -275,7 +275,7 @@ class AlpacaChat {
           fType = bData.getInt32(bPos, Endian.little);
           bPos += 4;
 
-          if (fileLength >= bPos) {
+          if (bPos >= fileLength) {
             break;
           }
 
