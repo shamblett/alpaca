@@ -22,7 +22,7 @@ class AlpacaGptParams {
 
   int nBatch = 8; // batch size for prompt processing
 
-  String model = "ggml-alpaca-7b-q4.bin"; // model path
+  String model = "ggml-model-q4_0.bin"; // model name
   String prompt = '';
 
   bool useColor = true; // use color to distinguish generations and inputs

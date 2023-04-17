@@ -5,6 +5,7 @@
  * Copyright :  S.Hamblett
  */
 
+import 'dart:io';
 
 import 'package:fixnum/fixnum.dart';
 import 'package:mt19937/mt19937.dart';
@@ -35,8 +36,29 @@ int main(List<String> argv) {
 
   int tLoadUs = 0;
 
-  final AlpacaGptVocab vocab;
-  final AlpacaLlamaModel model;
+  final vocab = AlpacaGptVocab();
+  final model = AlpacaLlamaModel();
 
+  // Load the model
+  {
+    final modelPath = '${Directory.current.path}/model/${params.model}';
+    print('Model path is $modelPath');
+    final tStartUs = ggml.timeUs();
+    if (!AlpacaChat.llamaModelLoad(
+        modelPath, model, vocab, params.nCtx, ggml)) {
+      print('AlpacaChat:: failed to load model from $modelPath\n');
+      return 1;
+    }
+
+    final tLoadUs = ggml.timeUs() - tStartUs;
+  }
+
+  // Print system information
+  {
+    final numProcessors = Platform.numberOfProcessors;
+    //fprintf(stderr, "\n");
+    //fprintf(stderr, "system_info: n_threads = %d / %d | %s\n",
+    //  params.n_threads, std::thread::hardware_concurrency(), llama_print_system_info());
+  }
   return 0;
 }

@@ -11,23 +11,23 @@ class AlpacaChat {
   /// Load the model's weights from a file
   static bool llamaModelLoad(String fname, AlpacaLlamaModel? model,
       AlpacaGptVocab? vocab, int nCtx, Ggml ggml) {
-    print('Loading model from $fname - please wait ...\n');
+    print('Loading model from $fname - please wait ...');
     const latin1Decoder = Latin1Decoder();
 
     File file = File(fname);
     RandomAccessFile raf;
     int bPos = 0;
+    Uint8List buff;
     try {
       raf = file.openSync(mode: FileMode.read);
       raf.setPositionSync(bPos);
+      buff = raf.readSync(1024 * 1024);
     } on FileSystemException {
       print('llamaModelLoad:: Failed to open "$fname" - exiting');
       return false;
     }
 
-    final buff = raf.readSync(1024 * 1024);
-
-    // verify magic
+    // Verify magic
     final bData = ByteData.sublistView(buff);
     final magic = bData.getUint32(0, Endian.little);
     if (magic != 0x67676d6c) {
@@ -99,7 +99,7 @@ class AlpacaChat {
       default:
         {
           print(
-              'llamaModelLoad:: Invalid model file "$fname" (bad f16 value ${model.hParams!.f16})\n');
+              'llamaModelLoad:: Invalid model file "$fname" (bad f16 value ${model.hParams!.f16})');
           return false;
         }
     }
@@ -140,7 +140,7 @@ class AlpacaChat {
       ctxSize += (5 + 10 * nLayer) * 256; // object overhead
       //
       print(
-          'llamaModelLoad:: Ggml ctx size = ${ctxSize ~/ (1024.0 * 1024.0)} MB\n');
+          'llamaModelLoad:: Ggml ctx size = ${ctxSize ~/ (1024.0 * 1024.0)} MB');
       ctxSizeInt = ctxSize.toInt();
     }
 
@@ -152,7 +152,7 @@ class AlpacaChat {
       model.ctx = nullptr;
       model.ctx = ggml.init(params);
       if (model.ctx == nullptr) {
-        print('llamaModelLoad:: ggml.init() failed\n');
+        print('llamaModelLoad:: ggml.init() failed');
         return false;
       }
     }
@@ -225,7 +225,7 @@ class AlpacaChat {
           ggml.nBytes(model.memoryK!) + ggml.nBytes(model.memoryV!);
 
       print(
-          'llamaModelLoad:: Memory_size = ${memorySize / 1024.0 / 1024.0} MB, nMem = $nMem\n');
+          'llamaModelLoad:: Memory_size = ${memorySize / 1024.0 / 1024.0} MB, nMem = $nMem');
     }
 
     // Load model parts;
@@ -245,16 +245,18 @@ class AlpacaChat {
       }
 
       print(
-          'llamaModelLoad:: loading model part ${i + 1}/$nParts from "$fnamePart"\n');
+          'llamaModelLoad:: loading model part ${i + 1}/$nParts from "$fnamePart"');
+      int fileLength = 0;
       try {
         raf = file.openSync(mode: FileMode.read);
+        fileLength = raf.lengthSync();
         raf.setPositionSync(bPos);
+        buff = raf.readSync(fileLength - bPos);
       } on FileSystemException {
         print('llamaModelLoad:: Failed to open "$fname" - exiting');
         return false;
       }
-      final fileLength = raf.lengthSync();
-      final buff = raf.readSync(fileLength);
+
       final bData = ByteData.sublistView(buff);
       bPos = 0;
 
@@ -290,7 +292,7 @@ class AlpacaChat {
           bPos += length;
 
           if (!model.tensors.containsKey(name)) {
-            print('llamaModelLoad:: unknown tensor "$name" in model file\n');
+            print('llamaModelLoad:: unknown tensor "$name" in model file');
             return false;
           }
 
@@ -314,13 +316,13 @@ class AlpacaChat {
           if (nDims == 1) {
             if (ggml.nElements(tensor!) != nElements) {
               print(
-                  'llamaModelLoad:: 1 tensor "$name" has wrong size in model file\n');
+                  'llamaModelLoad:: 1 tensor "$name" has wrong size in model file');
               return false;
             }
           } else {
             if (ggml.nElements(tensor!) / nParts != nElements) {
               print(
-                  'llamaModelLoad:: 2 tensor "$name" has wrong size in model file\n');
+                  'llamaModelLoad:: 2 tensor "$name" has wrong size in model file');
               return false;
             }
           }
@@ -329,7 +331,7 @@ class AlpacaChat {
             if (tensor.instance.ne[0] != ne[0] ||
                 tensor.instance.ne[1] != ne[1]) {
               print(
-                  'llamaModelLoad:: tensor "$name" has wrong shape in model file: got [${tensor.instance.ne[0]},${tensor.instance.ne[1]}], expected [${ne[0]}, ${ne[1]}]\n');
+                  'llamaModelLoad:: tensor "$name" has wrong shape in model file: got [${tensor.instance.ne[0]},${tensor.instance.ne[1]}], expected [${ne[0]}, ${ne[1]}]');
               return false;
             }
           } else {
@@ -337,14 +339,14 @@ class AlpacaChat {
               if (tensor.instance.ne[0] / nParts != ne[0] ||
                   tensor.instance.ne[1] != ne[1]) {
                 print(
-                    'llamaModelLoad:: tensor "$name" has wrong shape in model file: got [${tensor.instance.ne[0] / nParts},${tensor.instance.ne[1]}], expected [${ne[0]}, ${ne[1]}]\n');
+                    'llamaModelLoad:: tensor "$name" has wrong shape in model file: got [${tensor.instance.ne[0] / nParts},${tensor.instance.ne[1]}], expected [${ne[0]}, ${ne[1]}]');
                 return false;
               }
             } else {
               if (tensor.instance.ne[0] != ne[0] ||
                   tensor.instance.ne[1] / nParts != ne[1]) {
                 print(
-                    'llamaModelLoad:: tensor "$name" has wrong shape in model file: got [${tensor.instance.ne[0]},${tensor.instance.ne[1] / nParts}], expected [${ne[0]}, ${ne[1]}]\n');
+                    'llamaModelLoad:: tensor "$name" has wrong shape in model file: got [${tensor.instance.ne[0]},${tensor.instance.ne[1] / nParts}], expected [${ne[0]}, ${ne[1]}]');
                 return false;
               }
             }
@@ -369,8 +371,7 @@ class AlpacaChat {
               break;
             default:
               {
-                print(
-                    'llamaModelLoad:: Unknown ftype [$fType] in model file\n');
+                print('llamaModelLoad:: Unknown ftype [$fType] in model file');
                 return false;
               }
           }
@@ -380,7 +381,7 @@ class AlpacaChat {
                     ggml.blockSize(GgmlType.type(tensor.instance.type)) !=
                 ggml.nBytes(tensor)) {
               print(
-                  'llamaModelLoad:: 1 tensor "$name" has wrong size in model file: got ${ggml.nBytes(tensor)}, expected ${nElements * bpe}\n');
+                  'llamaModelLoad:: 1 tensor "$name" has wrong size in model file: got ${ggml.nBytes(tensor)}, expected ${nElements * bpe}');
               return false;
             }
             final readLength = ggml.nBytes(tensor);
@@ -395,7 +396,7 @@ class AlpacaChat {
                     ggml.blockSize(GgmlType.type(tensor.instance.type)) !=
                 ggml.nBytes(tensor) / nParts) {
               print(
-                  'llamaModelLoad:: 2 tensor "$name" has wrong size in model file: got ${ggml.nBytes(tensor) / nParts}, expected ${nElements * bpe}\n');
+                  'llamaModelLoad:: 2 tensor "$name" has wrong size in model file: got ${ggml.nBytes(tensor) / nParts}, expected ${nElements * bpe}');
               return false;
             }
 
@@ -437,10 +438,10 @@ class AlpacaChat {
           }
         }
 
-        print('llamaModelLoad:: done\n');
+        print('llamaModelLoad:: done');
 
         print(
-            'llamaModelLoad:: model size = ${totalSize / 1024.0 / 1024.0} MB / num tensors = $nTensors\n');
+            'llamaModelLoad:: model size = ${totalSize / 1024.0 / 1024.0} MB / num tensors = $nTensors');
       }
     }
 
