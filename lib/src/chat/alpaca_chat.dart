@@ -16,7 +16,7 @@ class AlpacaChat {
 
     File file = File(fname);
     RandomAccessFile raf;
-    int bPos = 0;
+    int bPos = 0; // Starts at 0 and rolls on down the method
     Uint8List buff;
     try {
       raf = file.openSync(mode: FileMode.read);
@@ -249,17 +249,17 @@ class AlpacaChat {
       Uint8List partBuff1;
       Uint8List partBuff2;
       // Load the rest of the model file. Split it into two chunks
-      // and concatenate them. Dart doesn't seem to want to raed Random Access files
+      // and concatenate them. Dart doesn't seem to want to read Random Access files
       // in chunks greater that 2GB.
       try {
         // Read the buffers
         raf = file.openSync(mode: FileMode.read);
         fileLength = raf.lengthSync();
-        raf.setPositionSync(bPos);
-        final lengthToRead = fileLength - bPos;
+        raf.setPositionSync(0);
+        final lengthToRead = fileLength;
         partBuff1 = raf.readSync(lengthToRead ~/ 2);
-        raf.setPositionSync(bPos + (lengthToRead ~/ 2));
-        partBuff2 = raf.readSync(lengthToRead ~/ 2);
+        raf.setPositionSync(lengthToRead ~/ 2);
+        partBuff2 = raf.readSync((lengthToRead ~/ 2) + 1);
       } on FileSystemException {
         print('llamaModelLoad:: Failed to open "$fname" - exiting');
         return false;
@@ -270,8 +270,6 @@ class AlpacaChat {
       partBuff.setAll(0, partBuff1);
       partBuff.setAll(partBuff1.length, partBuff2);
       final bData = ByteData.view(partBuff.buffer);
-      print('llamaModelLoad:: Buffer length is ${bData.buffer.lengthInBytes}');
-      bPos = 0;
 
       // Load weights
       {
@@ -463,7 +461,7 @@ class AlpacaChat {
         print('llamaModelLoad:: done');
 
         print(
-            'llamaModelLoad:: model size = ${totalSize / 1024.0 / 1024.0} MB / num tensors = $nTensors');
+            'llamaModelLoad:: model size = ${totalSize / 1024.0 ~/ 1024.0} MB / num tensors = $nTensors');
       }
     }
 
