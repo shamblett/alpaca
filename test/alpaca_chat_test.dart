@@ -21,7 +21,6 @@ int main() {
     final ggml = Ggml();
     final ret = AlpacaChat.llamaModelLoad(fname, model, vocab, gptParams.nCtx, ggml);
     expect(ret, isTrue);
-    print(model.hParams);
   });
 
   return 0;

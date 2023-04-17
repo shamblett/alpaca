@@ -259,7 +259,8 @@ class AlpacaChat {
         final lengthToRead = fileLength;
         partBuff1 = raf.readSync(lengthToRead ~/ 2);
         raf.setPositionSync(lengthToRead ~/ 2);
-        partBuff2 = raf.readSync((lengthToRead ~/ 2) + 1);
+        int oddOffset = fileLength.isOdd ? 1 : 0;
+        partBuff2 = raf.readSync((lengthToRead ~/ 2) + oddOffset);
       } on FileSystemException {
         print('llamaModelLoad:: Failed to open "$fname" - exiting');
         return false;
@@ -457,7 +458,8 @@ class AlpacaChat {
             stdout.write('.');
           }
         }
-
+        stdout.flush();
+        print('');
         print('llamaModelLoad:: done');
 
         print(
