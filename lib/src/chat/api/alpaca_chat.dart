@@ -496,4 +496,50 @@ class AlpacaChat {
 
     return s.toString();
   }
+
+  /// Evaluate the transformer
+  ///
+  ///  - model:     the model
+  ///  - nThreads: number of threads to use
+  ///  - nPast:    the context size so far
+  ///  - embdInp:  the embeddings of the tokens in the context
+  ///  - embdW:    the predicted logits for the next token
+  ///
+  /// The GPT-J model requires about 16MB of memory per input token.
+  static bool llamaEval(AlpacaLlamaModel model, int nThreads, int nPast,
+      List<Id> embdInp, List<double> embdW, int memPerToken) {
+    final N = embdInp.length;
+
+    final hParams = model.hParams;
+
+    final nEmbd = hParams?.nEmbd;
+    final nLayer = hParams?.nLayer;
+    final nCtx = hParams?.nCtx;
+    final nHead = hParams?.nHead;
+    final nVocab = hParams?.nVocab;
+    final nRot = nEmbd! / nHead!;
+
+    final dKey = nEmbd! / nHead!;
+
+    // TODO: check if this size scales with n_ctx linearly and remove constant. somehow I feel it wasn't the case
+    // static size_t buf_size = hparams.n_ctx*1024*1024;
+    const bufSize = 512 * 1024 * 1024;
+    final bufPtr = ffi.calloc<Uint8>(bufSize);
+
+    final params = GgmlInitParams();
+    params.instance.mem_size = bufSize;
+    params.instance.mem_buffer = bufPtr.cast<Void>();
+
+    final ggml = Ggml();
+    final ctx0 = ggml.init(params);
+    final gf = GgmlCGraph();
+    gf.instance.n_threads = nThreads;
+
+    final embd = ggml.newTensor1D(ctx0, GgmlType.i32, N);
+    embd.setData(Uint8List.fromList(embdInp));
+
+    final inpL = ggml.getRows(ctx0, model.tokEmbeddings, embd);
+
+    return false;
+  }
 }
