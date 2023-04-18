@@ -540,6 +540,12 @@ class AlpacaChat {
 
     final inpL = ggml.getRows(ctx0, model.tokEmbeddings!, embd);
 
+    for (int il = 0; il < nLayer!; ++il) {
+
+
+    }
+
+
     return false;
   }
 }
