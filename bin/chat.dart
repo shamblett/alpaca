@@ -60,5 +60,47 @@ int main(List<String> argv) {
     print(
         'AlpacaChat:: System_info: n_threads = ${params.nThreads} / $numProcessors | ${AlpacaChat.llamaPrintSystemInfo(ggml)}');
   }
+
+  int nPast = 0;
+
+  int tSampleUs = 0;
+  int tPredictUs = 0;
+
+  final logits = <double>[];
+
+  // Tokenize the prompt
+  final embdInp = <Id?>[];
+
+  final instructInp = AlpacaUtils.llamaTokenize(
+      vocab,
+      ' Below is an instruction that describes a task. Write a response that appropriately completes the request.\n\n',
+      true);
+  final promptInp =
+      AlpacaUtils.llamaTokenize(vocab, '### Instruction:\n\n', true);
+  final responseInp =
+      AlpacaUtils.llamaTokenize(vocab, '### Response:\n\n', false);
+  embdInp.addAll(instructInp);
+
+  if (params.prompt.isNotEmpty) {
+    final paramInp = AlpacaUtils.llamaTokenize(vocab, params.prompt, true);
+    embdInp.addAll(promptInp);
+    embdInp.addAll(paramInp);
+    embdInp.addAll(responseInp);
+  }
+
+  if (params.interactive) {
+    print('AlpacaChat:: interactive mode on');
+  }
+  print(
+      'AlpacaChat:: sampling parameters: temp = ${params.temp}, top_k = ${params.topK}, top_p = ${params.topP}, repeat_last_n = ${params.repeatLastN}, repeat_penalty = ${params.repeatPenalty}');
+  print('');
+  print('');
+
+  final embd = <Id>[];
+
+  // Determine the required inference memory per token:
+  int memPerToken = 0;
+  //llama_eval(model, params.n_threads, 0, { 0, 1, 2, 3 }, logits, mem_per_token);
+
   return 0;
 }

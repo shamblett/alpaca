@@ -117,7 +117,7 @@ class AlpacaUtils {
   }
 
   /// SentencePiece implementation after https://guillaume-be.github.io/2020-05-30/sentence_piece
-  List<Id?> llamaTokenize(AlpacaGptVocab vocab, String text, bool bos) {
+  static List<Id?> llamaTokenize(AlpacaGptVocab vocab, String text, bool bos) {
     List<Id?> res = [];
     List<int> score = [];
     List<Id?> prev = [];
