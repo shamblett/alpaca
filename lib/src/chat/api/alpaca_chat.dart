@@ -660,8 +660,63 @@ class AlpacaChat {
       final inpFF = ggml.add(ctx0, cur, inpSA);
 
       // Feed-forward network
-      {}
+      {
+        // Norm
+        {
+          cur.ptr = ggml.rmsNorm(ctx0, inpFF).ptr;
+
+          // cur = ffn_norm*cur
+          cur.ptr = ggml
+              .mul(ctx0, ggml.repeat(ctx0, model.layers[il].ffnNorm!, cur), cur)
+              .ptr;
+        }
+
+        final tmp = ggml.mulMat(ctx0, model.layers[il].w3!, cur);
+
+        cur.ptr = ggml.mulMat(ctx0, model.layers[il].w1!, cur).ptr;
+
+        cur.ptr = ggml.mulMat(ctx0, model.layers[il].w1!, cur).ptr;
+
+        // SILU activation
+        cur.ptr = ggml.silu(ctx0, cur).ptr;
+
+        cur.ptr = ggml.mul(ctx0, cur, tmp).ptr;
+
+        cur.ptr = ggml.mulMat(ctx0, model.layers[il].w2!, cur).ptr;
+      }
+
+      cur.ptr = ggml.add(ctx0, cur, inpFF).ptr;
+
+      // Input for next layer
+      inpL.ptr = cur.ptr;
     }
+
+    // Norm
+    {
+      inpL.ptr = ggml.rmsNorm(ctx0, inpL).ptr;
+
+      // inpL = norm*inpL
+      inpL.ptr = ggml.mul(ctx0, ggml.repeat(ctx0, model.norm!, inpL), inpL).ptr;
+    }
+
+    // lm_head
+    {
+      inpL.ptr = ggml.mulMat(ctx0, model.output!, inpL).ptr;
+    }
+
+    // Run the computation
+    ggml.buildForwardExpand(gf, inpL);
+    ggml.graphCompute(ctx0, gf);
+
+    // Return result for just the last token;
+    embdW.addAll((ggml.getData(inpL) as Iterable<double>));
+    // embdW.addAll((nVocab! * (N-1)));
+
+    if (memPerToken == 0) {
+      memPerToken = ggml.usedMem(ctx0) ~/ N;
+    }
+
+    ggml.free(ctx0);
 
     return false;
   }
