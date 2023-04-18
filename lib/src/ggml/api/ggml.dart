@@ -375,9 +375,16 @@ class Ggml {
 
   /// struct ggml_tensor * ggml_permute(struct ggml_context * ctx,
   /// struct ggml_tensor  * a, int axis0, int axis1, int axis2, int axis3);
-  GgmlTensor transpose(GgmlContext ctx, GgmlTensor a, int axis0, int axis1,
+  GgmlTensor permute(GgmlContext ctx, GgmlTensor a, int axis0, int axis1,
       int axis2, int axis3) {
     final ptr = _impl.ggml_permute(ctx, a.ptr, axis0, axis1, axis2, axis3);
+    return GgmlTensor()..ptr = ptr;
+  }
+
+  /// struct ggml_tensor * ggml_transpose(struct ggml_context * ctx,
+  /// struct ggml_tensor  * a);
+  GgmlTensor transpose(GgmlContext ctx, GgmlTensor a) {
+    final ptr = _impl.ggml_transpose(ctx, a.ptr);
     return GgmlTensor()..ptr = ptr;
   }
 

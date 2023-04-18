@@ -541,10 +541,127 @@ class AlpacaChat {
     final inpL = ggml.getRows(ctx0, model.tokEmbeddings!, embd);
 
     for (int il = 0; il < nLayer!; ++il) {
+      final inpSA = inpL;
+      final cur = GgmlTensor();
 
+      // Norm
+      {
+        cur.ptr = ggml.rmsNorm(ctx0, inpL).ptr;
 
+        // cur = attention_norm*cur
+        cur.ptr = ggml
+            .mul(ctx0, ggml.repeat(ctx0, model.layers[il].attentionNorm!, cur),
+                cur)
+            .ptr;
+      }
+
+      // Self-attention
+      {
+        final qCur = ggml.mulMat(ctx0, model.layers[il].wq!, cur);
+        final kCur = ggml.mulMat(ctx0, model.layers[il].wk!, cur);
+        final vCur = ggml.mulMat(ctx0, model.layers[il].wv!, cur);
+
+        // store key and value to memory
+        if (N >= 1) {
+          final k = ggml.view1D(
+              ctx0,
+              model.memoryK!,
+              N * nEmbd,
+              (ggml.elementSize(model.memoryK!) * nEmbd) *
+                  (il * nCtx! + nPast));
+          final v = ggml.view1D(ctx0, model.memoryV!, N * nEmbd,
+              (ggml.elementSize(model.memoryV!) * nEmbd) * (il * nCtx + nPast));
+          ggml.buildForwardExpand(gf, ggml.cpy(ctx0, kCur, k));
+          ggml.buildForwardExpand(gf, ggml.cpy(ctx0, vCur, v));
+        }
+
+        // Q = Qcur.contiguous().view(n_embd/n_head, n_head, N).permute(0, 2, 1, 3)
+        final q = ggml.permute(
+            ctx0,
+            ggml.rope(
+                ctx0,
+                ggml.cpy(
+                    ctx0,
+                    qCur,
+                    ggml.newTensor3D(
+                        ctx0, GgmlType.f32, nEmbd ~/ nHead, nHead, N)),
+                nPast,
+                nRot.toInt(),
+                0),
+            0,
+            2,
+            1,
+            3);
+
+        // K = Kmem.view(n_embd/n_head, n_head, n_past + N).permute(0, 2, 1, 3)
+        final k = ggml.permute(
+            ctx0,
+            ggml.rope(
+                ctx0,
+                ggml.reshape3D(
+                    ctx0,
+                    ggml.view1D(ctx0, model.memoryK!, (nPast + N) * nEmbd,
+                        il * nCtx! * ggml.elementSize(model.memoryK!) * nEmbd),
+                    nEmbd ~/ nHead,
+                    nHead,
+                    nPast + N),
+                nPast,
+                nRot.toInt(),
+                1),
+            0,
+            2,
+            1,
+            3);
+
+        // K * Q
+        final kq = ggml.mulMat(ctx0, k, q);
+
+        // KQ_scaled = KQ / sqrt(n_embd/n_head)
+        final kqScaled =
+            ggml.scale(ctx0, kq, ggml.newF32(ctx0, 1.0 / sqrt(nEmbd / nHead)));
+
+        // KQ_masked = mask_past(KQ_scaled)
+        final kqMasked = ggml.diagMaskInf(ctx0, kqScaled, nPast);
+
+        // KQ = soft_max(KQ_masked)
+        final kqSoftMax = ggml.softMax(ctx0, kqMasked);
+
+        // V_trans = Vmem.view(n_embd/n_head, n_head, n_past + N).permute(1, 2, 0, 3).contiguous()
+        final vTrans = ggml.permute(
+            ctx0,
+            ggml.reshape3D(
+                ctx0,
+                ggml.view1D(ctx0, model.memoryV!, (nPast + N) * nEmbd,
+                    il * nCtx * ggml.elementSize(model.memoryV!) * nEmbd),
+                nEmbd ~/ nHead,
+                nHead,
+                nPast + N),
+            1,
+            2,
+            0,
+            3);
+
+        // KQV = transpose(V) * KQ_soft_max
+        final kqv = ggml.mulMat(ctx0, vTrans, kqSoftMax);
+
+        // KQV_merged = KQV.permute(0, 2, 1, 3)
+        final kqvMerged = ggml.permute(ctx0, kqv, 0, 2, 1, 3);
+
+        // cur = KQV_merged.contiguous().view(n_embd, N)
+        cur.ptr = ggml
+            .cpy(
+                ctx0, kqvMerged, ggml.newTensor2D(ctx0, GgmlType.f32, nEmbd, N))
+            .ptr;
+
+        // Projection (no bias)
+        cur.ptr = ggml.mulMat(ctx0, model.layers[il].wo!, cur).ptr;
+      }
+
+      final inpFF = ggml.add(ctx0, cur, inpSA);
+
+      // Feed-forward network
+      {}
     }
-
 
     return false;
   }
