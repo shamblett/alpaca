@@ -538,7 +538,7 @@ class AlpacaChat {
     final embd = ggml.newTensor1D(ctx0, GgmlType.i32, N);
     embd.setData(Uint8List.fromList(embdInp));
 
-    final inpL = ggml.getRows(ctx0, model.tokEmbeddings, embd);
+    final inpL = ggml.getRows(ctx0, model.tokEmbeddings!, embd);
 
     return false;
   }

@@ -183,6 +183,265 @@ class Ggml {
   Pointer<Float> getDataF32(GgmlTensor tensor) =>
       _impl.ggml_get_data_f32(tensor.ptr);
 
+  /// struct ggml_tensor * ggml_dup(struct ggml_context * ctx,struct ggml_tensor  * a);
+  GgmlTensor dup(GgmlContext ctx, GgmlTensor a) {
+    final ptr = _impl.ggml_dup(ctx, a.ptr);
+    return GgmlTensor()..ptr = ptr;
+  }
+
+  /// struct ggml_tensor * ggml_add(struct ggml_context * ctx,
+  /// struct ggml_tensor  * a, struct ggml_tensor  * b);
+  GgmlTensor add(GgmlContext ctx, GgmlTensor a, GgmlTensor b) {
+    final ptr = _impl.ggml_add(ctx, a.ptr, b.ptr);
+    return GgmlTensor()..ptr = ptr;
+  }
+
+  /// struct ggml_tensor * ggml_sub(struct ggml_context * ctx,
+  /// struct ggml_tensor  * a, struct ggml_tensor  * b);
+  GgmlTensor sub(GgmlContext ctx, GgmlTensor a, GgmlTensor b) {
+    final ptr = _impl.ggml_sub(ctx, a.ptr, b.ptr);
+    return GgmlTensor()..ptr = ptr;
+  }
+
+  /// struct ggml_tensor * ggml_mul(struct ggml_context * ctx,
+  /// struct ggml_tensor  * a, struct ggml_tensor  * b);
+  GgmlTensor mul(GgmlContext ctx, GgmlTensor a, GgmlTensor b) {
+    final ptr = _impl.ggml_mul(ctx, a.ptr, b.ptr);
+    return GgmlTensor()..ptr = ptr;
+  }
+
+  /// struct ggml_tensor * ggml_div(struct ggml_context * ctx,
+  /// struct ggml_tensor  * a, struct ggml_tensor  * b);
+  GgmlTensor div(GgmlContext ctx, GgmlTensor a, GgmlTensor b) {
+    final ptr = _impl.ggml_div(ctx, a.ptr, b.ptr);
+    return GgmlTensor()..ptr = ptr;
+  }
+
+  /// struct ggml_tensor * ggml_sqr(struct ggml_context * ctx,
+  /// struct ggml_tensor  * a);
+  GgmlTensor sqr(GgmlContext ctx, GgmlTensor a) {
+    final ptr = _impl.ggml_sqr(ctx, a.ptr);
+    return GgmlTensor()..ptr = ptr;
+  }
+
+  /// struct ggml_tensor * ggml_sqrt(struct ggml_context * ctx,
+  /// struct ggml_tensor  * a);
+  GgmlTensor sqrt(GgmlContext ctx, GgmlTensor a) {
+    final ptr = _impl.ggml_sqrt(ctx, a.ptr);
+    return GgmlTensor()..ptr = ptr;
+  }
+
+  /// struct ggml_tensor * ggml_sum(struct ggml_context * ctx,
+  /// struct ggml_tensor  * a);
+  GgmlTensor sum(GgmlContext ctx, GgmlTensor a) {
+    final ptr = _impl.ggml_sum(ctx, a.ptr);
+    return GgmlTensor()..ptr = ptr;
+  }
+
+  /// struct ggml_tensor * ggml_mean(struct ggml_context * ctx,
+  /// struct ggml_tensor  * a);
+  GgmlTensor mean(GgmlContext ctx, GgmlTensor a) {
+    final ptr = _impl.ggml_mean(ctx, a.ptr);
+    return GgmlTensor()..ptr = ptr;
+  }
+
+  /// struct ggml_tensor * ggml_repeat(struct ggml_context * ctx,
+  /// struct ggml_tensor  * a, struct ggml_tensor  * b);
+  GgmlTensor repeat(GgmlContext ctx, GgmlTensor a, GgmlTensor b) {
+    final ptr = _impl.ggml_repeat(ctx, a.ptr, b.ptr);
+    return GgmlTensor()..ptr = ptr;
+  }
+
+  /// struct ggml_tensor * ggml_abs(struct ggml_context * ctx,
+  /// struct ggml_tensor  * a);
+  GgmlTensor abs(GgmlContext ctx, GgmlTensor a) {
+    final ptr = _impl.ggml_abs(ctx, a.ptr);
+    return GgmlTensor()..ptr = ptr;
+  }
+
+  /// struct ggml_tensor * ggml_sgn(struct ggml_context * ctx,
+  /// struct ggml_tensor  * a);
+  GgmlTensor sgn(GgmlContext ctx, GgmlTensor a) {
+    final ptr = _impl.ggml_sgn(ctx, a.ptr);
+    return GgmlTensor()..ptr = ptr;
+  }
+
+  /// struct ggml_tensor * ggml_neg(struct ggml_context * ctx,
+  /// struct ggml_tensor  * a);
+  GgmlTensor neg(GgmlContext ctx, GgmlTensor a) {
+    final ptr = _impl.ggml_neg(ctx, a.ptr);
+    return GgmlTensor()..ptr = ptr;
+  }
+
+  /// struct ggml_tensor * ggml_step(struct ggml_context * ctx,
+  /// struct ggml_tensor  * a);
+  GgmlTensor step(GgmlContext ctx, GgmlTensor a) {
+    final ptr = _impl.ggml_step(ctx, a.ptr);
+    return GgmlTensor()..ptr = ptr;
+  }
+
+  /// struct ggml_tensor * ggml_relu(struct ggml_context * ctx,
+  /// struct ggml_tensor  * a);
+  GgmlTensor relu(GgmlContext ctx, GgmlTensor a) {
+    final ptr = _impl.ggml_relu(ctx, a.ptr);
+    return GgmlTensor()..ptr = ptr;
+  }
+
+  /// struct ggml_tensor * ggml_gelu(struct ggml_context * ctx,
+  /// struct ggml_tensor  * a);
+  GgmlTensor gelu(GgmlContext ctx, GgmlTensor a) {
+    final ptr = _impl.ggml_gelu(ctx, a.ptr);
+    return GgmlTensor()..ptr = ptr;
+  }
+
+  /// struct ggml_tensor * ggml_silu(struct ggml_context * ctx,
+  /// struct ggml_tensor  * a);
+  GgmlTensor silu(GgmlContext ctx, GgmlTensor a) {
+    final ptr = _impl.ggml_silu(ctx, a.ptr);
+    return GgmlTensor()..ptr = ptr;
+  }
+
+  /// struct ggml_tensor * ggml_norm(struct ggml_context * ctx,
+  /// struct ggml_tensor  * a);
+  GgmlTensor norm(GgmlContext ctx, GgmlTensor a) {
+    final ptr = _impl.ggml_norm(ctx, a.ptr);
+    return GgmlTensor()..ptr = ptr;
+  }
+
+  /// struct ggml_tensor * ggml_rms_norm(struct ggml_context * ctx,
+  /// struct ggml_tensor  * a);
+  GgmlTensor rmsNorm(GgmlContext ctx, GgmlTensor a) {
+    final ptr = _impl.ggml_rms_norm(ctx, a.ptr);
+    return GgmlTensor()..ptr = ptr;
+  }
+
+  /// struct ggml_tensor * ggml_mul_mat(struct ggml_context * ctx,
+  /// struct ggml_tensor  * a, struct ggml_tensor  * b);
+  GgmlTensor mulMat(GgmlContext ctx, GgmlTensor a, GgmlTensor b) {
+    final ptr = _impl.ggml_mul_mat(ctx, a.ptr, b.ptr);
+    return GgmlTensor()..ptr = ptr;
+  }
+
+  /// struct ggml_tensor * ggml_scale(struct ggml_context * ctx,
+  /// struct ggml_tensor  * a, struct ggml_tensor  * b);
+  GgmlTensor scale(GgmlContext ctx, GgmlTensor a, GgmlTensor b) {
+    final ptr = _impl.ggml_scale(ctx, a.ptr, b.ptr);
+    return GgmlTensor()..ptr = ptr;
+  }
+
+  /// struct ggml_tensor * ggml_cpy(struct ggml_context * ctx,
+  /// struct ggml_tensor  * a, struct ggml_tensor  * b);
+  GgmlTensor cpy(GgmlContext ctx, GgmlTensor a, GgmlTensor b) {
+    final ptr = _impl.ggml_cpy(ctx, a.ptr, b.ptr);
+    return GgmlTensor()..ptr = ptr;
+  }
+
+  /// struct ggml_tensor * ggml_reshape(struct ggml_context * ctx,
+  /// struct ggml_tensor  * a, struct ggml_tensor  * b);
+  GgmlTensor reshape(GgmlContext ctx, GgmlTensor a, GgmlTensor b) {
+    final ptr = _impl.ggml_reshape(ctx, a.ptr, b.ptr);
+    return GgmlTensor()..ptr = ptr;
+  }
+
+  /// struct ggml_tensor * ggml_reshape_2d(struct ggml_context * ctx,
+  /// struct ggml_tensor  * a, int ne0, int ne1);
+  GgmlTensor reshape2D(GgmlContext ctx, GgmlTensor a, int ne0, int ne1) {
+    final ptr = _impl.ggml_reshape_2d(ctx, a.ptr, ne0, ne1);
+    return GgmlTensor()..ptr = ptr;
+  }
+
+  /// struct ggml_tensor * ggml_reshape_3d(struct ggml_context * ctx,
+  /// struct ggml_tensor  * a, int ne0, int ne1, int ne2);
+  GgmlTensor reshape3D(
+      GgmlContext ctx, GgmlTensor a, int ne0, int ne1, int ne2) {
+    final ptr = _impl.ggml_reshape_3d(ctx, a.ptr, ne0, ne1, ne2);
+    return GgmlTensor()..ptr = ptr;
+  }
+
+  /// struct ggml_tensor * ggml_view_1d(struct ggml_context * ctx,
+  /// struct ggml_tensor  * a, int ne0, int offset);
+  GgmlTensor view1D(GgmlContext ctx, GgmlTensor a, int ne0, int offset) {
+    final ptr = _impl.ggml_view_1d(ctx, a.ptr, ne0, offset);
+    return GgmlTensor()..ptr = ptr;
+  }
+
+  /// struct ggml_tensor * ggml_view_2d(struct ggml_context * ctx,
+  /// struct ggml_tensor  * a, int ne0, int ne1, int nb1, int offset);
+  GgmlTensor view2D(
+      GgmlContext ctx, GgmlTensor a, int ne0, int ne1, int nb1, int offset) {
+    final ptr = _impl.ggml_view_2d(ctx, a.ptr, ne0, ne1, nb1, offset);
+    return GgmlTensor()..ptr = ptr;
+  }
+
+  /// struct ggml_tensor * ggml_permute(struct ggml_context * ctx,
+  /// struct ggml_tensor  * a, int axis0, int axis1, int axis2, int axis3);
+  GgmlTensor transpose(GgmlContext ctx, GgmlTensor a, int axis0, int axis1,
+      int axis2, int axis3) {
+    final ptr = _impl.ggml_permute(ctx, a.ptr, axis0, axis1, axis2, axis3);
+    return GgmlTensor()..ptr = ptr;
+  }
+
+  /// struct ggml_tensor * ggml_get_rows(struct ggml_context * ctx,
+  /// struct ggml_tensor  * a, struct ggml_tensor  * b);
+  GgmlTensor getRows(GgmlContext ctx, GgmlTensor a, GgmlTensor b) {
+    final ptr = _impl.ggml_get_rows(ctx, a.ptr, b.ptr);
+    return GgmlTensor()..ptr = ptr;
+  }
+
+  /// struct ggml_tensor * ggml_diag_mask_inf(struct ggml_context * ctx,
+  /// struct ggml_tensor  * a, int n_past);
+  GgmlTensor diagMaskInf(GgmlContext ctx, GgmlTensor a, int nPast) {
+    final ptr = _impl.ggml_diag_mask_inf(ctx, a.ptr, nPast);
+    return GgmlTensor()..ptr = ptr;
+  }
+
+  /// struct ggml_tensor * ggml_soft_max(struct ggml_context * ctx,
+  /// struct ggml_tensor  * a, struct ggml_tensor  * b);
+  GgmlTensor softMax(GgmlContext ctx, GgmlTensor a) {
+    final ptr = _impl.ggml_soft_max(ctx, a.ptr);
+    return GgmlTensor()..ptr = ptr;
+  }
+
+  /// struct ggml_tensor * ggml_rope(struct ggml_context * ctx,
+  /// struct ggml_tensor  * a, int n_past, int n_dims, int mode);
+  GgmlTensor rope(
+      GgmlContext ctx, GgmlTensor a, int nPast, int nDims, int mode) {
+    final ptr = _impl.ggml_rope(ctx, a.ptr, nPast, nDims, mode);
+    return GgmlTensor()..ptr = ptr;
+  }
+
+  /// struct ggml_tensor * ggml_conv_1d_1s(struct ggml_context * ctx,
+  /// struct ggml_tensor  * a, struct ggml_tensor  * b);
+  GgmlTensor conv1D1S(GgmlContext ctx, GgmlTensor a, GgmlTensor b) {
+    final ptr = _impl.ggml_conv_1d_1s(ctx, a.ptr, b.ptr);
+    return GgmlTensor()..ptr = ptr;
+  }
+
+  /// struct ggml_tensor * ggml_conv_1d_2s(struct ggml_context * ctx,
+  /// struct ggml_tensor  * a, struct ggml_tensor  * b);
+  GgmlTensor conv1D2S(GgmlContext ctx, GgmlTensor a, GgmlTensor b) {
+    final ptr = _impl.ggml_conv_1d_2s(ctx, a.ptr, b.ptr);
+    return GgmlTensor()..ptr = ptr;
+  }
+
+  /// struct ggml_tensor * ggml_flash_attn(struct ggml_context * ctx,
+  /// struct ggml_tensor * q, struct ggml_tensor * k, struct ggml_tensor * v,
+  /// bool masked);
+  GgmlTensor flashAttn(
+      GgmlContext ctx, GgmlTensor q, GgmlTensor k, GgmlTensor v, bool masked) {
+    final ptr = _impl.ggml_flash_attn(ctx, q.ptr, k.ptr, v.ptr, masked);
+    return GgmlTensor()..ptr = ptr;
+  }
+
+  /// struct ggml_tensor * ggml_flash_ff(struct ggml_context * ctx,
+  /// struct ggml_tensor * a, struct ggml_tensor * b0, struct ggml_tensor * b1,
+  /// struct ggml_tensor * c0, struct ggml_tensor * c1);
+  GgmlTensor flashFf(GgmlContext ctx, GgmlTensor a, GgmlTensor b0,
+      GgmlTensor b1, GgmlTensor c0, GgmlTensor c1) {
+    final ptr = _impl.ggml_flash_ff(ctx, a.ptr, b0.ptr, b1.ptr, c0.ptr, c1.ptr);
+    return GgmlTensor()..ptr = ptr;
+  }
+
   /// void ggml_set_param(struct ggml_context * ctx, struct ggml_tensor * tensor);
   void setParam(GgmlContext ctx, GgmlTensor tensor) =>
       _impl.ggml_set_param(ctx, tensor.ptr);
