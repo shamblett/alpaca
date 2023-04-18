@@ -23,4 +23,4 @@ part 'src/utils/types/alpaca_gpt_params.dart';
 part 'src/utils/types/alpaca_gpt_vocab.dart';
 part 'src/utils/types/alpaca_gpt_logit.dart';
 part 'src/chat/types/alpaca_chat_types.dart';
-part 'src/chat/alpaca_chat.dart';
+part 'src/chat/api/alpaca_chat.dart';
