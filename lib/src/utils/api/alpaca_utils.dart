@@ -119,22 +119,21 @@ class AlpacaUtils {
   /// SentencePiece implementation after https://guillaume-be.github.io/2020-05-30/sentence_piece
   static List<Id?> llamaTokenize(AlpacaGptVocab vocab, String text, bool bos) {
     List<Id?> res = [];
-    List<int> score = [];
-    List<Id?> prev = [];
     final int len = text.length;
-
+    final score = List<int>.filled(len + 1, 0);
+    final prev = List<Id>.filled(len + 1, 0);
     // Forward pass
     for (int i = 0; i < len; i++) {
       for (int subLen = 1; subLen <= len - i; subLen++) {
-        var sub = text.substring(i, subLen);
-        var token = vocab.tokenToId.containsValue(sub);
+        var sub = text.substring(i, i + subLen);
+        var token = vocab.tokenToId.containsKey(sub);
         if (token) {
           int tokenScore = sub.length * sub.length;
           int localScore = score[i] + tokenScore;
           int next = i + subLen;
           if (score[next] < localScore) {
             score[next] = localScore;
-            prev[next] = vocab.tokenToId[sub];
+            prev[next] = vocab.tokenToId[sub]!;
           }
         }
       }
