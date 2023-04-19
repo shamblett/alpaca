@@ -204,7 +204,76 @@ int main(List<String> argv) {
         }
         stdout.flush();
       }
+
+      // In interactive mode, and not currently processing queued inputs;
+      // check if we should prompt the user for more
+      if (params.interactive && embdInp.length <= inputConsumed) {
+        if (isInteracting) {
+          inputConsumed = embdInp.length;
+          embdInp.addAll(promptInp);
+          print('>');
+
+          // Currently being interactive
+          bool anotherLine = true;
+          while (anotherLine) {
+            if (params.useColor) {
+              print(ansiBold);
+              print(ansiColorGreen);
+            }
+            var line = stdin.readLineSync();
+            if (params.useColor) {
+              print(ansiColorReset);
+            }
+            line != null && line.endsWith('\\')
+                ? anotherLine = true
+                : anotherLine = false;
+
+            final lineInp = AlpacaUtils.llamaTokenize(vocab, line!, false);
+            embdInp.addAll(lineInp);
+            embdInp.addAll(responseInp);
+
+            remainingTokens -=
+                promptInp.length + lineInp.length + responseInp.length;
+
+            inputNoEcho = true;
+          }
+
+          isInteracting = false;
+        }
+      }
+      // End of text token
+      if (embd.last == 2) {
+        if (params.interactive) {
+          isInteracting = true;
+          continue;
+        } else {
+          print('');
+          print(' [end of text]');
+          break;
+        }
+      }
     }
+  }
+
+  // Report timing
+  {
+    final tMainEndUs = ggml.timeUs();
+
+    print('');
+    print('');
+    print('AlpacaChat:: mem per token = $memPerToken bytes');
+    print('AlpacaChat:: load time = ${tLoadUs / 1000.0} ms');
+    print('AlpacaChat:: sample time = ${tSampleUs / 1000.0} ms');
+    print(
+        'AlpacaChat:: predict time = ${tPredictUs / 1000} ms / ${tPredictUs / 1000.0 / nPast} ms per token');
+    print(
+        'AlpacaChat:: total time = ${(tMainEndUs - tMainStartUs) / 1000.0} ms');
+  }
+
+  ggml.free(model.ctx!);
+
+  if (params.useColor) {
+    print(ansiColorReset);
   }
 
   return 0;
