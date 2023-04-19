@@ -6,11 +6,14 @@
  */
 
 import 'dart:io';
+import 'dart:math';
 
 import 'package:fixnum/fixnum.dart';
 import 'package:mt19937/mt19937.dart';
 import 'package:alpaca/alpaca.dart';
 import 'package:alpaca/src/ggml/ggml.dart';
+
+bool isInteracting = false;
 
 ///
 /// Main chat application
@@ -100,7 +103,109 @@ int main(List<String> argv) {
 
   // Determine the required inference memory per token:
   int memPerToken = 0;
-  //llama_eval(model, params.n_threads, 0, { 0, 1, 2, 3 }, logits, mem_per_token);
+  AlpacaChat.llamaEval(
+      model, params.nThreads, 0, [0, 1, 2, 3], logits, memPerToken);
+
+  int lastNSize = params.repeatLastN;
+  final lastNTokens = List<Id>.filled(lastNSize, 0);
+
+  if (params.interactive) {
+    print('AlpacaChat:: == Running in chat mode. ==');
+    print('AlpacaChat::  - Press Ctrl+C to interject at any time.');
+
+    // We may want to slide the input window along with the context, but for now we restrict to the context length
+    int remainingTokens = model.hParams!.nCtx - embdInp.length;
+    int inputConsumed = 0;
+    bool inputNoEcho = true;
+
+    // Prompt user immediately after the starting prompt has been loaded
+    if (params.interactiveStart) {
+      isInteracting = true;
+    }
+
+    // set the color for the prompt which will be output initially
+    if (params.useColor) {
+      print(ansiColorYellow);
+    }
+
+    while (remainingTokens > 0) {
+      // Predict
+      if (embd.isNotEmpty) {
+        final tStartUs = ggml.timeUs();
+
+        if (!AlpacaChat.llamaEval(
+            model, params.nThreads, nPast, embd, logits, memPerToken)) {
+          print('AlpacaChat:: Failed to predict');
+          return 1;
+        }
+
+        tPredictUs += ggml.timeUs() - tStartUs;
+      }
+
+      nPast += embd.length;
+      embd.clear();
+
+      if (embdInp.length <= inputConsumed && !isInteracting) {
+        // out of user input, sample next token
+        final topK = params.topK;
+        final topP = params.topP;
+        final temp = params.temp;
+        final repeatPenalty = params.repeatPenalty;
+
+        final nVocab = model.hParams?.nVocab;
+
+        Id id = 0;
+
+        {
+          final tStartSampleUs = ggml.timeUs();
+
+          final rand = Random();
+          id = AlpacaUtils.llamaSampleTopPTopK(vocab, logits, lastNTokens,
+              repeatPenalty, topK, topP, temp, rand);
+
+          lastNTokens.clear();
+          lastNTokens.add(id);
+
+          tSampleUs += ggml.timeUs() - tStartSampleUs;
+        }
+
+        // Add it to the context
+        embd.add(id);
+
+        // Echo this to console
+        inputNoEcho = false;
+
+        // Decrement remaining sampling budget
+        --remainingTokens;
+      } else {
+        // Some user input remains from prompt or interaction, forward it to processing
+        while (embdInp.length > inputConsumed) {
+          embd.add(embdInp[inputConsumed]!);
+          lastNTokens.clear();
+          lastNTokens.add(embdInp[inputConsumed]!);
+          ++inputConsumed;
+          if (embd.length > params.nBatch) {
+            break;
+          }
+        }
+
+        // Reset color to default if we there is no pending user input
+        if (!inputNoEcho &&
+            params.useColor &&
+            embdInp.length == inputConsumed) {
+          print(ansiColorReset);
+        }
+      }
+
+      // Display text
+      if (!inputNoEcho) {
+        for (final id in embd) {
+          stdout.write('${vocab.idToToken[id]}');
+        }
+        stdout.flush();
+      }
+    }
+  }
 
   return 0;
 }
