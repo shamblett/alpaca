@@ -709,7 +709,9 @@ class AlpacaChat {
     ggml.graphCompute(ctx0, gf);
 
     // Return result for just the last token;
-    embdW.addAll((ggml.getData(inpL) as Iterable<double>));
+    final resPtr = ggml.getDataF32(inpL);
+    final f = resPtr[0];
+    //embdW.addAll((ggml.getData(inpL) as Iterable<double>));
     // embdW.addAll((nVocab! * (N-1)));
 
     if (memPerToken == 0) {
