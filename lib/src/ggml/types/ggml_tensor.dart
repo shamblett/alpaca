@@ -12,7 +12,6 @@ class GgmlTensor {
   Pointer<ggmlimpl.ggml_tensor> _ptr = ffi.calloc<ggmlimpl.ggml_tensor>();
 
   set ptr(Pointer<ggmlimpl.ggml_tensor> ptr) {
-    free();
     _ptr = ptr;
   }
 

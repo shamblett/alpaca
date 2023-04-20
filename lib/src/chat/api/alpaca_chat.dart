@@ -675,8 +675,6 @@ class AlpacaChat {
 
         cur.ptr = ggml.mulMat(ctx0, model.layers[il].w1!, cur).ptr;
 
-        cur.ptr = ggml.mulMat(ctx0, model.layers[il].w1!, cur).ptr;
-
         // SILU activation
         cur.ptr = ggml.silu(ctx0, cur).ptr;
 
