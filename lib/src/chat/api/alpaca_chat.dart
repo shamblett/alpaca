@@ -507,7 +507,7 @@ class AlpacaChat {
   ///
   /// The GPT-J model requires about 16MB of memory per input token.
   static bool llamaEval(AlpacaLlamaModel model, int nThreads, int nPast,
-      List<Id> embdInp, List<double> embdW, int memPerToken) {
+      List<Id> embdInp, AlpacaLogit embdW, int memPerToken) {
     final N = embdInp.length;
 
     final hParams = model.hParams;
@@ -709,7 +709,7 @@ class AlpacaChat {
     // Return result for just the last token;
     final resPtr = ggml.getDataF32(inpL);
     final data = resPtr.asTypedList(N * nVocab!);
-    embdW = data.sublist(nVocab * (N - 1));
+    embdW.logits = data.sublist(nVocab * (N - 1));
 
     if (memPerToken == 0) {
       memPerToken = ggml.usedMem(ctx0) ~/ N;

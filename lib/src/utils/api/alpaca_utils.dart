@@ -200,7 +200,7 @@ class AlpacaUtils {
   ///
   static Id llamaSampleTopPTopK(
       AlpacaGptVocab vocab,
-      List<double> logits,
+      AlpacaLogit logits,
       List<Id> lastNTokens,
       double repeatPenalty,
       int topK,
@@ -208,36 +208,36 @@ class AlpacaUtils {
       double temp,
       Random rng) {
     int nLogits = vocab.idToToken.length;
-    //
+
     final logitsId = <AlpacaGptLogit>[];
-    //
-    final double scale = 1.0 / temp;
-    for (int i = 0; i < nLogits; ++i) {
-      // Repetition penalty from CTRL paper (https://arxiv.org/abs/1909.05858)
-      // credit https://github.com/facebookresearch/llama/compare/main...shawwn:llama:main
+    {
+      final double scale = 1.0 / temp;
+      for (int i = 0; i < nLogits; ++i) {
+        // Repetition penalty from CTRL paper (https://arxiv.org/abs/1909.05858)
+        // credit https://github.com/facebookresearch/llama/compare/main...shawwn:llama:main
 
-      if (lastNTokens.contains(i)) {
-        // if score < 0 then repetition penalty has to multiplied to reduce the previous token probability
+        if (lastNTokens.contains(i)) {
+          // if score < 0 then repetition penalty has to multiplied to reduce the previous token probability
 
-        if (logits[i] < 0.0) {
-          logitsId.add(AlpacaGptLogit()
-            ..id = i
-            ..val = logits[i] * scale * repeatPenalty);
+          if (logits.logits[i] < 0.0) {
+            logitsId.add(AlpacaGptLogit()
+              ..id = i
+              ..val = logits.logits[i] * scale * repeatPenalty);
+          } else {
+            logitsId.add(AlpacaGptLogit()
+              ..id = i
+              ..val = logits.logits[i] / scale * repeatPenalty);
+          }
         } else {
           logitsId.add(AlpacaGptLogit()
             ..id = i
-            ..val = logits[i] / scale * repeatPenalty);
+            ..val = logits.logits[i] / scale);
         }
-      } else {
-        logitsId.add(AlpacaGptLogit()
-          ..id = i
-          ..val = logits[i] / scale);
       }
     }
 
-    //
     sampleTopK(logitsId, topK);
-    //
+
     double maxl = double.negativeInfinity;
     for (final entry in logitsId) {
       maxl = max(maxl, entry.val);

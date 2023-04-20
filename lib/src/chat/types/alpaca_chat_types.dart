@@ -7,14 +7,14 @@
 
 part of alpaca;
 
-const String ansiColorRed = 'x1b[31m';
-const String ansiColorGreen = 'x1b[32m';
-const String ansiColorYellow = 'x1b[33m';
-const String ansiColorBlue = 'x1b[34m';
-const String ansiColorMagenta = 'x1b[35m';
-const String ansiColorCyan = 'x1b[36m';
-const String ansiColorReset = 'x1b[0m';
-const String ansiBold = 'x1b[1m';
+const String ansiColorRed = '\u001b[31m';
+const String ansiColorGreen = '\u001b[32m';
+const String ansiColorYellow = '\u001b[33m';
+const String ansiColorBlue = '\u001b[34m';
+const String ansiColorMagenta = '\u001b[35m';
+const String ansiColorCyan = '\u001b[36m';
+const String ansiColorReset = '\u001b[0m';
+const String ansiBold = '\u001b[1m';
 
 // Determine number of model parts based on the dimension
 const llamaNParts = <int, int>{4096: 1, 5120: 1, 6656: 1, 8192: 1};
@@ -70,4 +70,8 @@ class AlpacaLlamaModel {
 
   GgmlContext? ctx;
   final tensors = <String, GgmlTensor>{};
+}
+
+class AlpacaLogit {
+  List<double> logits = <double>[];
 }

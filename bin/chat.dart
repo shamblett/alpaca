@@ -69,7 +69,7 @@ int main(List<String> argv) {
   int tSampleUs = 0;
   int tPredictUs = 0;
 
-  final logits = <double>[];
+  final logits = AlpacaLogit();
 
   // Tokenize the prompt
   final embdInp = <Id?>[];
