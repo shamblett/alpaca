@@ -717,6 +717,6 @@ class AlpacaChat {
 
     ggml.free(ctx0);
 
-    return false;
+    return true;
   }
 }

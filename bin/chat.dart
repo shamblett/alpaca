@@ -107,7 +107,7 @@ int main(List<String> argv) {
       model, params.nThreads, 0, [0, 1, 2, 3], logits, memPerToken);
 
   int lastNSize = params.repeatLastN;
-  final lastNTokens = List<Id>.filled(lastNSize, 0);
+  final lastNTokens = <Id>[];
 
   if (params.interactive) {
     print('AlpacaChat:: == Running in chat mode. ==');
