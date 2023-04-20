@@ -707,7 +707,7 @@ class AlpacaChat {
     ggml.graphCompute(ctx0, gf);
 
     // Return result for just the last token;
-    final resPtr = ggml.getDataF32(inpL);
+    final resPtr = ggml.getData(inpL).cast<Float>();
     final data = resPtr.asTypedList(N * nVocab!);
     embdW.logits = data.sublist(nVocab * (N - 1));
 
