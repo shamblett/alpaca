@@ -646,7 +646,6 @@ class AlpacaChat {
         // KQV_merged = KQV.permute(0, 2, 1, 3)
         final kqvMerged = ggml.permute(ctx0, kqv, 0, 2, 1, 3);
 
-        // cur = KQV_merged.contiguous().view(n_embd, N)
         cur.ptr = ggml
             .cpy(
                 ctx0, kqvMerged, ggml.newTensor2D(ctx0, GgmlType.f32, nEmbd, N))
