@@ -522,7 +522,6 @@ class AlpacaChat {
     final dKey = nEmbd / nHead;
 
     // TODO: check if this size scales with n_ctx linearly and remove constant. somehow I feel it wasn't the case
-    // static size_t buf_size = hparams.n_ctx*1024*1024;
     const bufSize = 512 * 1024 * 1024;
     final bufPtr = ffi.calloc<Uint8>(bufSize);
 
@@ -618,7 +617,7 @@ class AlpacaChat {
 
         // KQ_scaled = KQ / sqrt(n_embd/n_head)
         final kqScaled =
-            ggml.scale(ctx0, kq, ggml.newF32(ctx0, 1.0 / sqrt(nEmbd / nHead)));
+            ggml.scale(ctx0, kq, ggml.newF32(ctx0, 1.0 / sqrt(nEmbd) / nHead));
 
         // KQ_masked = mask_past(KQ_scaled)
         final kqMasked = ggml.diagMaskInf(ctx0, kqScaled, nPast);
