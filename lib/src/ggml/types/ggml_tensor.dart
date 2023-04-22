@@ -32,14 +32,12 @@ class GgmlTensor {
 
   GgmlTensor getSrc0() {
     final tensor = GgmlTensor();
-    tensor.free();
     tensor.ptr = instance.src0;
     return tensor;
   }
 
   GgmlTensor getSrc1() {
     final tensor = GgmlTensor();
-    tensor.free();
     tensor.ptr = instance.src1;
     return tensor;
   }

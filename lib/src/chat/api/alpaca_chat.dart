@@ -217,7 +217,7 @@ class AlpacaChat {
       final nMem = nLayer * nCtx;
       final nElements = nEmbd * nMem;
 
-      model.memoryK = ggml.newTensor1D(ctx!,GgmlType.f32, nElements);
+      model.memoryK = ggml.newTensor1D(ctx!, GgmlType.f32, nElements);
       model.memoryV = ggml.newTensor1D(ctx, GgmlType.f32, nElements);
 
       final memorySize =
@@ -568,10 +568,8 @@ class AlpacaChat {
               N * nEmbd,
               (ggml.elementSize(model.memoryK!) * nEmbd) *
                   (il * nCtx! + nPast));
-
           final v = ggml.view1D(ctx0, model.memoryV!, N * nEmbd,
               (ggml.elementSize(model.memoryV!) * nEmbd) * (il * nCtx + nPast));
-
           ggml.buildForwardExpand(gf, ggml.cpy(ctx0, kCur, k));
           ggml.buildForwardExpand(gf, ggml.cpy(ctx0, vCur, v));
         }

@@ -19,18 +19,6 @@ class GgmlCGraph {
 
   void free() => ffi.calloc.free(ptr);
 
-  List<GgmlTensor> getNodes() {
-    final ret = <GgmlTensor>[];
-    for (int x = 0; x < instance.n_nodes; x++) {
-      final ptr = instance.nodes[x];
-      final tensor = GgmlTensor();
-      tensor.free();
-      tensor.ptr = ptr;
-      ret.add(tensor);
-    }
-    return ret;
-  }
-
   @override
   toString() => 'Nodes = ${instance.n_nodes}';
 }

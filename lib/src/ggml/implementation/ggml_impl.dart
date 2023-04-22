@@ -164,7 +164,7 @@ class GgmlImpl {
   }
 
   late final _ggml_nbytesPtr =
-      _lookup<ffi.NativeFunction<ffi.Int Function(ffi.Pointer<ggml_tensor>)>>(
+      _lookup<ffi.NativeFunction<ffi.Size Function(ffi.Pointer<ggml_tensor>)>>(
           'ggml_nbytes');
   late final _ggml_nbytes =
       _ggml_nbytesPtr.asFunction<int Function(ffi.Pointer<ggml_tensor>)>();
@@ -192,7 +192,7 @@ class GgmlImpl {
   }
 
   late final _ggml_type_sizePtr =
-      _lookup<ffi.NativeFunction<ffi.Int Function(ffi.Int32)>>(
+      _lookup<ffi.NativeFunction<ffi.Size Function(ffi.Int32)>>(
           'ggml_type_size');
   late final _ggml_type_size =
       _ggml_type_sizePtr.asFunction<int Function(int)>();
@@ -220,7 +220,7 @@ class GgmlImpl {
   }
 
   late final _ggml_element_sizePtr =
-      _lookup<ffi.NativeFunction<ffi.Int Function(ffi.Pointer<ggml_tensor>)>>(
+      _lookup<ffi.NativeFunction<ffi.Size Function(ffi.Pointer<ggml_tensor>)>>(
           'ggml_element_size');
   late final _ggml_element_size = _ggml_element_sizePtr
       .asFunction<int Function(ffi.Pointer<ggml_tensor>)>();
@@ -262,7 +262,7 @@ class GgmlImpl {
   }
 
   late final _ggml_used_memPtr =
-      _lookup<ffi.NativeFunction<ffi.Int Function(ffi.Pointer<ggml_context>)>>(
+      _lookup<ffi.NativeFunction<ffi.Size Function(ffi.Pointer<ggml_context>)>>(
           'ggml_used_mem');
   late final _ggml_used_mem =
       _ggml_used_memPtr.asFunction<int Function(ffi.Pointer<ggml_context>)>();
@@ -279,41 +279,10 @@ class GgmlImpl {
 
   late final _ggml_set_scratchPtr = _lookup<
       ffi.NativeFunction<
-          ffi.Int Function(
+          ffi.Size Function(
               ffi.Pointer<ggml_context>, ggml_scratch)>>('ggml_set_scratch');
   late final _ggml_set_scratch = _ggml_set_scratchPtr
       .asFunction<int Function(ffi.Pointer<ggml_context>, ggml_scratch)>();
-
-  int ggml_mlock_supported() {
-    return _ggml_mlock_supported();
-  }
-
-  late final _ggml_mlock_supportedPtr =
-      _lookup<ffi.NativeFunction<ffi.Int Function()>>('ggml_mlock_supported');
-  late final _ggml_mlock_supported =
-      _ggml_mlock_supportedPtr.asFunction<int Function()>();
-
-  int ggml_mlock(
-    ffi.Pointer<ggml_context> ctx,
-    ffi.Pointer<ffi.Void> opt_extra_addr,
-    int opt_extra_len,
-    ffi.Pointer<ffi.Pointer<ffi.Char>> err_p,
-  ) {
-    return _ggml_mlock(
-      ctx,
-      opt_extra_addr,
-      opt_extra_len,
-      err_p,
-    );
-  }
-
-  late final _ggml_mlockPtr = _lookup<
-      ffi.NativeFunction<
-          ffi.Int Function(ffi.Pointer<ggml_context>, ffi.Pointer<ffi.Void>,
-              ffi.Int, ffi.Pointer<ffi.Pointer<ffi.Char>>)>>('ggml_mlock');
-  late final _ggml_mlock = _ggml_mlockPtr.asFunction<
-      int Function(ffi.Pointer<ggml_context>, ffi.Pointer<ffi.Void>, int,
-          ffi.Pointer<ffi.Pointer<ffi.Char>>)>();
 
   ffi.Pointer<ggml_tensor> ggml_new_tensor(
     ffi.Pointer<ggml_context> ctx,
@@ -1161,7 +1130,7 @@ class GgmlImpl {
   late final _ggml_view_1dPtr = _lookup<
       ffi.NativeFunction<
           ffi.Pointer<ggml_tensor> Function(ffi.Pointer<ggml_context>,
-              ffi.Pointer<ggml_tensor>, ffi.Int, ffi.Int)>>('ggml_view_1d');
+              ffi.Pointer<ggml_tensor>, ffi.Int, ffi.Size)>>('ggml_view_1d');
   late final _ggml_view_1d = _ggml_view_1dPtr.asFunction<
       ffi.Pointer<ggml_tensor> Function(
           ffi.Pointer<ggml_context>, ffi.Pointer<ggml_tensor>, int, int)>();
@@ -1191,8 +1160,8 @@ class GgmlImpl {
               ffi.Pointer<ggml_tensor>,
               ffi.Int,
               ffi.Int,
-              ffi.Int,
-              ffi.Int)>>('ggml_view_2d');
+              ffi.Size,
+              ffi.Size)>>('ggml_view_2d');
   late final _ggml_view_2d = _ggml_view_2dPtr.asFunction<
       ffi.Pointer<ggml_tensor> Function(ffi.Pointer<ggml_context>,
           ffi.Pointer<ggml_tensor>, int, int, int, int)>();
@@ -1383,7 +1352,7 @@ class GgmlImpl {
     ffi.Pointer<ggml_tensor> q,
     ffi.Pointer<ggml_tensor> k,
     ffi.Pointer<ggml_tensor> v,
-    int masked,
+    bool masked,
   ) {
     return _ggml_flash_attn(
       ctx,
@@ -1401,14 +1370,14 @@ class GgmlImpl {
               ffi.Pointer<ggml_tensor>,
               ffi.Pointer<ggml_tensor>,
               ffi.Pointer<ggml_tensor>,
-              ffi.Int)>>('ggml_flash_attn');
+              ffi.Bool)>>('ggml_flash_attn');
   late final _ggml_flash_attn = _ggml_flash_attnPtr.asFunction<
       ffi.Pointer<ggml_tensor> Function(
           ffi.Pointer<ggml_context>,
           ffi.Pointer<ggml_tensor>,
           ffi.Pointer<ggml_tensor>,
           ffi.Pointer<ggml_tensor>,
-          int)>();
+          bool)>();
 
   ffi.Pointer<ggml_tensor> ggml_flash_ff(
     ffi.Pointer<ggml_context> ctx,
@@ -1498,7 +1467,7 @@ class GgmlImpl {
   ggml_cgraph ggml_build_backward(
     ffi.Pointer<ggml_context> ctx,
     ffi.Pointer<ggml_cgraph> gf,
-    int keep,
+    bool keep,
   ) {
     return _ggml_build_backward(
       ctx,
@@ -1510,10 +1479,10 @@ class GgmlImpl {
   late final _ggml_build_backwardPtr = _lookup<
       ffi.NativeFunction<
           ggml_cgraph Function(ffi.Pointer<ggml_context>,
-              ffi.Pointer<ggml_cgraph>, ffi.Int)>>('ggml_build_backward');
+              ffi.Pointer<ggml_cgraph>, ffi.Bool)>>('ggml_build_backward');
   late final _ggml_build_backward = _ggml_build_backwardPtr.asFunction<
       ggml_cgraph Function(
-          ffi.Pointer<ggml_context>, ffi.Pointer<ggml_cgraph>, int)>();
+          ffi.Pointer<ggml_context>, ffi.Pointer<ggml_cgraph>, bool)>();
 
   void ggml_graph_compute(
     ffi.Pointer<ggml_context> ctx,
@@ -1613,54 +1582,6 @@ class GgmlImpl {
   late final _ggml_opt = _ggml_optPtr.asFunction<
       int Function(ffi.Pointer<ggml_context>, ggml_opt_params,
           ffi.Pointer<ggml_tensor>)>();
-
-  int ggml_quantize_q4_0(
-    ffi.Pointer<ffi.Float> src,
-    ffi.Pointer<ffi.Void> dst,
-    int n,
-    int k,
-    ffi.Pointer<ffi.Int64> hist,
-  ) {
-    return _ggml_quantize_q4_0(
-      src,
-      dst,
-      n,
-      k,
-      hist,
-    );
-  }
-
-  late final _ggml_quantize_q4_0Ptr = _lookup<
-      ffi.NativeFunction<
-          ffi.Int Function(ffi.Pointer<ffi.Float>, ffi.Pointer<ffi.Void>,
-              ffi.Int, ffi.Int, ffi.Pointer<ffi.Int64>)>>('ggml_quantize_q4_0');
-  late final _ggml_quantize_q4_0 = _ggml_quantize_q4_0Ptr.asFunction<
-      int Function(ffi.Pointer<ffi.Float>, ffi.Pointer<ffi.Void>, int, int,
-          ffi.Pointer<ffi.Int64>)>();
-
-  int ggml_quantize_q4_1(
-    ffi.Pointer<ffi.Float> src,
-    ffi.Pointer<ffi.Void> dst,
-    int n,
-    int k,
-    ffi.Pointer<ffi.Int64> hist,
-  ) {
-    return _ggml_quantize_q4_1(
-      src,
-      dst,
-      n,
-      k,
-      hist,
-    );
-  }
-
-  late final _ggml_quantize_q4_1Ptr = _lookup<
-      ffi.NativeFunction<
-          ffi.Int Function(ffi.Pointer<ffi.Float>, ffi.Pointer<ffi.Void>,
-              ffi.Int, ffi.Int, ffi.Pointer<ffi.Int64>)>>('ggml_quantize_q4_1');
-  late final _ggml_quantize_q4_1 = _ggml_quantize_q4_1Ptr.asFunction<
-      int Function(ffi.Pointer<ffi.Float>, ffi.Pointer<ffi.Void>, int, int,
-          ffi.Pointer<ffi.Int64>)>();
 
   int ggml_cpu_has_avx() {
     return _ggml_cpu_has_avx();
@@ -1776,6 +1697,8 @@ class __fsid_t extends ffi.Struct {
   external ffi.Array<ffi.Int> __val;
 }
 
+class max_align_t extends ffi.Opaque {}
+
 typedef ggml_fp16_t = ffi.Uint16;
 
 class ggml_object extends ffi.Opaque {}
@@ -1843,13 +1766,13 @@ class ggml_tensor extends ffi.Struct {
   external ffi.Array<ffi.Int> ne;
 
   @ffi.Array.multi([4])
-  external ffi.Array<ffi.Int> nb;
+  external ffi.Array<ffi.Size> nb;
 
   @ffi.Int32()
   external int op;
 
-  @ffi.Int()
-  external int is_param;
+  @ffi.Bool()
+  external bool is_param;
 
   external ffi.Pointer<ggml_tensor> grad;
 
@@ -1888,7 +1811,7 @@ class ggml_cgraph extends ffi.Struct {
   @ffi.Int()
   external int n_threads;
 
-  @ffi.Int()
+  @ffi.Size()
   external int work_size;
 
   external ffi.Pointer<ggml_tensor> work;
@@ -1913,23 +1836,20 @@ class ggml_cgraph extends ffi.Struct {
 }
 
 class ggml_scratch extends ffi.Struct {
-  @ffi.Int()
+  @ffi.Size()
   external int offs;
 
-  @ffi.Int()
+  @ffi.Size()
   external int size;
 
   external ffi.Pointer<ffi.Void> data;
 }
 
 class ggml_init_params extends ffi.Struct {
-  @ffi.Int()
+  @ffi.Size()
   external int mem_size;
 
   external ffi.Pointer<ffi.Void> mem_buffer;
-
-  @ffi.Int()
-  external int no_alloc;
 }
 
 abstract class ggml_opt_type {
@@ -1973,11 +1893,11 @@ class ggml_opt_params extends ffi.Struct {
   @ffi.Int()
   external int max_no_improvement;
 
-  @ffi.Int()
-  external int print_forward_graph;
+  @ffi.Bool()
+  external bool print_forward_graph;
 
-  @ffi.Int()
-  external int print_backward_graph;
+  @ffi.Bool()
+  external bool print_backward_graph;
 
   external UnnamedStruct1 adam;
 
@@ -2102,7 +2022,7 @@ const int __GNU_LIBRARY__ = 6;
 
 const int __GLIBC__ = 2;
 
-const int __GLIBC_MINOR__ = 37;
+const int __GLIBC_MINOR__ = 35;
 
 const int _SYS_CDEFS_H = 1;
 
@@ -2259,6 +2179,14 @@ const int WCHAR_MAX = 2147483647;
 const int WINT_MIN = 0;
 
 const int WINT_MAX = 4294967295;
+
+const int NULL = 0;
+
+const int true1 = 1;
+
+const int false1 = 0;
+
+const int __bool_true_false_are_defined = 1;
 
 const int GGML_MAX_DIMS = 4;
 
