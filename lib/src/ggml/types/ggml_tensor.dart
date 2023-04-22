@@ -34,5 +34,6 @@ class GgmlTensor {
 
   @override
   toString() =>
-      'Type = ${GgmlType.type(instance.type)} nDims = ${instance.n_dims}';
+      'Type = ${GgmlType.type(instance.type)} nDims = ${instance.n_dims} '
+      'nElements = ${instance.ne[0] * instance.ne[1] * instance.ne[2] * instance.ne[3]}';
 }

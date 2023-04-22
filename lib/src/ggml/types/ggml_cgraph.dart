@@ -18,4 +18,7 @@ class GgmlCGraph {
   static int get size => sizeOf<ggmlimpl.ggml_cgraph>();
 
   void free() => ffi.calloc.free(ptr);
+
+  @override
+  toString() => 'Nodes = ${instance.n_nodes}';
 }
