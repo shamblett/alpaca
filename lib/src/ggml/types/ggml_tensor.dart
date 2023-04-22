@@ -30,6 +30,18 @@ class GgmlTensor {
     return dPtr.asTypedList(32);
   }
 
+  GgmlTensor getSrc0() {
+    final tensor = GgmlTensor();
+    tensor.ptr = tensor.instance.src0;
+    return tensor;
+  }
+
+  GgmlTensor getSrc1() {
+    final tensor = GgmlTensor();
+    tensor.ptr = tensor.instance.src1;
+    return tensor;
+  }
+
   void free() => ffi.calloc.free(ptr);
 
   @override
