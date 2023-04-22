@@ -9,19 +9,12 @@ part of ggml;
 
 class GgmlInitParams {
   // Finalized to free the resource should the user not do so
-  Pointer<ggmlimpl.ggml_init_params> _ptr =
+  Pointer<ggmlimpl.ggml_init_params> ptr =
       ffi.calloc<ggmlimpl.ggml_init_params>();
 
-  set ptr(Pointer<ggmlimpl.ggml_init_params> ptr) {
-    free();
-    _ptr = ptr;
-  }
-
-  Pointer<ggmlimpl.ggml_init_params> get ptr => _ptr;
-
-  ggmlimpl.ggml_init_params get instance => _ptr.ref;
+  ggmlimpl.ggml_init_params get instance => ptr.ref;
 
   static int get size => sizeOf<ggmlimpl.ggml_init_params>();
 
-  void free() => ffi.calloc.free(_ptr);
+  void free() => ffi.calloc.free(ptr);
 }

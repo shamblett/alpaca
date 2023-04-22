@@ -9,20 +9,13 @@ part of ggml;
 
 class GgmlCGraph {
   // Finalized to free the resource should the user not do so
-  Pointer<ggmlimpl.ggml_cgraph> _ptr = ffi.calloc<ggmlimpl.ggml_cgraph>();
+  Pointer<ggmlimpl.ggml_cgraph> ptr = ffi.calloc<ggmlimpl.ggml_cgraph>();
 
-  set ptr(Pointer<ggmlimpl.ggml_cgraph> ptr) {
-    free();
-    _ptr = ptr;
-  }
+  ggmlimpl.ggml_cgraph get instance => ptr.ref;
 
-  Pointer<ggmlimpl.ggml_cgraph> get ptr => _ptr;
-
-  ggmlimpl.ggml_cgraph get instance => _ptr.ref;
-
-  set instance(ggmlimpl.ggml_cgraph cGraph) => _ptr.ref = cGraph;
+  set instance(ggmlimpl.ggml_cgraph cGraph) => ptr.ref = cGraph;
 
   static int get size => sizeOf<ggmlimpl.ggml_cgraph>();
 
-  void free() => ffi.calloc.free(_ptr);
+  void free() => ffi.calloc.free(ptr);
 }

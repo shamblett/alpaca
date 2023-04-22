@@ -9,15 +9,9 @@ part of ggml;
 
 class GgmlTensor {
   // Finalized to free the resource should the user not do so
-  Pointer<ggmlimpl.ggml_tensor> _ptr = ffi.calloc<ggmlimpl.ggml_tensor>();
+  Pointer<ggmlimpl.ggml_tensor> ptr = ffi.calloc<ggmlimpl.ggml_tensor>();
 
-  set ptr(Pointer<ggmlimpl.ggml_tensor> ptr) {
-    _ptr = ptr;
-  }
-
-  Pointer<ggmlimpl.ggml_tensor> get ptr => _ptr;
-
-  ggmlimpl.ggml_tensor get instance => _ptr.ref;
+  ggmlimpl.ggml_tensor get instance => ptr.ref;
 
   static int get size => sizeOf<ggmlimpl.ggml_tensor>();
 
@@ -37,5 +31,5 @@ class GgmlTensor {
     _dataBlockCount++;
   }
 
-  void free() => ffi.calloc.free(_ptr);
+  void free() => ffi.calloc.free(ptr);
 }

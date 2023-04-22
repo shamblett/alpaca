@@ -9,21 +9,14 @@ part of ggml;
 
 class GgmlOptParams {
   // Finalized to free the resource should the user not do so
-  Pointer<ggmlimpl.ggml_opt_params> _ptr =
+  Pointer<ggmlimpl.ggml_opt_params> ptr =
       ffi.calloc<ggmlimpl.ggml_opt_params>();
 
-  set ptr(Pointer<ggmlimpl.ggml_opt_params> ptr) {
-    free();
-    _ptr = ptr;
-  }
+  set instance(ggmlimpl.ggml_opt_params params) => ptr.ref = params;
 
-  Pointer<ggmlimpl.ggml_opt_params> get ptr => _ptr;
-
-  set instance(ggmlimpl.ggml_opt_params params) => _ptr.ref = params;
-
-  ggmlimpl.ggml_opt_params get instance => _ptr.ref;
+  ggmlimpl.ggml_opt_params get instance => ptr.ref;
 
   static int get size => sizeOf<ggmlimpl.ggml_opt_params>();
 
-  void free() => ffi.calloc.free(_ptr);
+  void free() => ffi.calloc.free(ptr);
 }

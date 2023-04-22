@@ -9,18 +9,11 @@ part of ggml;
 
 class GgmlScratch {
   // Finalized to free the resource should the user not do so
-  Pointer<ggmlimpl.ggml_scratch> _ptr = ffi.calloc<ggmlimpl.ggml_scratch>();
+  Pointer<ggmlimpl.ggml_scratch> ptr = ffi.calloc<ggmlimpl.ggml_scratch>();
 
-  set ptr(Pointer<ggmlimpl.ggml_scratch> ptr) {
-    free();
-    _ptr = ptr;
-  }
-
-  Pointer<ggmlimpl.ggml_scratch> get ptr => _ptr;
-
-  ggmlimpl.ggml_scratch get instance => _ptr.ref;
+  ggmlimpl.ggml_scratch get instance => ptr.ref;
 
   static int get size => sizeOf<ggmlimpl.ggml_scratch>();
 
-  void free() => ffi.calloc.free(_ptr);
+  void free() => ffi.calloc.free(ptr);
 }
