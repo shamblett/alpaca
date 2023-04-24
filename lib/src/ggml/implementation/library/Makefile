@@ -183,19 +183,22 @@ default: chat quantize
 #
 
 ggml.o: ggml.c ggml.h
-	$(CC)  $(CFLAGS) -c ggml.c -o ggml.o
+	$(CC)  $(CFLAGS) -c ggml.c  -o ggml.o
 
 ggml.so: ggml.o
-	gcc  $(CFLAGS) ggml.c -o libggml.so  -shared
+	gcc  $(CFLAGS)  -o libggml.so -shared -lc ggml.o
 
 utils.o: utils.cpp utils.h
 	$(CXX) $(CXXFLAGS) -c utils.cpp -o utils.o
 
 clean:
-	rm -f *.o *.so main quantize chat
+	rm -f *.o *.so main quantize chat sochat
 
-chat: chat.cpp utils.o ggml.so
-	$(CXX) $(CXXFLAGS) chat.cpp utils.o libggml.so -o chat $(LDFLAGS)
+chat: chat.cpp utils.o ggml.o
+	$(CXX) $(CXXFLAGS) chat.cpp utils.o ggml.o -o chat $(LDFLAGS)
+
+sochat: chat.cpp utils.o ggml.so
+	$(CXX) $(CXXFLAGS) chat.cpp utils.o libggml.so -o sochat $(LDFLAGS)
 
 chat_mac: chat.cpp ggml.c utils.cpp
 	$(CC)  $(CFLAGS)   -c ggml.c -o ggml_x86.o -target x86_64-apple-macos
