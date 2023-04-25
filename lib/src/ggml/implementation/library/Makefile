@@ -30,8 +30,9 @@ endif
 # Compile flags
 #
 
-CFLAGS   = -I. -O3 -DNDEBUG -std=c11 -fPIC
-CXXFLAGS = -I. -I./examples -g -std=c++11 -fPIC
+CFLAGS   = -I.              -O3 -DNDEBUG -std=c11   -fPIC
+#CFLAGS   = -I.               -g -std=c11   -fPIC
+CXXFLAGS = -I. -I./examples -O3 -DNDEBUG -std=c++11 -fPIC
 LDFLAGS  =
 
 # OS specific
@@ -183,22 +184,17 @@ default: chat quantize
 #
 
 ggml.o: ggml.c ggml.h
-	$(CC)  $(CFLAGS) -c ggml.c  -o ggml.o
-
-ggml.so: ggml.o
-	gcc  $(CFLAGS)  -o libggml.so -shared -lc ggml.o
+	$(CC)  $(CFLAGS)   -c ggml.c -o ggml.o
+	$(CC)  $(CCFLAGS)  -shared -o libggml.so ggml.o
 
 utils.o: utils.cpp utils.h
 	$(CXX) $(CXXFLAGS) -c utils.cpp -o utils.o
 
 clean:
-	rm -f *.o *.so main quantize chat sochat
+	rm -f *.o *.so main quantize
 
-chat: chat.cpp utils.o ggml.o
-	$(CXX) $(CXXFLAGS) chat.cpp utils.o ggml.o -o chat $(LDFLAGS)
-
-sochat: chat.cpp utils.o ggml.so
-	$(CXX) $(CXXFLAGS) chat.cpp utils.o libggml.so -o sochat $(LDFLAGS)
+chat: chat.cpp ggml.o utils.o
+	$(CXX) $(CXXFLAGS) chat.cpp ggml.o utils.o -o chat $(LDFLAGS)
 
 chat_mac: chat.cpp ggml.c utils.cpp
 	$(CC)  $(CFLAGS)   -c ggml.c -o ggml_x86.o -target x86_64-apple-macos
@@ -209,7 +205,7 @@ chat_mac: chat.cpp ggml.c utils.cpp
 	lipo -create -output chat_mac chat_x86 chat_arm
 
 quantize: quantize.cpp ggml.o utils.o
-	$(CXX) $(CXXFLAGS) -g quantize.cpp ggml.o utils.o -o quantize $(LDFLAGS)
+	$(CXX) $(CXXFLAGS) quantize.cpp ggml.o utils.o -o quantize $(LDFLAGS)
 
 #
 # Tests
