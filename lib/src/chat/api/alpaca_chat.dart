@@ -143,9 +143,10 @@ class AlpacaChat {
       ctxSizeInt = ctxSize.toInt();
     }
 
+    final params = GgmlInitParams();
+
     // Create the ggml context
     {
-      final params = GgmlInitParams();
       params.instance.mem_size = ctxSizeInt;
       params.instance.mem_buffer = nullptr;
       model.ctx = nullptr;

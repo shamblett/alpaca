@@ -1844,7 +1844,9 @@ class ggml_scratch extends ffi.Struct {
 }
 
 class ggml_init_params extends ffi.Struct {
-  @ffi.Int()
+  // SJH - hand edit, ffigen is incorrectly setting this size_t
+  // member to ffi.Int(). This is too small for the memory size.
+  @ffi.Uint64()
   external int mem_size;
 
   external ffi.Pointer<ffi.Void> mem_buffer;
