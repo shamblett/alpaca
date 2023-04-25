@@ -24,3 +24,4 @@ part 'types/ggml_cgraph.dart';
 part 'types/ggml_opt_params.dart';
 part 'types/ggml_opt_result.dart';
 part 'types/ggml_opt_type.dart';
+part 'types/ggml_op.dart';

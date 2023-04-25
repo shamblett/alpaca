@@ -15,7 +15,8 @@ class GgmlTensor {
 
   static int get size => sizeOf<ggmlimpl.ggml_tensor>();
 
-  void setData(Uint8List data) {
+  // SJH TODO fix this for floats
+  void setDataRaw(Uint8List data) {
     final Pointer<Uint8> tensorData = ffi.calloc
         .allocate<Uint8>(data.length); // Allocate a pointer large enough.
     final pointerList = tensorData.asTypedList(data
@@ -27,7 +28,10 @@ class GgmlTensor {
   /// Get the first 2 floats from the tensor data
   Float32List getData() {
     final dPtr = instance.data.cast<Float>();
-    return dPtr.asTypedList(32);
+    if (dPtr != nullptr) {
+      return dPtr.asTypedList(32);
+    }
+    return Float32List(0);
   }
 
   GgmlTensor getSrc0() {
@@ -45,7 +49,26 @@ class GgmlTensor {
   void free() => ffi.calloc.free(ptr);
 
   @override
-  toString() =>
-      'Type = ${GgmlType.type(instance.type)} nDims = ${instance.n_dims} '
-      'nElements = ${instance.ne[0] * instance.ne[1] * instance.ne[2] * instance.ne[3]}';
+  toString() {
+    final sb = StringBuffer();
+    sb.writeln('Type = ${GgmlType.type(instance.type)}');
+    sb.writeln('Dimensions = ${instance.n_dims}');
+    sb.writeln('Op = ${GgmlOp.op(instance.op)}');
+    var tmp = instance.src0 == nullptr ? 'Null' : 'Valid';
+    sb.writeln('Src0 => $tmp');
+    tmp = instance.src1 == nullptr ? 'Null' : 'Valid';
+    sb.writeln('Src1 => $tmp');
+    sb.writeln('');
+    tmp = instance.data == nullptr ? 'Null' : 'Valid';
+    sb.write('Data => $tmp');
+    if (instance.data != nullptr) {
+      final dPtr = instance.data.cast<Float>();
+      tmp =
+          ' (${dPtr[0].toInt()}, ${dPtr[1].toInt()}, ${dPtr[2].toInt()}, ${dPtr[3].toInt()}...)';
+      sb.writeln(tmp);
+    } else {
+      sb.writeln('');
+    }
+    return sb.toString();
+  }
 }
