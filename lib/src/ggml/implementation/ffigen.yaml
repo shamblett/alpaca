@@ -12,6 +12,7 @@ headers:
   entry-points:
     - 'ggml/ggml.h'
 comments: true
+use-supported-typedefs: true
 preamble: |
   //  alpaca package
   //
