@@ -15,8 +15,49 @@ class GgmlTensor {
 
   static int get size => sizeOf<ggmlimpl.ggml_tensor>();
 
-  // SJH TODO fix this for floats
-  void setDataRaw(Uint8List data) {
+  /// Get the raw data pointer
+  Pointer<Void> getData() => Ggml().getData(this).cast<Void>();
+
+  /// Get data as a Float *
+  Pointer<Float> getDataF32() => Ggml().getDataF32(this);
+
+  /// Set the data pointer
+  void setData(Pointer<Void> data) => instance.data = data;
+
+  /// Set the data pointer from a float pointer
+  void setDataF32(Pointer<Float> data) => instance.data = data.cast<Void>();
+
+  /// Set the data from another tensor
+  void setDataTensor(GgmlTensor tensor) => setData(tensor.getData());
+
+  /// Set data from a list of ints as ints
+  void setDataInt(List<int> values) {
+    final valPtr = ffi.calloc.allocate<Int>(values.length); // All
+    for (int i = 0; i < values.length; i++) {
+      valPtr[i] = values[i];
+    }
+    instance.data = valPtr.cast<Void>();
+  }
+
+  /// Set data from a list of doubles as doubles
+  void setDataDouble(List<double> values) {
+    final valPtr = ffi.calloc.allocate<Float>(values.length); // All
+    final pointerList = valPtr.asTypedList(values.length); // Create a list
+    pointerList.setAll(0, values);
+    instance.data = valPtr.cast<Void>();
+  }
+
+  /// Set data from a list of floats
+  void setDataFloat(List<Float> values) {
+    var listDouble = values.map((i) => i as double).toList();
+    final valPtr = ffi.calloc.allocate<Float>(values.length); // All
+    final pointerList = valPtr.asTypedList(values.length); // Create a list
+    pointerList.setAll(0, listDouble);
+    instance.data = valPtr.cast<Void>();
+  }
+
+  /// Set data from a list of bytes
+  void setDataBytes(Uint8List data) {
     final Pointer<Uint8> tensorData = ffi.calloc
         .allocate<Uint8>(data.length); // Allocate a pointer large enough.
     final pointerList = tensorData.asTypedList(data
@@ -25,13 +66,34 @@ class GgmlTensor {
     instance.data = tensorData.cast<Void>();
   }
 
-  /// Get the first 2 floats from the tensor data
-  Float32List getData() {
-    final dPtr = instance.data.cast<Float>();
-    if (dPtr != nullptr) {
-      return dPtr.asTypedList(32);
+  /// Gets the top x data values as ints, returns an empty list if the data pointer is null.
+  /// Defaults to the top 5. The caller must ensure the list is large enough for the
+  /// value of the top parameter.
+  List<int> getTopXDataInt([top = 5]) {
+    final ret = <int>[];
+    if (instance.data != nullptr) {
+      for (int i = 0; i < top; i++) {
+        final dPtr = instance.data.cast<Int>();
+        ret.add(dPtr.elementAt(i).value);
+      }
+      for (int i = 0; i < top; i++) {}
     }
-    return Float32List(0);
+    return ret;
+  }
+
+  /// Gets the top x data values as doubles, returns an empty list if the data pointer is null.
+  /// Defaults to the top 5. The caller must ensure the list is large enough for the
+  /// value of the top parameter.
+  List<double> getTopXDataDouble([top = 5]) {
+    final ret = <double>[];
+    if (instance.data != nullptr) {
+      for (int i = 0; i < top; i++) {
+        final dPtr = instance.data.cast<Float>();
+        ret.add(dPtr.elementAt(i).value);
+      }
+      for (int i = 0; i < top; i++) {}
+    }
+    return ret;
   }
 
   GgmlTensor getSrc0() {

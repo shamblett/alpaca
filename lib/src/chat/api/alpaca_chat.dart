@@ -409,7 +409,7 @@ class AlpacaChat {
             final readLength = ggml.nBytes(tensor);
             if (partId == 0) {
               final bytes = bData.buffer.asUint8List(bPos, readLength);
-              tensor.setData(bytes);
+              tensor.setDataBytes(bytes);
             }
             bPos += readLength;
             totalSize += ggml.nBytes(tensor);
@@ -536,7 +536,8 @@ class AlpacaChat {
     gf.instance.n_threads = nThreads;
 
     final embd = ggml.newTensor1D(ctx0, GgmlType.i32, N);
-    embd.setData(Uint8List.fromList(embdInp));
+    embd.setDataInt(embdInp);
+    print(embd.getTopXDataInt(3));
 
     final inpL = ggml.getRows(ctx0, model.tokEmbeddings!, embd);
 
