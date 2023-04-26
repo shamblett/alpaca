@@ -32,11 +32,16 @@ class GgmlTensor {
 
   /// Set data from a list of ints as ints
   void setDataInt(List<int> values) {
-    final valPtr = ffi.calloc.allocate<Int>(values.length); // All
-    for (int i = 0; i < values.length; i++) {
-      valPtr[i] = values[i];
+    if ( instance.data == nullptr) {
+      instance.data = ffi.calloc.allocate<Int32>(values.length).cast<Void>();
     }
-    instance.data = valPtr.cast<Void>();
+    final dataList = Int32List.fromList(values);
+    final buf = dataList.buffer.asInt32List();
+    final byteData = ByteData.sublistView(buf);
+    for (int i = 0; i < buf.length; i++) {
+      final val = byteData.getInt32(i, Endian.big);
+      Ggml().setI321d(this, i, val);
+    }
   }
 
   /// Set data from a list of doubles as doubles
@@ -72,11 +77,10 @@ class GgmlTensor {
   List<int> getTopXDataInt([top = 5]) {
     final ret = <int>[];
     if (instance.data != nullptr) {
+      final dPtr = getDataF32();
       for (int i = 0; i < top; i++) {
-        final dPtr = instance.data.cast<Int>();
-        ret.add(dPtr.elementAt(i).value);
+        ret.add(dPtr.elementAt(i).value.toInt());
       }
-      for (int i = 0; i < top; i++) {}
     }
     return ret;
   }
