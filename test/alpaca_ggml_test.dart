@@ -68,18 +68,15 @@ int main() {
       final ggml = Ggml();
       final ctx = ggml.init(params);
       final tensor = ggml.newTensor1D(ctx, GgmlType.f32, 4);
-      ggml.setF321d(tensor, 0, 0.0);
-      ggml.setF321d(tensor, 0, 1.0);
-      ggml.setF321d(tensor, 0, 2.0);
-      ggml.setF321d(tensor, 0, 3.0);
-      ggml.setF321d(tensor, 0, 4.0);
+      for (int i = 0; i < 5; i++) {
+        ggml.setF321d(tensor, i, i.toDouble());
+      }
       print(tensor.dump());
       final dPtr = ggml.getDataF32(tensor);
       for (int i = 0; i < 5; i++) {
-        print('Value = ${dPtr[0]}');
+        print('Value = ${dPtr[i]}');
       }
     });
-
   });
 
   test('Various', () {
