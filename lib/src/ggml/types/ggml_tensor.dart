@@ -15,6 +15,8 @@ class GgmlTensor {
 
   static int get size => sizeOf<ggmlimpl.ggml_tensor>();
 
+  final _ggml = Ggml();
+
   /// Get the raw data pointer
   Pointer<Void> getData() => Ggml().getData(this).cast<Void>();
 
@@ -30,35 +32,18 @@ class GgmlTensor {
   /// Set the data from another tensor
   void setDataTensor(GgmlTensor tensor) => setData(tensor.getData());
 
-  /// Set data from a list of ints as ints
+  /// Set data from a list of ints as ints.
   void setDataInt(List<int> values) {
-    if (instance.data == nullptr) {
-      instance.data = ffi.calloc.allocate<Int32>(values.length).cast<Void>();
-    }
-    final dataList = Int32List.fromList(values);
-    final buf = dataList.buffer.asInt32List();
-    final byteData = ByteData.sublistView(buf);
-    for (int i = 0; i < buf.length; i++) {
-      final val = byteData.getInt32(i, Endian.big);
-      Ggml().setI321d(this, i, val);
+    for (int i = 0; i < values.length; i++) {
+      _ggml.setI321d(this, i, values[i]);
     }
   }
 
   /// Set data from a list of doubles as doubles
   void setDataDouble(List<double> values) {
-    final valPtr = ffi.calloc.allocate<Float>(values.length); // All
-    final pointerList = valPtr.asTypedList(values.length); // Create a list
-    pointerList.setAll(0, values);
-    instance.data = valPtr.cast<Void>();
-  }
-
-  /// Set data from a list of floats
-  void setDataFloat(List<Float> values) {
-    var listDouble = values.map((i) => i as double).toList();
-    final valPtr = ffi.calloc.allocate<Float>(values.length); // All
-    final pointerList = valPtr.asTypedList(values.length); // Create a list
-    pointerList.setAll(0, listDouble);
-    instance.data = valPtr.cast<Void>();
+    for (int i = 0; i < values.length; i++) {
+      _ggml.setF321d(this, i, values[i]);
+    }
   }
 
   /// Set data from a list of bytes
