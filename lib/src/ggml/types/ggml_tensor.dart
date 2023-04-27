@@ -8,7 +8,6 @@
 part of ggml;
 
 class GgmlTensor {
-  // Finalized to free the resource should the user not do so
   Pointer<ggmlimpl.ggml_tensor> ptr = ffi.calloc<ggmlimpl.ggml_tensor>();
 
   ggmlimpl.ggml_tensor get instance => ptr.ref;
@@ -18,19 +17,16 @@ class GgmlTensor {
   final _ggml = Ggml();
 
   /// Get the raw data pointer
-  Pointer<Void> getData() => Ggml().getData(this).cast<Void>();
+  Pointer<Void> getData() => _ggml.getData(this).cast<Void>();
 
-  /// Get data as a Float *
-  Pointer<Float> getDataF32() => Ggml().getDataF32(this);
+  /// Get the data pointer as a Float *
+  Pointer<Float> getDataF32() => _ggml.getDataF32(this);
 
   /// Set the data pointer
   void setData(Pointer<Void> data) => instance.data = data;
 
   /// Set the data pointer from a float pointer
   void setDataF32(Pointer<Float> data) => instance.data = data.cast<Void>();
-
-  /// Set the data from another tensor
-  void setDataTensor(GgmlTensor tensor) => setData(tensor.getData());
 
   /// Set data from a list of ints as ints.
   void setDataInt(List<int> values) {
@@ -46,14 +42,33 @@ class GgmlTensor {
     }
   }
 
-  /// Set data from a list of bytes
+  /// Set data from a list of bytes.
   void setDataBytes(Uint8List data) {
-    final Pointer<Uint8> tensorData = ffi.calloc
-        .allocate<Uint8>(data.length); // Allocate a pointer large enough.
-    final pointerList = tensorData.asTypedList(data
-        .length); // Create a list that uses our pointer and copy in the image data.
-    pointerList.setAll(0, data);
-    instance.data = tensorData.cast<Void>();
+    if (instance.data == nullptr) {
+      instance.data = ffi.calloc.allocate(data.length);
+    }
+    final dataPtr = getData().cast<Uint8>();
+    final dListPtr = dataPtr.asTypedList(data.length);
+    dListPtr.setAll(0, data);
+  }
+
+  /// Get data as a list of bytes.
+  Uint8List getDataBytes(int number) {
+    if (instance.data != nullptr) {
+      final dPtr = getData().cast<Uint8>();
+      final dPtrList = dPtr.asTypedList(number);
+      return Uint8List.fromList(dPtrList);
+    }
+    return Uint8List(0);
+  }
+
+  /// Memory copy as per posix from one data pointer to another.
+  /// If any pointers are null no copy is performed.
+  static void setDataMemcpy(Pointer<Void> dest, Pointer<Void> src, int length) {
+    if (dest == nullptr || src == nullptr) {
+      return;
+    }
+    posix.memcpy(dest, src, length);
   }
 
   /// Gets the data values as ints, returns an empty list if the data pointer is null

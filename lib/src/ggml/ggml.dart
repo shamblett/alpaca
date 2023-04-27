@@ -11,6 +11,7 @@ import 'dart:ffi';
 import 'dart:typed_data';
 
 import 'package:ffi/ffi.dart' as ffi;
+import 'package:posix/posix.dart' as posix;
 
 import 'implementation/ggml_impl.dart' as ggmlimpl;
 

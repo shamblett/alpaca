@@ -17,6 +17,7 @@ dependencies:
  ffi: '^2.0.1'
  fixnum: '^1.1.0'
  mt19937: '^0.1.0'
+ posix: '^4.1.0'
 
 dev_dependencies:
  test: '^1.21.5'

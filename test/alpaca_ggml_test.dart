@@ -8,6 +8,8 @@
 @TestOn('vm && linux')
 
 import 'dart:ffi';
+import 'dart:typed_data';
+
 import 'package:test/test.dart';
 import 'package:ffi/ffi.dart' as ffi;
 
@@ -95,6 +97,34 @@ int main() {
       expect(values, vals);
       ggml.free(ctx);
     });
+
+    test('1D Data type I32 - set data bytes', () {
+      final ggml = Ggml();
+      final ctx = ggml.init(params);
+      final tensor = ggml.newTensor1D(ctx, GgmlType.i32, 4);
+      final vals = [0, 1, 20, 30, 40];
+      tensor.setDataBytes(Uint8List.fromList(vals));
+      final values = tensor.getDataBytes(vals.length);
+      expect(values, vals);
+      ggml.free(ctx);
+    });
+
+    test('1D Data type I32 - set data memcpy', () {
+      final ggml = Ggml();
+      final ctx = ggml.init(params);
+      final tensor1 = ggml.newTensor1D(ctx, GgmlType.i32, 4);
+      final tensor2 = ggml.newTensor1D(ctx, GgmlType.i32, 4);
+      final vals = [0, 1, 20, 30, 40];
+      final uList = Uint8List.fromList(vals);
+      tensor1.setDataBytes(uList);
+      tensor2.setData(ffi.calloc.allocate(uList.length));
+      GgmlTensor.setDataMemcpy(
+          tensor2.getData(), tensor1.getData(), uList.length);
+      final values = tensor2.getDataBytes(vals.length);
+      expect(values, vals);
+      ggml.free(ctx);
+    });
+
   });
 
   test('Various', () {
