@@ -35,9 +35,9 @@ int main() {
       final ctx = ggml.init(params);
       final tensor = ggml.newTensor1D(ctx, GgmlType.i32, 4);
       ggml.setI321d(tensor, 0, 1);
-      print(tensor.dump());
       final dPtr = ggml.getData(tensor).cast<Int>();
-      print('Value = ${dPtr[0]}');
+      expect(dPtr[0], 1);
+      ggml.free(ctx);
     });
 
     test('1D Data type I32 - multi', () {
@@ -47,11 +47,9 @@ int main() {
       for (int i = 0; i < 5; i++) {
         ggml.setI321d(tensor, i, i);
       }
-      print(tensor.dump());
-      final dPtr = ggml.getData(tensor).cast<Int>();
-      for (int i = 0; i < 5; i++) {
-        print('Value = ${dPtr[i]}');
-      }
+      final values = tensor.getTopXDataInt();
+      expect(values, [0, 1, 2, 3, 4]);
+      ggml.free(ctx);
     });
 
     test('1D Data type F32', () {
@@ -59,9 +57,9 @@ int main() {
       final ctx = ggml.init(params);
       final tensor = ggml.newTensor1D(ctx, GgmlType.f32, 4);
       ggml.setF321d(tensor, 0, 1.0);
-      print(tensor.dump());
       final dPtr = ggml.getDataF32(tensor);
-      print('Value = ${dPtr[0]}');
+      expect(dPtr[0], 1.0);
+      ggml.free(ctx);
     });
 
     test('1D Data type F32 - multi', () {
@@ -71,11 +69,9 @@ int main() {
       for (int i = 0; i < 5; i++) {
         ggml.setF321d(tensor, i, i.toDouble());
       }
-      print(tensor.dump());
-      final dPtr = ggml.getDataF32(tensor);
-      for (int i = 0; i < 5; i++) {
-        print('Value = ${dPtr[i]}');
-      }
+      final values = tensor.getTopXDataDouble();
+      expect(values, [0.0, 1.0, 2.0, 3.0, 4.0]);
+      ggml.free(ctx);
     });
   });
 
