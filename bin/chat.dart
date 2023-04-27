@@ -202,7 +202,6 @@ int main(List<String> argv) {
         for (final id in embd) {
           stdout.write('${vocab.idToToken[id]}');
         }
-        stdout.flush();
       }
 
       // In interactive mode, and not currently processing queued inputs;

@@ -459,7 +459,6 @@ class AlpacaChat {
             stdout.write('.');
           }
         }
-        stdout.flush();
         print('');
         print('llamaModelLoad:: done');
 

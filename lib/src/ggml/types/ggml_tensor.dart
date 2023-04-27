@@ -28,14 +28,14 @@ class GgmlTensor {
   /// Set the data pointer from a float pointer
   void setDataF32(Pointer<Float> data) => instance.data = data.cast<Void>();
 
-  /// Set data from a list of ints as ints.
+  /// Set data from a list of ints.
   void setDataInt(List<int> values) {
     for (int i = 0; i < values.length; i++) {
       _ggml.setI321d(this, i, values[i]);
     }
   }
 
-  /// Set data from a list of doubles as doubles
+  /// Set data from a list of doubles as doubles.
   void setDataDouble(List<double> values) {
     for (int i = 0; i < values.length; i++) {
       _ggml.setF321d(this, i, values[i]);
