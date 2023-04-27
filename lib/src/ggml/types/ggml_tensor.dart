@@ -114,6 +114,27 @@ class GgmlTensor {
 
   void free() => ffi.calloc.free(ptr);
 
+  String dump() {
+    final sb = StringBuffer();
+    sb.writeln('Type = ${GgmlType.type(instance.type)}');
+    sb.writeln('Dimensions = ${instance.n_dims}');
+    sb.writeln('Nb => ${instance.nb[0]}, ${instance.nb[1]}, ${instance.nb[2]}, ${instance.nb[3]}');
+    sb.writeln('Ne => ${instance.ne[0]}, ${instance.ne[1]}, ${instance.ne[2]}, ${instance.ne[3]}');
+    sb.writeln('Op = ${GgmlOp.op(instance.op)}');
+    sb.writeln('Is param = ${instance.is_param == 0 ? 'False' : 'True'}');
+    var tmp = instance.src0 == nullptr ? 'Null' : 'Valid';
+    sb.writeln('Src0 => $tmp');
+    tmp = instance.src1 == nullptr ? 'Null' : 'Valid';
+    sb.writeln('Src1 => $tmp');
+    tmp = instance.grad == nullptr ? 'Null' : 'Valid';
+    sb.writeln('Grad => $tmp');
+    tmp = instance.data == nullptr ? 'Null' : 'Valid';
+    sb.write('Data => $tmp');
+    sb.writeln('');
+    sb.writeln('');
+    return sb.toString();
+  }
+
   @override
   toString() {
     final sb = StringBuffer();
@@ -124,7 +145,6 @@ class GgmlTensor {
     sb.writeln('Src0 => $tmp');
     tmp = instance.src1 == nullptr ? 'Null' : 'Valid';
     sb.writeln('Src1 => $tmp');
-    sb.writeln('');
     tmp = instance.data == nullptr ? 'Null' : 'Valid';
     sb.write('Data => $tmp');
     if (instance.data != nullptr) {
