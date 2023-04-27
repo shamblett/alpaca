@@ -47,7 +47,7 @@ int main() {
       for (int i = 0; i < 5; i++) {
         ggml.setI321d(tensor, i, i);
       }
-      final values = tensor.getTopXDataInt();
+      final values = tensor.getDataInt(5);
       expect(values, [0, 1, 2, 3, 4]);
       ggml.free(ctx);
     });
@@ -69,7 +69,7 @@ int main() {
       for (int i = 0; i < 5; i++) {
         ggml.setF321d(tensor, i, i.toDouble());
       }
-      final values = tensor.getTopXDataDouble();
+      final values = tensor.getDataDouble(5);
       expect(values, [0.0, 1.0, 2.0, 3.0, 4.0]);
       ggml.free(ctx);
     });
@@ -80,7 +80,7 @@ int main() {
       final tensor = ggml.newTensor1D(ctx, GgmlType.i32, 4);
       final vals = [0, 1, 2, 3, 4];
       tensor.setDataInt(vals);
-      final values = tensor.getTopXDataInt();
+      final values = tensor.getDataInt(vals.length);
       expect(values, vals);
       ggml.free(ctx);
     });
@@ -91,7 +91,7 @@ int main() {
       final vals = [0.0, 1.0, 2.0, 3.0, 4.0];
       final tensor = ggml.newTensor1D(ctx, GgmlType.f32, 4);
       tensor.setDataDouble(vals);
-      final values = tensor.getTopXDataDouble();
+      final values = tensor.getDataDouble(vals.length);
       expect(values, vals);
       ggml.free(ctx);
     });

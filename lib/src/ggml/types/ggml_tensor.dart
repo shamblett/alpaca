@@ -56,31 +56,31 @@ class GgmlTensor {
     instance.data = tensorData.cast<Void>();
   }
 
-  /// Gets the top x data values as ints, returns an empty list if the data pointer is null
+  /// Gets the data values as ints, returns an empty list if the data pointer is null
   /// or the conditions below are not met.
-  /// Defaults to the top 5. The caller must ensure the list is large enough for the
-  /// value of the top parameter and the type of the tensor is I32.
-  List<int> getTopXDataInt([top = 5]) {
+  /// The caller must ensure the list is large enough for the
+  /// value of the number parameter and the type of the tensor is I32.
+  List<int> getDataInt(int number) {
     final ret = <int>[];
     if (instance.data == nullptr &&
         GgmlType.type(instance.type) == GgmlType.i32) {
       final dPtr = getData().cast<Int>();
-      for (int i = 0; i < top; i++) {
+      for (int i = 0; i < number; i++) {
         ret.add(dPtr[i]);
       }
     }
     return ret;
   }
 
-  /// Gets the top x data values as doubles, returns an empty list if the data pointer is null
+  /// Gets the data values as doubles, returns an empty list if the data pointer is null
   /// or the conditions below are not met.
-  /// Defaults to the top 5. The caller must ensure the list is large enough for the
-  /// value of the top parameter and the type of the tensor is F32.
-  List<double> getTopXDataDouble([top = 5]) {
+  /// The caller must ensure the list is large enough for the
+  /// value of the number parameter and the type of the tensor is F32.
+  List<double> getDataDouble(int number) {
     final ret = <double>[];
     if (instance.data == nullptr &&
         GgmlType.type(instance.type) == GgmlType.f32) {
-      for (int i = 0; i < top; i++) {
+      for (int i = 0; i < number; i++) {
         final dPtr = getDataF32();
         ret.add(dPtr[i]);
       }
