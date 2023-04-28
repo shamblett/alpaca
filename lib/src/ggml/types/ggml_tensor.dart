@@ -91,7 +91,7 @@ class GgmlTensor {
   /// Gets the data values as doubles, returns an empty list if the data pointer is null
   /// or the conditions below are not met.
   /// The caller must ensure the list is large enough for the
-  /// value of the number parameter and the type of the tensor is F32.
+  /// value of the number parameter.
   List<double> getDataDouble(int number) {
     final ret = <double>[];
     if (instance.data != nullptr) {
