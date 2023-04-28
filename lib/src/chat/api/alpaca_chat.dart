@@ -536,8 +536,12 @@ class AlpacaChat {
 
     final embd = ggml.newTensor1D(ctx0, GgmlType.i32, N);
     embd.setDataInt(embdInp);
+    final dt3 = embd.dump();
 
+    final dt1 = model.tokEmbeddings!.dump();
     final inpL = ggml.getRows(ctx0, model.tokEmbeddings!, embd);
+    var tmp1 = inpL.getDataDouble(2);
+    final dt = inpL.dump();
 
     for (int il = 0; il < nLayer!; ++il) {
       final inpSA = inpL;
@@ -701,11 +705,15 @@ class AlpacaChat {
     }
 
     // Run the computation
+    var tmp = inpL.getDataDouble(5);
+    var hh = inpL.dump();
     ggml.buildForwardExpand(gf, inpL);
+    tmp = inpL.getDataDouble(5);
+    hh = inpL.dump();
     ggml.graphCompute(ctx0, gf);
 
     // Return result for just the last token;
-    final resPtr = ggml.getData(inpL).cast<Float>();
+    final resPtr = inpL.getDataF32();
     final data = resPtr.asTypedList(N * nVocab!);
     embdW.logits = data.sublist(nVocab * (N - 1));
 

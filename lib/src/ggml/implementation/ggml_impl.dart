@@ -164,7 +164,7 @@ class GgmlImpl {
   }
 
   late final _ggml_nbytesPtr =
-      _lookup<ffi.NativeFunction<ffi.Int Function(ffi.Pointer<ggml_tensor>)>>(
+      _lookup<ffi.NativeFunction<ffi.Uint64 Function(ffi.Pointer<ggml_tensor>)>>(
           'ggml_nbytes');
   late final _ggml_nbytes =
       _ggml_nbytesPtr.asFunction<int Function(ffi.Pointer<ggml_tensor>)>();
@@ -192,7 +192,7 @@ class GgmlImpl {
   }
 
   late final _ggml_type_sizePtr =
-      _lookup<ffi.NativeFunction<ffi.Int Function(ffi.Int32)>>(
+      _lookup<ffi.NativeFunction<ffi.Uint64 Function(ffi.Int32)>>(
           'ggml_type_size');
   late final _ggml_type_size =
       _ggml_type_sizePtr.asFunction<int Function(int)>();
@@ -220,7 +220,7 @@ class GgmlImpl {
   }
 
   late final _ggml_element_sizePtr =
-      _lookup<ffi.NativeFunction<ffi.Int Function(ffi.Pointer<ggml_tensor>)>>(
+      _lookup<ffi.NativeFunction<ffi.Uint64 Function(ffi.Pointer<ggml_tensor>)>>(
           'ggml_element_size');
   late final _ggml_element_size = _ggml_element_sizePtr
       .asFunction<int Function(ffi.Pointer<ggml_tensor>)>();
@@ -262,7 +262,7 @@ class GgmlImpl {
   }
 
   late final _ggml_used_memPtr =
-      _lookup<ffi.NativeFunction<ffi.Int Function(ffi.Pointer<ggml_context>)>>(
+      _lookup<ffi.NativeFunction<ffi.Uint64 Function(ffi.Pointer<ggml_context>)>>(
           'ggml_used_mem');
   late final _ggml_used_mem =
       _ggml_used_memPtr.asFunction<int Function(ffi.Pointer<ggml_context>)>();
@@ -279,7 +279,7 @@ class GgmlImpl {
 
   late final _ggml_set_scratchPtr = _lookup<
       ffi.NativeFunction<
-          ffi.Int Function(
+          ffi.Uint64 Function(
               ffi.Pointer<ggml_context>, ggml_scratch)>>('ggml_set_scratch');
   late final _ggml_set_scratch = _ggml_set_scratchPtr
       .asFunction<int Function(ffi.Pointer<ggml_context>, ggml_scratch)>();
@@ -1130,7 +1130,7 @@ class GgmlImpl {
   late final _ggml_view_1dPtr = _lookup<
       ffi.NativeFunction<
           ffi.Pointer<ggml_tensor> Function(ffi.Pointer<ggml_context>,
-              ffi.Pointer<ggml_tensor>, ffi.Int, ffi.Int)>>('ggml_view_1d');
+              ffi.Pointer<ggml_tensor>, ffi.Int, ffi.Uint64)>>('ggml_view_1d');
   late final _ggml_view_1d = _ggml_view_1dPtr.asFunction<
       ffi.Pointer<ggml_tensor> Function(
           ffi.Pointer<ggml_context>, ffi.Pointer<ggml_tensor>, int, int)>();
@@ -1160,8 +1160,8 @@ class GgmlImpl {
               ffi.Pointer<ggml_tensor>,
               ffi.Int,
               ffi.Int,
-              ffi.Int,
-              ffi.Int)>>('ggml_view_2d');
+              ffi.Uint64,
+              ffi.Uint64)>>('ggml_view_2d');
   late final _ggml_view_2d = _ggml_view_2dPtr.asFunction<
       ffi.Pointer<ggml_tensor> Function(ffi.Pointer<ggml_context>,
           ffi.Pointer<ggml_tensor>, int, int, int, int)>();
@@ -1763,8 +1763,9 @@ class ggml_tensor extends ffi.Struct {
   @ffi.Array.multi([4])
   external ffi.Array<ffi.Int> ne;
 
+  // SJH - hand edit, ffigen is incorrectly setting this size_t
   @ffi.Array.multi([4])
-  external ffi.Array<ffi.Int> nb;
+  external ffi.Array<ffi.Uint64> nb;
 
   @ffi.Int32()
   external int op;
@@ -1809,7 +1810,8 @@ class ggml_cgraph extends ffi.Struct {
   @ffi.Int()
   external int n_threads;
 
-  @ffi.Int()
+  // SJH - hand edit, ffigen is incorrectly setting this size_t
+  @ffi.Uint64()
   external int work_size;
 
   external ffi.Pointer<ggml_tensor> work;
@@ -1834,10 +1836,11 @@ class ggml_cgraph extends ffi.Struct {
 }
 
 class ggml_scratch extends ffi.Struct {
-  @ffi.Int()
+  // SJH - hand edit, ffigen is incorrectly setting this size_t
+  @ffi.Uint64()
   external int offs;
 
-  @ffi.Int()
+  @ffi.Uint64()
   external int size;
 
   external ffi.Pointer<ffi.Void> data;
