@@ -20,5 +20,5 @@ class GgmlCGraph {
   void free() => ffi.calloc.free(ptr);
 
   @override
-  toString() => 'Nodes = ${instance.n_nodes}';
+  toString() => 'Nodes = ${instance.n_nodes}, leafs = ${instance.n_leafs}';
 }
