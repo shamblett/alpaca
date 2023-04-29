@@ -96,7 +96,7 @@ class GgmlTensor {
     final ret = <double>[];
     if (instance.data != nullptr) {
       for (int i = 0; i < number; i++) {
-        final dPtr = getDataF32();
+        final dPtr = getData().cast<Float>();
         ret.add(dPtr[i]);
       }
     }

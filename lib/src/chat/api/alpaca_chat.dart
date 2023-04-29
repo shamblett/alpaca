@@ -536,26 +536,19 @@ class AlpacaChat {
 
     final embd = ggml.newTensor1D(ctx0, GgmlType.i32, N);
     embd.setDataInt(embdInp);
-    final dt3 = embd.dump();
 
-    final dt1 = model.tokEmbeddings!.dump();
-    final inpL = ggml.getRows(ctx0, model.tokEmbeddings!, embd);
-    var tmp1 = inpL.getDataDouble(2);
-    final dt = inpL.dump();
+    var inpL = ggml.getRows(ctx0, model.tokEmbeddings!, embd);
 
     for (int il = 0; il < nLayer!; ++il) {
       final inpSA = inpL;
-      final cur = GgmlTensor();
-
+      var cur = GgmlTensor();
       // Norm
       {
-        cur.ptr = ggml.rmsNorm(ctx0, inpL).ptr;
+        cur = ggml.rmsNorm(ctx0, inpL);
 
         // cur = attention_norm*cur
-        cur.ptr = ggml
-            .mul(ctx0, ggml.repeat(ctx0, model.layers[il].attentionNorm!, cur),
-                cur)
-            .ptr;
+        cur = ggml.mul(
+            ctx0, ggml.repeat(ctx0, model.layers[il].attentionNorm!, cur), cur);
       }
 
       // Self-attention
@@ -650,13 +643,11 @@ class AlpacaChat {
         // KQV_merged = KQV.permute(0, 2, 1, 3)
         final kqvMerged = ggml.permute(ctx0, kqv, 0, 2, 1, 3);
 
-        cur.ptr = ggml
-            .cpy(
-                ctx0, kqvMerged, ggml.newTensor2D(ctx0, GgmlType.f32, nEmbd, N))
-            .ptr;
+        cur = ggml.cpy(
+            ctx0, kqvMerged, ggml.newTensor2D(ctx0, GgmlType.f32, nEmbd, N));
 
         // Projection (no bias)
-        cur.ptr = ggml.mulMat(ctx0, model.layers[il].wo!, cur).ptr;
+        cur = ggml.mulMat(ctx0, model.layers[il].wo!, cur);
       }
 
       final inpFF = ggml.add(ctx0, cur, inpSA);
@@ -665,51 +656,46 @@ class AlpacaChat {
       {
         // Norm
         {
-          cur.ptr = ggml.rmsNorm(ctx0, inpFF).ptr;
+          cur = ggml.rmsNorm(ctx0, inpFF);
 
           // cur = ffn_norm*cur
-          cur.ptr = ggml
-              .mul(ctx0, ggml.repeat(ctx0, model.layers[il].ffnNorm!, cur), cur)
-              .ptr;
+          cur = ggml.mul(
+              ctx0, ggml.repeat(ctx0, model.layers[il].ffnNorm!, cur), cur);
         }
 
         final tmp = ggml.mulMat(ctx0, model.layers[il].w3!, cur);
 
-        cur.ptr = ggml.mulMat(ctx0, model.layers[il].w1!, cur).ptr;
+        cur = ggml.mulMat(ctx0, model.layers[il].w1!, cur);
 
         // SILU activation
-        cur.ptr = ggml.silu(ctx0, cur).ptr;
+        cur = ggml.silu(ctx0, cur);
 
-        cur.ptr = ggml.mul(ctx0, cur, tmp).ptr;
+        cur = ggml.mul(ctx0, cur, tmp);
 
-        cur.ptr = ggml.mulMat(ctx0, model.layers[il].w2!, cur).ptr;
+        cur = ggml.mulMat(ctx0, model.layers[il].w2!, cur);
       }
 
-      cur.ptr = ggml.add(ctx0, cur, inpFF).ptr;
+      cur = ggml.add(ctx0, cur, inpFF);
 
       // Input for next layer
-      inpL.ptr = cur.ptr;
+      inpL = cur;
     }
 
     // Norm
     {
-      inpL.ptr = ggml.rmsNorm(ctx0, inpL).ptr;
+      inpL = ggml.rmsNorm(ctx0, inpL);
 
       // inpL = norm*inpL
-      inpL.ptr = ggml.mul(ctx0, ggml.repeat(ctx0, model.norm!, inpL), inpL).ptr;
+      inpL = ggml.mul(ctx0, ggml.repeat(ctx0, model.norm!, inpL), inpL);
     }
 
     // lm_head
     {
-      inpL.ptr = ggml.mulMat(ctx0, model.output!, inpL).ptr;
+      inpL = ggml.mulMat(ctx0, model.output!, inpL);
     }
 
     // Run the computation
-    var tmp = inpL.getDataDouble(5);
-    var hh = inpL.dump();
     ggml.buildForwardExpand(gf, inpL);
-    tmp = inpL.getDataDouble(5);
-    hh = inpL.dump();
     ggml.graphCompute(ctx0, gf);
 
     // Return result for just the last token;
