@@ -16,6 +16,10 @@ class GgmlTensor {
 
   final _ggml = Ggml();
 
+  GgmlTensor();
+
+  GgmlTensor.fromPtr(this.ptr);
+
   /// Get the raw data pointer
   Pointer<Void> getData() => _ggml.getData(this).cast<Void>();
 

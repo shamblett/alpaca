@@ -673,6 +673,8 @@ class AlpacaChat {
         cur = ggml.mul(ctx0, cur, tmp);
 
         cur = ggml.mulMat(ctx0, model.layers[il].w2!, cur);
+
+        print('');
       }
 
       cur = ggml.add(ctx0, cur, inpFF);
@@ -696,7 +698,22 @@ class AlpacaChat {
 
     // Run the computation
     ggml.buildForwardExpand(gf, inpL);
+
+    // SJH TODO get the bad leaf nodes patch
+    final leaves = gf.instance.n_leafs;
+    for (int i = 0; i < leaves; i++) {
+      final tensor = GgmlTensor.fromPtr(gf.instance.leafs[i]);
+      if (ggml.nElements(tensor) == 1) {
+        ggml.setF321d(tensor, 0, 8.8e-02);
+      }
+    }
+
     ggml.graphCompute(ctx0, gf);
+
+    // if (nPast%100 == 0) {
+    //   final dgf = GgmlCGraph()..ptr = nullptr;
+    //   ggml.graphDumpDot(gf, dgf, "gpt-2.dot");
+    // }
 
     // Return result for just the last token;
     final resPtr = inpL.getDataF32();
