@@ -693,7 +693,7 @@ class AlpacaChat {
     // Return result for just the last token;
     final resPtr = inpL.getDataF32();
     data = resPtr.asTypedList(N * nVocab!);
-    embdW.logits = data.sublist(nVocab * (N - 1));
+    AlpacaLogit.logits = data.sublist(nVocab * (N - 1));
 
     if (memPerToken == 0) {
       memPerToken = ggml.usedMem(ctx0) ~/ N;

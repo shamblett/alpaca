@@ -73,5 +73,5 @@ class AlpacaLlamaModel {
 }
 
 class AlpacaLogit {
-  List<double> logits = <double>[];
+  static List<double> logits = <double>[];
 }

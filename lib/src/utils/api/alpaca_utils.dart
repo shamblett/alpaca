@@ -218,19 +218,19 @@ class AlpacaUtils {
         if (lastNTokens.contains(i)) {
           // if score < 0 then repetition penalty has to multiplied to reduce the previous token probability
 
-          if (logits.logits[i] < 0.0) {
+          if (AlpacaLogit.logits[i] < 0.0) {
             logitsId.add(AlpacaGptLogit()
               ..id = i
-              ..val = logits.logits[i] * scale * repeatPenalty);
+              ..val = AlpacaLogit.logits[i] * scale * repeatPenalty);
           } else {
             logitsId.add(AlpacaGptLogit()
               ..id = i
-              ..val = logits.logits[i] / scale * repeatPenalty);
+              ..val = AlpacaLogit.logits[i] / scale * repeatPenalty);
           }
         } else {
           logitsId.add(AlpacaGptLogit()
             ..id = i
-            ..val = logits.logits[i] / scale);
+            ..val = AlpacaLogit.logits[i] / scale);
         }
       }
     }
