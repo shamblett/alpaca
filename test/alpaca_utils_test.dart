@@ -21,10 +21,6 @@ int main() {
     AlpacaUtils.gptPrintUsage(1, ['chat'], AlpacaGptParams());
   });
 
-  test('Get Llama tokenize', () async {
-    final str = 'This is a string of words';
-  });
-
   test('Sample Top K 0', () {
     final values = <AlpacaGptLogit>[
       AlpacaGptLogit()

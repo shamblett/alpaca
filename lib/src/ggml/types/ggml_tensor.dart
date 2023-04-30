@@ -81,7 +81,7 @@ class GgmlTensor {
   /// value of the number parameter and the type of the tensor is I32.
   List<int> getDataInt(int number) {
     final ret = <int>[];
-    if (instance.data == nullptr &&
+    if (instance.data != nullptr &&
         GgmlType.type(instance.type) == GgmlType.i32) {
       final dPtr = getData().cast<Int>();
       for (int i = 0; i < number; i++) {

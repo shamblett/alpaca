@@ -103,7 +103,6 @@ class AlpacaChat {
         }
     }
 
-    const GgmlType wType2 = GgmlType.f32;
     int ctxSizeInt = 0;
     {
       final hParams = model.hParams;
@@ -162,7 +161,6 @@ class AlpacaChat {
       final hParams = model.hParams;
       final nEmbd = hParams!.nEmbd;
       final nLayer = hParams.nLayer;
-      final nCtx = hParams.nCtx;
       final nVocab = hParams.nVocab;
       final ctx = model.ctx;
 
@@ -518,8 +516,6 @@ class AlpacaChat {
     final nHead = hParams?.nHead;
     final nVocab = hParams?.nVocab;
     final nRot = nEmbd! / nHead!;
-
-    final dKey = nEmbd / nHead;
 
     // TODO: check if this size scales with n_ctx linearly and remove constant. somehow I feel it wasn't the case
     const bufSize = 512 * 1024 * 1024;

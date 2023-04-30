@@ -8,8 +8,6 @@
 import 'dart:io';
 import 'dart:math';
 
-import 'package:fixnum/fixnum.dart';
-import 'package:mt19937/mt19937.dart';
 import 'package:alpaca/alpaca.dart';
 import 'package:alpaca/src/ggml/ggml.dart';
 
@@ -35,8 +33,6 @@ int main(List<String> argv) {
 
   print('seed = ${params.seed}\n');
 
-  var rng = MersenneTwisterEngine.w32()..init(Int64(params.seed));
-
   int tLoadUs = 0;
 
   final vocab = AlpacaGptVocab();
@@ -46,14 +42,11 @@ int main(List<String> argv) {
   {
     final modelPath = '${Directory.current.path}/model/${params.model}';
     print('Model path is $modelPath');
-    final tStartUs = ggml.timeUs();
     if (!AlpacaChat.llamaModelLoad(
         modelPath, model, vocab, params.nCtx, ggml)) {
       print('AlpacaChat:: failed to load model from $modelPath\n');
       return 1;
     }
-
-    final tLoadUs = ggml.timeUs() - tStartUs;
   }
 
   // Print system information
@@ -103,7 +96,6 @@ int main(List<String> argv) {
   AlpacaChat.llamaEval(
       model, params.nThreads, 0, [0, 1, 2, 3], logits, memPerToken);
 
-  int lastNSize = params.repeatLastN;
   final lastNTokens = <Id>[];
 
   if (params.interactive) {
@@ -148,8 +140,6 @@ int main(List<String> argv) {
         final topP = params.topP;
         final temp = params.temp;
         final repeatPenalty = params.repeatPenalty;
-
-        final nVocab = model.hParams?.nVocab;
 
         Id id = 0;
 
