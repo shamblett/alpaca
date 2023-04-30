@@ -8,6 +8,11 @@
 part of alpaca;
 
 class AlpacaChat {
+
+  static final ggml = Ggml();
+  static  var gf = GgmlCGraph();
+  static late GgmlTensor embd;
+
   /// Load the model's weights from a file
   static bool llamaModelLoad(String fname, AlpacaLlamaModel? model,
       AlpacaGptVocab? vocab, int nCtx, Ggml ggml) {
@@ -501,12 +506,11 @@ class AlpacaChat {
     params.instance.mem_size = bufSize;
     params.instance.mem_buffer = bufPtr.cast<Void>();
 
-    final ggml = Ggml();
     final ctx0 = ggml.init(params);
-    final gf = GgmlCGraph();
+    gf = GgmlCGraph();
     gf.instance.n_threads = nThreads;
 
-    final embd = ggml.newTensor1D(ctx0, GgmlType.i32, N);
+    embd = ggml.newTensor1D(ctx0, GgmlType.i32, N);
     embd.setDataInt(embdInp);
 
     var inpL = ggml.getRows(ctx0, model.tokEmbeddings!, embd);
