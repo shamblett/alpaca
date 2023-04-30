@@ -613,8 +613,9 @@ class AlpacaChat {
         final kq = ggml.mulMat(ctx0, k, q);
 
         // KQ_scaled = KQ / sqrt(n_embd/n_head)
+        final yy = 1.0 / sqrt(nEmbd / nHead);
         final kqScaled =
-            ggml.scale(ctx0, kq, ggml.newF32(ctx0, 1.0 / sqrt(nEmbd) / nHead));
+            ggml.scale(ctx0, kq, ggml.newF32(ctx0, yy));
 
         // KQ_masked = mask_past(KQ_scaled)
         final kqMasked = ggml.diagMaskInf(ctx0, kqScaled, nPast);
@@ -698,16 +699,6 @@ class AlpacaChat {
 
     // Run the computation
     ggml.buildForwardExpand(gf, inpL);
-
-    // SJH TODO get the bad leaf nodes patch
-    final leaves = gf.instance.n_leafs;
-    for (int i = 0; i < leaves; i++) {
-      final tensor = GgmlTensor.fromPtr(gf.instance.leafs[i]);
-      if (ggml.nElements(tensor) == 1) {
-        ggml.setF321d(tensor, 0, 8.8e-02);
-      }
-    }
-
     ggml.graphCompute(ctx0, gf);
 
     // if (nPast%100 == 0) {
