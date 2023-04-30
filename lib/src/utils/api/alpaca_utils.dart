@@ -246,17 +246,11 @@ class AlpacaUtils {
     // Compute probabilities for the top K tokens
     final probs = <double>[];
     //
-    double sum = 0.0;
     for (final entry in logitsId) {
       final p = exp(entry.val - maxl);
       probs.add(p);
-      sum += p;
     }
     //
-    // Normalize the probabilities
-    for (var p in probs) {
-      p /= sum;
-    }
 
     //
     if (topP < 1.0) {

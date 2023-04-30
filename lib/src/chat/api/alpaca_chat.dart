@@ -421,33 +421,12 @@ class AlpacaChat {
             }
 
             if (splitType == 0) {
-              final np0 = ne[0];
 
               final rowSize = (tensor.instance.ne[0] /
                   ggml.blockSize(GgmlType.type(tensor.instance.type)) *
                   ggml.typeSize(GgmlType.type(tensor.instance.type)));
               assert(rowSize == tensor.instance.nb[1]);
 
-              for (int i1 = 0; i1 < ne[1]; ++i1) {
-                final offsetRow = i1 * rowSize;
-                final offset = offsetRow +
-                    ((partId * np0) /
-                            ggml.blockSize(
-                                GgmlType.type(tensor.instance.type))) *
-                        ggml.typeSize(GgmlType.type(tensor.instance.type));
-                //TODO needs implementing for other models - fin.read(reinterpret_cast<char *>(tensor->data) + offset, row_size/n_parts);
-              }
-            } else {
-              final np1 = ne[1];
-
-              final rowSize = (tensor.instance.ne[0] /
-                      ggml.blockSize(GgmlType.type(tensor.instance.type))) *
-                  ggml.typeSize(GgmlType.type(tensor.instance.type));
-
-              for (int i1 = 0; i1 < ne[1]; ++i1) {
-                final offsetRow = (i1 + partId * np1) * rowSize;
-                // TODO needs implementing for other models - fin.read(reinterpret_cast<char *>(tensor->data) + offset_row, row_size);
-              }
             }
 
             totalSize += ggml.nBytes(tensor) ~/ nParts;
