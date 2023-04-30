@@ -89,6 +89,7 @@ int main(List<String> argv) {
   }
   print(
       'AlpacaChat:: sampling parameters: temp = ${params.temp}, top_k = ${params.topK}, top_p = ${params.topP}, repeat_last_n = ${params.repeatLastN}, repeat_penalty = ${params.repeatPenalty}');
+  print('');
   final embd = <Id>[];
 
   // Determine the required inference memory per token:
@@ -101,6 +102,7 @@ int main(List<String> argv) {
   if (params.interactive) {
     print('AlpacaChat:: == Running in chat mode. ==');
     print('AlpacaChat::  - Press Ctrl+C to interject at any time.');
+    print('');
 
     // We may want to slide the input window along with the context, but for now we restrict to the context length
     int remainingTokens = model.hParams!.nCtx - embdInp.length;
@@ -114,7 +116,7 @@ int main(List<String> argv) {
 
     // set the color for the prompt which will be output initially
     if (params.useColor) {
-      print(ansiColorYellow);
+      stdout.write(ansiColorYellow);
     }
 
     while (remainingTokens > 0) {
@@ -197,18 +199,18 @@ int main(List<String> argv) {
         if (isInteracting) {
           inputConsumed = embdInp.length;
           embdInp.addAll(promptInp);
-          print('>');
+          stdout.write('>');
 
           // Currently being interactive
           bool anotherLine = true;
           while (anotherLine) {
             if (params.useColor) {
-              print(ansiBold);
-              print(ansiColorGreen);
+              stdout.write(ansiBold);
+              stdout.write(ansiColorGreen);
             }
             var line = stdin.readLineSync();
             if (params.useColor) {
-              print(ansiColorReset);
+              stdout.write(ansiColorReset);
             }
             line != null && line.endsWith('\\')
                 ? anotherLine = true
@@ -259,7 +261,7 @@ int main(List<String> argv) {
   ggml.free(model.ctx!);
 
   if (params.useColor) {
-    print(ansiColorReset);
+    stdout.write(ansiColorReset);
   }
 
   return 0;
