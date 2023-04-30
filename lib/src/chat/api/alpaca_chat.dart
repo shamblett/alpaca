@@ -673,8 +673,6 @@ class AlpacaChat {
         cur = ggml.mul(ctx0, cur, tmp);
 
         cur = ggml.mulMat(ctx0, model.layers[il].w2!, cur);
-
-        print('');
       }
 
       cur = ggml.add(ctx0, cur, inpFF);

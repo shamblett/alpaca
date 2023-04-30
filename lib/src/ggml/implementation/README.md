@@ -1,6 +1,6 @@
 # Warning
 
-There is currently a hand edit that must be applied to the generated ggml_impl.dart file, 
+There is currently a number(approx 6)hand edits that must be applied to the generated ggml_impl.dart file, example 
 
 ```
 class ggml_init_params extends ffi.Struct {
@@ -13,4 +13,5 @@ external ffi.Pointer<ffi.Void> mem_buffer;
 }
 ```
 
-The mem_size member must be annotated as Uint64
+The mem_size member must be annotated as Uint64, so must any other type that is size_t in the ggml.h header.
+
