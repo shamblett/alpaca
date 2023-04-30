@@ -199,7 +199,7 @@ int main(List<String> argv) {
         if (isInteracting) {
           inputConsumed = embdInp.length;
           embdInp.addAll(promptInp);
-          stdout.write('>');
+          stdout.write('> ');
 
           // Currently being interactive
           bool anotherLine = true;
@@ -230,7 +230,7 @@ int main(List<String> argv) {
         }
       }
       // End of text token
-      if (embd.last == 2) {
+      if (embd.isNotEmpty && embd.last == 2) {
         if (params.interactive) {
           isInteracting = true;
           continue;
