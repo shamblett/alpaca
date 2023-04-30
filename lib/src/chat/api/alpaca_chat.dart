@@ -421,12 +421,10 @@ class AlpacaChat {
             }
 
             if (splitType == 0) {
-
               final rowSize = (tensor.instance.ne[0] /
                   ggml.blockSize(GgmlType.type(tensor.instance.type)) *
                   ggml.typeSize(GgmlType.type(tensor.instance.type)));
               assert(rowSize == tensor.instance.nb[1]);
-
             }
 
             totalSize += ggml.nBytes(tensor) ~/ nParts;
@@ -496,7 +494,6 @@ class AlpacaChat {
     final nVocab = hParams?.nVocab;
     final nRot = nEmbd! / nHead!;
 
-    // TODO: check if this size scales with n_ctx linearly and remove constant. somehow I feel it wasn't the case
     const bufSize = 512 * 1024 * 1024;
     final bufPtr = ffi.calloc<Uint8>(bufSize);
 

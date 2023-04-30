@@ -163,9 +163,9 @@ class GgmlImpl {
     );
   }
 
-  late final _ggml_nbytesPtr =
-      _lookup<ffi.NativeFunction<ffi.Uint64 Function(ffi.Pointer<ggml_tensor>)>>(
-          'ggml_nbytes');
+  late final _ggml_nbytesPtr = _lookup<
+          ffi.NativeFunction<ffi.Uint64 Function(ffi.Pointer<ggml_tensor>)>>(
+      'ggml_nbytes');
   late final _ggml_nbytes =
       _ggml_nbytesPtr.asFunction<int Function(ffi.Pointer<ggml_tensor>)>();
 
@@ -219,9 +219,9 @@ class GgmlImpl {
     );
   }
 
-  late final _ggml_element_sizePtr =
-      _lookup<ffi.NativeFunction<ffi.Uint64 Function(ffi.Pointer<ggml_tensor>)>>(
-          'ggml_element_size');
+  late final _ggml_element_sizePtr = _lookup<
+          ffi.NativeFunction<ffi.Uint64 Function(ffi.Pointer<ggml_tensor>)>>(
+      'ggml_element_size');
   late final _ggml_element_size = _ggml_element_sizePtr
       .asFunction<int Function(ffi.Pointer<ggml_tensor>)>();
 
@@ -261,9 +261,9 @@ class GgmlImpl {
     );
   }
 
-  late final _ggml_used_memPtr =
-      _lookup<ffi.NativeFunction<ffi.Uint64 Function(ffi.Pointer<ggml_context>)>>(
-          'ggml_used_mem');
+  late final _ggml_used_memPtr = _lookup<
+          ffi.NativeFunction<ffi.Uint64 Function(ffi.Pointer<ggml_context>)>>(
+      'ggml_used_mem');
   late final _ggml_used_mem =
       _ggml_used_memPtr.asFunction<int Function(ffi.Pointer<ggml_context>)>();
 

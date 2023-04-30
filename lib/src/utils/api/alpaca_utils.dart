@@ -144,7 +144,6 @@ class AlpacaUtils {
     while (i > 0) {
       var tokenId = prev[i];
       if (tokenId == 0) {
-        // TODO: Return error or something more meaningful
         print("failed to tokenize string!\n");
         break;
       }
@@ -156,7 +155,7 @@ class AlpacaUtils {
     }
 
     if (bos) {
-      res.add(1); // TODO: replace with vocab.bos
+      res.add(1);
     }
 
     // Pieces are in reverse order so correct that

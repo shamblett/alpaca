@@ -91,7 +91,6 @@ class GgmlTensor {
     return ret;
   }
 
-  // TODO SJH remove tensor type checks
   /// Gets the data values as doubles, returns an empty list if the data pointer is null
   /// or the conditions below are not met.
   /// The caller must ensure the list is large enough for the
