@@ -614,8 +614,7 @@ class AlpacaChat {
 
         // KQ_scaled = KQ / sqrt(n_embd/n_head)
         final yy = 1.0 / sqrt(nEmbd / nHead);
-        final kqScaled =
-            ggml.scale(ctx0, kq, ggml.newF32(ctx0, yy));
+        final kqScaled = ggml.scale(ctx0, kq, ggml.newF32(ctx0, yy));
 
         // KQ_masked = mask_past(KQ_scaled)
         final kqMasked = ggml.diagMaskInf(ctx0, kqScaled, nPast);
@@ -700,11 +699,6 @@ class AlpacaChat {
     // Run the computation
     ggml.buildForwardExpand(gf, inpL);
     ggml.graphCompute(ctx0, gf);
-
-    // if (nPast%100 == 0) {
-    //   final dgf = GgmlCGraph()..ptr = nullptr;
-    //   ggml.graphDumpDot(gf, dgf, "gpt-2.dot");
-    // }
 
     // Return result for just the last token;
     final resPtr = inpL.getDataF32();
