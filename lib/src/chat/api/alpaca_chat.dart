@@ -27,6 +27,7 @@ class AlpacaChat {
   static late GgmlTensor kqv;
   static late GgmlTensor kqvMerged;
   static late GgmlTensor tmp;
+  static late Float32List data;
 
   /// Load the model's weights from a file
   static bool llamaModelLoad(String fname, AlpacaLlamaModel? model,
@@ -691,7 +692,7 @@ class AlpacaChat {
 
     // Return result for just the last token;
     final resPtr = inpL.getDataF32();
-    final data = resPtr.asTypedList(N * nVocab!);
+    data = resPtr.asTypedList(N * nVocab!);
     embdW.logits = data.sublist(nVocab * (N - 1));
 
     if (memPerToken == 0) {
