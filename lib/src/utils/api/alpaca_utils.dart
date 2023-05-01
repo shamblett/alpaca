@@ -268,4 +268,13 @@ class AlpacaUtils {
     final idx = dist.sample(random: rng);
     return logitsId[idx].id;
   }
+
+  /// Memory copy as per posix from one data pointer to another.
+  /// If any of the pointers are null no copy is performed.
+  static void memCpy(Pointer<Void> dest, Pointer<Void> src, int length) {
+    if (dest == nullptr || src == nullptr) {
+      return;
+    }
+    posix.memcpy(dest, src, length);
+  }
 }

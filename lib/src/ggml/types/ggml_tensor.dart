@@ -66,13 +66,13 @@ class GgmlTensor {
     return Uint8List(0);
   }
 
-  /// Memory copy as per posix from one data pointer to another.
+  /// Memory copy as per posix from a tensor(src) to this on(dest).
   /// If any pointers are null no copy is performed.
-  static void setDataMemcpy(Pointer<Void> dest, Pointer<Void> src, int length) {
-    if (dest == nullptr || src == nullptr) {
+  void setDataMemCpy(Pointer<Void> src, int length) {
+    if (src == nullptr) {
       return;
     }
-    posix.memcpy(dest, src, length);
+    posix.memcpy(instance.data, src, length);
   }
 
   /// Gets the data values as ints, returns an empty list if the data pointer is null

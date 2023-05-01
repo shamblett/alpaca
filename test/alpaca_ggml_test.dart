@@ -118,13 +118,11 @@ int main() {
       final uList = Uint8List.fromList(vals);
       tensor1.setDataBytes(uList);
       tensor2.setData(ffi.calloc.allocate(uList.length));
-      GgmlTensor.setDataMemcpy(
-          tensor2.getData(), tensor1.getData(), uList.length);
+      tensor2.setDataMemCpy(tensor1.getData(), uList.length);
       final values = tensor2.getDataBytes(vals.length);
       expect(values, vals);
       ggml.free(ctx);
     });
-
   });
 
   test('Various', () {
