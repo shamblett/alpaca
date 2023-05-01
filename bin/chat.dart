@@ -6,7 +6,9 @@
  */
 
 import 'dart:io';
-import 'dart:math';
+
+import 'package:fixnum/fixnum.dart';
+import 'package:mt19937/mt19937.dart';
 
 import 'package:alpaca/alpaca.dart';
 import 'package:alpaca/src/ggml/ggml.dart';
@@ -32,6 +34,8 @@ int main(List<String> argv) {
   }
 
   print('seed = ${params.seed}\n');
+
+  final rng = RandomMt19937_64(seed: Int64(params.seed));
 
   int tLoadUs = 0;
 
@@ -148,9 +152,8 @@ int main(List<String> argv) {
         {
           final tStartSampleUs = ggml.timeUs();
 
-          final rand = Random();
-          id = AlpacaUtils.llamaSampleTopPTopK(vocab, logits, lastNTokens,
-              repeatPenalty, topK, topP, temp, rand);
+          id = AlpacaUtils.llamaSampleTopPTopK(
+              vocab, logits, lastNTokens, repeatPenalty, topK, topP, temp, rng);
 
           lastNTokens.clear();
           lastNTokens.add(id);

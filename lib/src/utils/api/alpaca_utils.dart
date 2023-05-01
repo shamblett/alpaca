@@ -205,7 +205,7 @@ class AlpacaUtils {
       int topK,
       double topP,
       double temp,
-      Random rng) {
+      RandomMt19937_64 rng) {
     int nLogits = vocab.idToToken.length;
 
     final logitsId = <AlpacaGptLogit>[];

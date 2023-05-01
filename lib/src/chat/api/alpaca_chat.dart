@@ -8,6 +8,8 @@
 part of alpaca;
 
 class AlpacaChat {
+  // Don't recreate these variables everytime eval is called.
+
   static final ggml = Ggml();
   static var gf = GgmlCGraph();
   static late GgmlTensor embd;
