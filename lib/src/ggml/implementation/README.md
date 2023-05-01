@@ -29,3 +29,5 @@ your system. this can be done in 2 ways :-
 
 My cloned repository will always match the Dart release, the antimatter repository may not do however, you may
 have to also copy the ggml.h header file into the ggml folder and regen the ggml_impl.dart file.
+
+Ggml has been implemented as a standalone library and should be easily lifted and used elsewhere, in future this may become its own package.
