@@ -16,3 +16,4 @@ doc
 
 /test/support/model/ggml-model-q4_0.bin
 /model/ggml-model-q4_0.bin
+/bin/chat.exe
