@@ -20,8 +20,9 @@ Note that the application is linux only until this [issue](https://github.com/sh
 
 Running the application is a simple matter of typing 'dart bin/chat.dart' from the top level of the package.
 
-Note this [issue](https://github.com/shamblett/alpaca/issues/2), until this is resolved you will need plenty(64GB at least) of RAM and only
-ask one question at a time, hopefully I'll come up with a fix for this soon.
+RAM usage is currently higher than its C++ counterpart, currently it settles at around 14GB and creeps forward per quastion.
+Alpaca chat settles at around 12GB and stays at that level throughout the session. Clearly some memory management
+updates are still needed, these are being pursued on this [issue](https://github.com/shamblett/alpaca/issues/3).
 
 Feel free to contact me about any of this, contact details [here](https://www.darticulate.com/), also I'm on Mastodon now at
 @shamblett@darticulate.com. Please also feel free to raise issues, pull requests etc.

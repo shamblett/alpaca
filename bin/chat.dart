@@ -157,7 +157,7 @@ int main(List<String> argv) {
 
           lastNTokens.clear();
           lastNTokens.add(id);
-
+          AlpacaChat.embd.free();
           tSampleUs += ggml.timeUs() - tStartSampleUs;
         }
 

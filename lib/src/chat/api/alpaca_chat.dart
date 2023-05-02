@@ -8,12 +8,13 @@
 part of alpaca;
 
 class AlpacaChat {
-  // Don't recreate these variables everytime eval is called.
-
   static final ggml = Ggml();
   static var gf = GgmlCGraph();
-  static late GgmlTensor embd;
+
+  // Don't recreate these variables everytime eval is called, also
+  // expose them for clearing after an eval pass if needed.
   static late GgmlTensor inpL;
+  static late GgmlTensor embd;
   static late GgmlTensor cur;
   static late GgmlTensor qCur;
   static late GgmlTensor kCur;
@@ -662,6 +663,7 @@ class AlpacaChat {
       memPerToken = ggml.usedMem(ctx0) ~/ N;
     }
 
+    gf.free();
     ggml.free(ctx0);
 
     return true;
