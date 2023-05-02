@@ -20,6 +20,7 @@ dependencies:
  fixnum: '^1.1.0'
  mt19937: '0.1.0'
  posix: '^4.1.0'
+ stdlibc: '^0.1.1'
 
 dev_dependencies:
  test: '^1.21.5'

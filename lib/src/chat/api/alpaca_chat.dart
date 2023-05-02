@@ -37,21 +37,13 @@ class AlpacaChat {
     print('Loading model from $fname - please wait ...');
     const latin1Decoder = Latin1Decoder();
 
-    File file = File(fname);
-    RandomAccessFile raf;
+    // Native file ops
+    final bufFd = stdlib.open(fname);
+    final buff = stdlib.read(bufFd, 1024 * 1024);
     int bPos = 0; // Starts at 0 and rolls on down the method
-    Uint8List buff;
-    try {
-      raf = file.openSync(mode: FileMode.read);
-      raf.setPositionSync(bPos);
-      buff = raf.readSync(1024 * 1024);
-    } on FileSystemException {
-      print('llamaModelLoad:: Failed to open "$fname" - exiting');
-      return false;
-    }
 
     // Verify magic
-    final bData = ByteData.sublistView(buff);
+    final bData = ByteData.sublistView(Uint8List.fromList(buff));
     final magic = bData.getUint32(0, Endian.little);
     if (magic != 0x67676d6c) {
       print('llamaModelLoad:: Invalid model file - bad magic $magic');
@@ -250,14 +242,6 @@ class AlpacaChat {
     }
 
     // Load model parts;
-    try {
-      raf.closeSync();
-    } on FileSystemException {
-      print(
-          'llamaModelLoad:: Failed to close file for part processing "$fname"');
-      return false;
-    }
-
     for (int i = 0; i < nParts!; ++i) {
       final partId = i;
       var fnamePart = fname;
@@ -267,32 +251,14 @@ class AlpacaChat {
 
       print(
           'llamaModelLoad:: loading model part ${i + 1}/$nParts from "$fnamePart"');
-      int fileLength = 0;
-      Uint8List partBuff1;
-      Uint8List partBuff2;
-      // Load the rest of the model file. Split it into two chunks
-      // and concatenate them. Dart doesn't seem to want to read Random Access files
-      // in chunks greater that 2GB.
-      try {
-        // Read the buffers
-        raf = file.openSync(mode: FileMode.read);
-        fileLength = raf.lengthSync();
-        raf.setPositionSync(0);
-        final lengthToRead = fileLength;
-        partBuff1 = raf.readSync(lengthToRead ~/ 2);
-        raf.setPositionSync(lengthToRead ~/ 2);
-        int oddOffset = fileLength.isOdd ? 1 : 0;
-        partBuff2 = raf.readSync((lengthToRead ~/ 2) + oddOffset);
-      } on FileSystemException {
-        print('llamaModelLoad:: Failed to open "$fname" - exiting');
-        return false;
-      }
-
-      // Concatenate the buffers
-      final partBuff = Uint8List(partBuff1.length + partBuff2.length);
-      partBuff.setAll(0, partBuff1);
-      partBuff.setAll(partBuff1.length, partBuff2);
-      final bData = ByteData.view(partBuff.buffer);
+      int fileLength = stdlib.stat(fnamePart)!.st_size;
+      final partFd = stdlib.open(fnamePart);
+      final pBufMapped = stdlib.mmap(
+          length: fileLength,
+          fd: partFd,
+          prot: stdlib.PROT_READ,
+          flags: stdlib.MAP_PRIVATE);
+      final bData = ByteData.view(pBufMapped!.data);
 
       // Load weights
       {
@@ -463,14 +429,10 @@ class AlpacaChat {
         print(
             'llamaModelLoad:: model size = ${totalSize / 1024.0 ~/ 1024.0} MB / num tensors = $nTensors');
       }
+      stdlib.close(partFd);
+      stdlib.munmap(pBufMapped);
     }
-
-    try {
-      raf.closeSync();
-    } on FileSystemException {
-      print('llamaModelLoad:: Failed to close file $fname');
-      return false;
-    }
+    stdlib.close(bufFd);
 
     return true;
   }

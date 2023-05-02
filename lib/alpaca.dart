@@ -18,6 +18,7 @@ import 'package:ffi/ffi.dart' as ffi;
 
 import 'package:mt19937/mt19937.dart';
 import 'package:posix/posix.dart' as posix;
+import 'package:stdlibc/stdlibc.dart' as stdlib;
 import 'package:alpaca/src/ggml/ggml.dart';
 
 part 'src/utils/api/alpaca_utils.dart';
