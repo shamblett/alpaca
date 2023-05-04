@@ -13,24 +13,8 @@ class AlpacaChat {
 
   // Don't recreate these variables everytime eval is called, also
   // expose them for clearing after an eval pass if needed.
-  static late GgmlTensor inpL;
+
   static late GgmlTensor embd;
-  static late GgmlTensor cur;
-  static late GgmlTensor qCur;
-  static late GgmlTensor kCur;
-  static late GgmlTensor vCur;
-  static late GgmlTensor k;
-  static late GgmlTensor v;
-  static late GgmlTensor q;
-  static late GgmlTensor kq;
-  static late GgmlTensor kqScaled;
-  static late GgmlTensor kqMasked;
-  static late GgmlTensor kqSoftMax;
-  static late GgmlTensor vTrans;
-  static late GgmlTensor kqv;
-  static late GgmlTensor kqvMerged;
-  static late GgmlTensor tmp;
-  static late Float32List data;
 
   /// Load the model's weights from a file
   static bool llamaModelLoad(String fname, AlpacaLlamaModel? model,
@@ -494,11 +478,11 @@ class AlpacaChat {
     embd = ggml.newTensor1D(ctx0, GgmlType.i32, N);
     embd.setDataInt(embdInp);
 
-    inpL = ggml.getRows(ctx0, model.tokEmbeddings!, embd);
+    var inpL = ggml.getRows(ctx0, model.tokEmbeddings!, embd);
 
     for (int il = 0; il < nLayer!; ++il) {
       final inpSA = inpL;
-      cur = GgmlTensor();
+      var cur = GgmlTensor();
       // Norm
       {
         cur = ggml.rmsNorm(ctx0, inpL);
@@ -510,26 +494,26 @@ class AlpacaChat {
 
       // Self-attention
       {
-        qCur = ggml.mulMat(ctx0, model.layers[il].wq!, cur);
-        kCur = ggml.mulMat(ctx0, model.layers[il].wk!, cur);
-        vCur = ggml.mulMat(ctx0, model.layers[il].wv!, cur);
+        final qCur = ggml.mulMat(ctx0, model.layers[il].wq!, cur);
+        final kCur = ggml.mulMat(ctx0, model.layers[il].wk!, cur);
+        final vCur = ggml.mulMat(ctx0, model.layers[il].wv!, cur);
 
         // store key and value to memory
         if (N >= 1) {
-          k = ggml.view1D(
+          final k = ggml.view1D(
               ctx0,
               model.memoryK!,
               N * nEmbd,
               (ggml.elementSize(model.memoryK!) * nEmbd) *
                   (il * nCtx! + nPast));
-          v = ggml.view1D(ctx0, model.memoryV!, N * nEmbd,
+          final v = ggml.view1D(ctx0, model.memoryV!, N * nEmbd,
               (ggml.elementSize(model.memoryV!) * nEmbd) * (il * nCtx + nPast));
           ggml.buildForwardExpand(gf, ggml.cpy(ctx0, kCur, k));
           ggml.buildForwardExpand(gf, ggml.cpy(ctx0, vCur, v));
         }
 
         // Q = Qcur.contiguous().view(n_embd/n_head, n_head, N).permute(0, 2, 1, 3)
-        q = ggml.permute(
+        final q = ggml.permute(
             ctx0,
             ggml.rope(
                 ctx0,
@@ -547,7 +531,7 @@ class AlpacaChat {
             3);
 
         // K = Kmem.view(n_embd/n_head, n_head, n_past + N).permute(0, 2, 1, 3)
-        k = ggml.permute(
+        final k = ggml.permute(
             ctx0,
             ggml.rope(
                 ctx0,
@@ -567,20 +551,20 @@ class AlpacaChat {
             3);
 
         // K * Q
-        kq = ggml.mulMat(ctx0, k, q);
+        final kq = ggml.mulMat(ctx0, k, q);
 
         // KQ_scaled = KQ / sqrt(n_embd/n_head)
         final yy = 1.0 / sqrt(nEmbd / nHead);
-        kqScaled = ggml.scale(ctx0, kq, ggml.newF32(ctx0, yy));
+        final kqScaled = ggml.scale(ctx0, kq, ggml.newF32(ctx0, yy));
 
         // KQ_masked = mask_past(KQ_scaled)
-        kqMasked = ggml.diagMaskInf(ctx0, kqScaled, nPast);
+        final kqMasked = ggml.diagMaskInf(ctx0, kqScaled, nPast);
 
         // KQ = soft_max(KQ_masked)
-        kqSoftMax = ggml.softMax(ctx0, kqMasked);
+        final kqSoftMax = ggml.softMax(ctx0, kqMasked);
 
         // V_trans = Vmem.view(n_embd/n_head, n_head, n_past + N).permute(1, 2, 0, 3).contiguous()
-        vTrans = ggml.permute(
+        final vTrans = ggml.permute(
             ctx0,
             ggml.reshape3D(
                 ctx0,
@@ -595,10 +579,10 @@ class AlpacaChat {
             3);
 
         // KQV = transpose(V) * KQ_soft_max
-        kqv = ggml.mulMat(ctx0, vTrans, kqSoftMax);
+        final kqv = ggml.mulMat(ctx0, vTrans, kqSoftMax);
 
         // KQV_merged = KQV.permute(0, 2, 1, 3)
-        kqvMerged = ggml.permute(ctx0, kqv, 0, 2, 1, 3);
+        final kqvMerged = ggml.permute(ctx0, kqv, 0, 2, 1, 3);
 
         cur = ggml.cpy(
             ctx0, kqvMerged, ggml.newTensor2D(ctx0, GgmlType.f32, nEmbd, N));
@@ -620,7 +604,7 @@ class AlpacaChat {
               ctx0, ggml.repeat(ctx0, model.layers[il].ffnNorm!, cur), cur);
         }
 
-        tmp = ggml.mulMat(ctx0, model.layers[il].w3!, cur);
+        final tmp = ggml.mulMat(ctx0, model.layers[il].w3!, cur);
 
         cur = ggml.mulMat(ctx0, model.layers[il].w1!, cur);
 
