@@ -435,7 +435,7 @@ class Ggml {
   /// struct ggml_tensor * q, struct ggml_tensor * k, struct ggml_tensor * v,
   /// bool masked);
   GgmlTensor flashAttn(
-      GgmlContext ctx, GgmlTensor q, GgmlTensor k, GgmlTensor v, int masked) {
+      GgmlContext ctx, GgmlTensor q, GgmlTensor k, GgmlTensor v, bool masked) {
     final ptr = _impl.ggml_flash_attn(ctx, q.ptr, k.ptr, v.ptr, masked);
     return GgmlTensor()..ptr = ptr;
   }
@@ -464,7 +464,7 @@ class Ggml {
   }
 
   /// struct ggml_cgraph ggml_build_backward(struct ggml_context * ctx, struct ggml_cgraph * gf, bool keep);
-  GgmlCGraph buildBackward(GgmlContext ctx, GgmlCGraph gf, int keep) {
+  GgmlCGraph buildBackward(GgmlContext ctx, GgmlCGraph gf, bool keep) {
     final cGraph = _impl.ggml_build_backward(ctx, gf.ptr, keep);
     return GgmlCGraph()..instance = cGraph;
   }

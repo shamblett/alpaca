@@ -11,6 +11,8 @@ description: 'Holds ffigen generated implementation bindings to the Alpaca ggml 
 headers:
   entry-points:
     - 'ggml/ggml.h'
+compiler-opts:
+    - '-I/usr/lib/gcc/x86_64-redhat-linux/13/include/'
 comments: true
 use-supported-typedefs: true
 preamble: |

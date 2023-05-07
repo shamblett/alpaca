@@ -129,7 +129,7 @@ class GgmlTensor {
     sb.writeln(
         'Ne => ${instance.ne[0]}, ${instance.ne[1]}, ${instance.ne[2]}, ${instance.ne[3]}');
     sb.writeln('Op = ${GgmlOp.op(instance.op)}');
-    sb.writeln('Is param = ${instance.is_param == 0 ? 'False' : 'True'}');
+    sb.writeln('Is param = ${instance.is_param ? 'True' : 'False'}');
     var tmp = instance.src0 == nullptr ? 'Null' : 'Valid';
     sb.writeln('Src0 => $tmp');
     tmp = instance.src1 == nullptr ? 'Null' : 'Valid';

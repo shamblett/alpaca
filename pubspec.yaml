@@ -24,8 +24,8 @@ dependencies:
 
 dev_dependencies:
  test: '^1.21.5'
- lints: '^2.0.0'
- ffigen: '^7.2.10'
+ lints: '^2.0.1'
+ ffigen: '^7.2.11'
  
  
 
