@@ -24,7 +24,15 @@ class AlpacaChat {
 
     // Native file ops
     final bufFd = stdlib.open(fname);
+    if (bufFd < 0) {
+      print('llamaModelLoad:: cannot open model file [$fname]');
+      return false;
+    }
     final buff = stdlib.read(bufFd, 1024 * 1024);
+    if (buff.isEmpty) {
+      print('llamaModelLoad:: failed to read from model file [$fname]');
+      return false;
+    }
     int bPos = 0; // Starts at 0 and rolls on down the method
 
     // Verify magic
@@ -237,13 +245,27 @@ class AlpacaChat {
       print(
           'llamaModelLoad:: loading model part ${i + 1}/$nParts from "$fnamePart"');
       int fileLength = stdlib.stat(fnamePart)!.st_size;
+      if (fileLength <= 0) {
+        print(
+            'llamaModelLoad:: failed to stat model part ${i + 1}/$nParts from "$fnamePart"');
+        return false;
+      }
       final partFd = stdlib.open(fnamePart);
+      if (partFd < 0) {
+        print(
+            'llamaModelLoad:: failed to open model part ${i + 1}/$nParts from "$fnamePart"');
+        return false;
+      }
       final pBufMapped = stdlib.mmap(
           length: fileLength,
           fd: partFd,
           prot: stdlib.PROT_READ,
           flags: stdlib.MAP_PRIVATE);
-      final bData = ByteData.view(pBufMapped!.data);
+      if (pBufMapped!.data.lengthInBytes <= 0) {
+        print(
+            'llamaModelLoad:: failed to mmap model part ${i + 1}/$nParts from "$fnamePart"');
+      }
+      final bData = ByteData.view(pBufMapped.data);
 
       // Load weights
       {
