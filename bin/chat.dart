@@ -97,11 +97,6 @@ int main(List<String> argv) {
       'AlpacaChat:: sampling parameters: temp = ${params.temp}, top_k = ${params.topK}, top_p = ${params.topP}, repeat_last_n = ${params.repeatLastN}, repeat_penalty = ${params.repeatPenalty}');
   print('');
   final embd = <Id>[];
-
-  // Determine the required inference memory per token:
-  AlpacaChat.llamaEval(
-      model, params.nThreads, 0, [0, 1, 2, 3], logits);
-
   final lastNTokens = <Id>[];
 
   if (params.interactive) {
