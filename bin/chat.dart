@@ -44,6 +44,7 @@ int main(List<String> argv) {
 
   // Load the model
   {
+    final tStartUs = ggml.timeUs();
     final modelPath = '${Directory.current.path}/model/${params.model}';
     print('Model path is $modelPath');
     if (!AlpacaChat.llamaModelLoad(
@@ -51,6 +52,7 @@ int main(List<String> argv) {
       print('AlpacaChat:: failed to load model from $modelPath\n');
       return 1;
     }
+    tLoadUs = ggml.timeUs() - tStartUs;
   }
 
   // Print system information
