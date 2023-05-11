@@ -10,6 +10,7 @@ part of alpaca;
 class AlpacaChat {
   static final ggml = Ggml();
   static var gf = GgmlCGraph();
+  static int memPerToken = 0;
 
   // Don't recreate these variables everytime eval is called, also
   // expose them for clearing after an eval pass if needed.
@@ -474,7 +475,7 @@ class AlpacaChat {
   ///
   /// The GPT-J model requires about 16MB of memory per input token.
   static bool llamaEval(AlpacaLlamaModel model, int nThreads, int nPast,
-      List<Id> embdInp, AlpacaLogit embdW, int memPerToken) {
+      List<Id> embdInp, AlpacaLogit embdW) {
     final N = embdInp.length;
 
     final hParams = model.hParams;
