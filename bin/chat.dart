@@ -99,9 +99,8 @@ int main(List<String> argv) {
   final embd = <Id>[];
 
   // Determine the required inference memory per token:
-  int memPerToken = 0;
   AlpacaChat.llamaEval(
-      model, params.nThreads, 0, [0, 1, 2, 3], logits, memPerToken);
+      model, params.nThreads, 0, [0, 1, 2, 3], logits);
 
   final lastNTokens = <Id>[];
 
@@ -131,7 +130,7 @@ int main(List<String> argv) {
         final tStartUs = ggml.timeUs();
 
         if (!AlpacaChat.llamaEval(
-            model, params.nThreads, nPast, embd, logits, memPerToken)) {
+            model, params.nThreads, nPast, embd, logits)) {
           print('AlpacaChat:: Failed to predict');
           return 1;
         }
@@ -257,7 +256,7 @@ int main(List<String> argv) {
 
     print('');
     print('');
-    print('AlpacaChat:: mem per token = $memPerToken bytes');
+    print('AlpacaChat:: mem per token = ${AlpacaChat.memPerToken} bytes');
     print('AlpacaChat:: load time = ${tLoadUs / 1000.0} ms');
     print('AlpacaChat:: sample time = ${tSampleUs / 1000.0} ms');
     print(
