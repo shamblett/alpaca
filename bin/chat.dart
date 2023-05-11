@@ -105,7 +105,7 @@ int main(List<String> argv) {
 
   if (params.interactive) {
     print('AlpacaChat:: == Running in chat mode. ==');
-    print('AlpacaChat::  - Press Ctrl+C to interject at any time.');
+    print('AlpacaChat::  - Type "stop" to exit cleanly.');
     print('');
 
     // We may want to slide the input window along with the context, but for now we restrict to the context length
@@ -212,14 +212,17 @@ int main(List<String> argv) {
               stdout.write(ansiColorGreen);
             }
             var line = stdin.readLineSync();
+            // Stop indication
+            if (line!.toLowerCase() == 'stop') {
+              remainingTokens = 0;
+              break;
+            }
             if (params.useColor) {
               stdout.write(ansiColorReset);
             }
-            line != null && line.endsWith('\\')
-                ? anotherLine = true
-                : anotherLine = false;
+            line.endsWith('\\') ? anotherLine = true : anotherLine = false;
 
-            final lineInp = AlpacaUtils.llamaTokenize(vocab, line!, false);
+            final lineInp = AlpacaUtils.llamaTokenize(vocab, line, false);
             embdInp.addAll(lineInp);
             embdInp.addAll(responseInp);
 
