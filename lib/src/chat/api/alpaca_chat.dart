@@ -9,7 +9,7 @@ part of alpaca;
 
 class AlpacaChat {
   static final ggml = Ggml();
-  static var gf = GgmlCGraph();
+  //static var gf = GgmlCGraph();
   static int memPerToken = 0;
 
   // Don't recreate these variables everytime eval is called, also
@@ -495,7 +495,7 @@ class AlpacaChat {
     params.instance.mem_buffer = bufPtr.cast<Void>();
 
     final ctx0 = ggml.init(params);
-    gf = GgmlCGraph();
+    final gf = GgmlCGraph();
     gf.instance.n_threads = nThreads;
 
     embd = ggml.newTensor1D(ctx0, GgmlType.i32, N);
@@ -503,9 +503,11 @@ class AlpacaChat {
 
     var inpL = ggml.getRows(ctx0, model.tokEmbeddings!, embd);
 
+
     for (int il = 0; il < nLayer!; ++il) {
       final inpSA = inpL;
       var cur = GgmlTensor();
+
       // Norm
       {
         cur = ggml.rmsNorm(ctx0, inpL);
@@ -674,5 +676,18 @@ class AlpacaChat {
     ggml.free(ctx0);
 
     return true;
+  }
+
+  static void printEmbd(AlpacaGptVocab vocab, List<Id> embd) {
+    print('');
+    if (embd.isEmpty) {
+      print('--- empty ---');
+      return;
+    }
+    final sb = StringBuffer();
+    for (final id in embd) {
+      sb.write(vocab.idToToken[id]);
+    }
+    print(sb);
   }
 }
