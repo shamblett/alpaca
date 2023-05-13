@@ -1692,18 +1692,18 @@ class GgmlImpl {
       _ggml_cpu_has_vsxPtr.asFunction<int Function()>();
 }
 
-class __fsid_t extends ffi.Struct {
+final class __fsid_t extends ffi.Struct {
   @ffi.Array.multi([2])
   external ffi.Array<ffi.Int> __val;
 }
 
-class max_align_t extends ffi.Opaque {}
+final class max_align_t extends ffi.Opaque {}
 
 typedef ggml_fp16_t = ffi.Uint16;
 
-class ggml_object extends ffi.Opaque {}
+final class ggml_object extends ffi.Opaque {}
 
-class ggml_context extends ffi.Opaque {}
+final class ggml_context extends ffi.Opaque {}
 
 abstract class ggml_type {
   static const int GGML_TYPE_Q4_0 = 0;
@@ -1755,7 +1755,7 @@ abstract class ggml_op {
   static const int GGML_OP_COUNT = 35;
 }
 
-class ggml_tensor extends ffi.Struct {
+final class ggml_tensor extends ffi.Struct {
   @ffi.Int32()
   external int type;
 
@@ -1801,7 +1801,7 @@ class ggml_tensor extends ffi.Struct {
   external ffi.Array<ffi.Char> padding;
 }
 
-class ggml_cgraph extends ffi.Struct {
+final class ggml_cgraph extends ffi.Struct {
   @ffi.Int()
   external int n_nodes;
 
@@ -1835,7 +1835,7 @@ class ggml_cgraph extends ffi.Struct {
   external int perf_time_us;
 }
 
-class ggml_scratch extends ffi.Struct {
+final class ggml_scratch extends ffi.Struct {
   @ffi.Size()
   external int offs;
 
@@ -1845,7 +1845,7 @@ class ggml_scratch extends ffi.Struct {
   external ffi.Pointer<ffi.Void> data;
 }
 
-class ggml_init_params extends ffi.Struct {
+final class ggml_init_params extends ffi.Struct {
   @ffi.Size()
   external int mem_size;
 
@@ -1877,7 +1877,7 @@ abstract class ggml_opt_result {
   static const int GGML_LINESEARCH_INVALID_PARAMETERS = -124;
 }
 
-class ggml_opt_params extends ffi.Struct {
+final class ggml_opt_params extends ffi.Struct {
   @ffi.Int32()
   external int type;
 
@@ -1904,7 +1904,7 @@ class ggml_opt_params extends ffi.Struct {
   external UnnamedStruct2 lbfgs;
 }
 
-class UnnamedStruct1 extends ffi.Struct {
+final class UnnamedStruct1 extends ffi.Struct {
   @ffi.Int()
   external int n_iter;
 
@@ -1927,7 +1927,7 @@ class UnnamedStruct1 extends ffi.Struct {
   external double eps_g;
 }
 
-class UnnamedStruct2 extends ffi.Struct {
+final class UnnamedStruct2 extends ffi.Struct {
   @ffi.Int()
   external int m;
 

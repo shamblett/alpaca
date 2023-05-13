@@ -503,7 +503,6 @@ class AlpacaChat {
 
     var inpL = ggml.getRows(ctx0, model.tokEmbeddings!, embd);
 
-
     for (int il = 0; il < nLayer!; ++il) {
       final inpSA = inpL;
       var cur = GgmlTensor();

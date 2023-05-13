@@ -9,23 +9,23 @@ funding:
 publish_to: 'none'
 
 environment:
- sdk: '>=2.17.0 <3.0.0'
+ sdk: '>=3.0.0 <4.0.0'
 
 executables:
  chat:
 
 dependencies:
  data: '^0.11.0'
- ffi: '^2.0.1'
+ ffi: '^2.0.2'
  fixnum: '^1.1.0'
  mt19937: '0.1.0'
- posix: '^4.1.0'
- stdlibc: '^0.1.1'
+ posix: '^5.0.0'
+ stdlibc: '^0.1.2'
 
 dev_dependencies:
  test: '^1.21.5'
  lints: '^2.0.1'
- ffigen: '^7.2.11'
+ ffigen: '^8.0.1'
  
  
 

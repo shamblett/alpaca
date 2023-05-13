@@ -7,7 +7,7 @@
 
 part of alpaca;
 
-class AlpacaGptLogit extends Comparable {
+class AlpacaGptLogit implements Comparable {
   Id id = 0;
   double val = 0.0;
 
