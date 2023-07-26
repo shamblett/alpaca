@@ -15,7 +15,7 @@ class AlpacaChat {
   // Don't recreate these variables everytime eval is called, also
   // expose them for clearing after an eval pass if needed.
 
-  static late GgmlTensor embd;
+  static GgmlTensor? embd;
 
   /// Load the model's weights from a file
   static bool llamaModelLoad(String fname, AlpacaLlamaModel? model,
@@ -499,9 +499,9 @@ class AlpacaChat {
     gf.instance.n_threads = nThreads;
 
     embd = ggml.newTensor1D(ctx0, GgmlType.i32, N);
-    embd.setDataInt(embdInp);
+    embd?.setDataInt(embdInp);
 
-    var inpL = ggml.getRows(ctx0, model.tokEmbeddings!, embd);
+    var inpL = ggml.getRows(ctx0, model.tokEmbeddings!, embd!);
 
     for (int il = 0; il < nLayer!; ++il) {
       final inpSA = inpL;

@@ -153,7 +153,6 @@ int main(List<String> argv) {
 
           lastNTokens.clear();
           lastNTokens.add(id);
-          AlpacaChat.embd.free();
           tSampleUs += ggml.timeUs() - tStartSampleUs;
         }
 
@@ -165,6 +164,7 @@ int main(List<String> argv) {
 
         // Decrement remaining sampling budget
         --remainingTokens;
+        AlpacaChat.embd?.free();
       } else {
         // Some user input remains from prompt or interaction, forward it to processing
         while (embdInp.length > inputConsumed) {
@@ -183,6 +183,7 @@ int main(List<String> argv) {
             embdInp.length == inputConsumed) {
           print(ansiColorReset);
         }
+        AlpacaChat.embd?.free();
       }
 
       // Display text
