@@ -235,7 +235,12 @@ class AlpacaChat {
           'llamaModelLoad:: Memory_size = ${memorySize / 1024.0 / 1024.0} MB, nMem = $nMem');
     }
 
-    // Load model parts;
+    // Load model parts.
+    //
+    // Note we use stdlibc functions to do this as the maximum read size of a file in Dart is 0x7ffff000
+    // (taken from file_impl.dart, note this is a linux limitation on the 'read' , 'write'
+    // and 'sendfile' functions).
+    // Using mmap here solves the above problem and also avoids reading the file into Dart memory.
     for (int i = 0; i < nParts!; ++i) {
       final partId = i;
       var fnamePart = fname;
