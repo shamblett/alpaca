@@ -17,3 +17,4 @@ doc
 /test/support/model/ggml-model-q4_0.bin
 /model/ggml-model-q4_0.bin
 /bin/chat.exe
+/model/ggml-alpaca-7b-q4.bin
